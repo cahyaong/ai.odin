@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Run.DebuggingWithGodot": {
+      "commandName": "Executable",
+      "executablePath": "$(GODOT_EXE)",
+      "commandLineArgs": "--path $(ProjectDir) --verbose",
+      "workingDirectory": "$(GodotProjectDir).godot\\mono\\temp\\bin",
+      "nativeDebugging": true
+    }
+  }
+}
