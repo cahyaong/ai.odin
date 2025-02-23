@@ -1,3 +1,15 @@
-[gd_scene format=3 uid="uid://ddem0vynqad2d"]
+[gd_scene load_steps=4 format=3 uid="uid://ddem0vynqad2d"]
+
+[ext_resource type="Script" path="res://Common/AppBootstrapper.cs" id="1_8co64"]
+[ext_resource type="PackedScene" uid="uid://y2biswnrb7sa" path="res://Common.Renderer/HeadUpDisplay.tscn" id="2_apw6n"]
+[ext_resource type="Script" path="res://Common/TimeTracker.cs" id="2_rpjsm"]
 
 [node name="Universe" type="Node2D"]
+
+[node name="AppBootstrapper" type="Node" parent="."]
+script = ExtResource("1_8co64")
+
+[node name="TimeTracker" type="Node" parent="."]
+script = ExtResource("2_rpjsm")
+
+[node name="HeadUpDisplay" parent="." instance=ExtResource("2_apw6n")]

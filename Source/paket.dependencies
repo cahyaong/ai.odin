@@ -2,8 +2,13 @@ storage: none
 framework: net8.0
 source https://api.nuget.org/v3/index.json
 
+nuget Autofac
+nuget JetBrains.Annotations
 nuget MonoGame.Content.Builder.Task
 nuget MonoGame.Framework.DesktopGL
 nuget SadConsole
 nuget SadConsole.Extended
 nuget SadConsole.Host.MonoGame
+nuget System.Reactive
+nuget System.Reactive.Linq
+nuget YamlDotNet

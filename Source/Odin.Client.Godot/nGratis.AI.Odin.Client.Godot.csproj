@@ -1,9 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Godot.NET.Sdk/4.3.0">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
+    <BaseIntermediateOutputPath>$(GodotProjectDir).godot\mono\temp\obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\External\cop.olympus\Source\Olympus.Contract\nGratis.Cop.Olympus.Contract.csproj" />
+    <ProjectReference Include="..\Odin.Engine\nGratis.AI.Odin.Engine.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\launchSettings.json" />
   </ItemGroup>
+  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
