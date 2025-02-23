@@ -8,9 +8,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{86771C6E
 		paket.dependencies = paket.dependencies
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGratis.AI.Yggdrasil.Client.Godot", "..\..\ai.yggdrasil\Source\Yggdrasil.Client.Godot\nGratis.AI.Yggdrasil.Client.Godot.csproj", "{C8079439-3999-2AD8-D062-CF90DB3460D9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGratis.AI.Odin.Client.Mono", "Odin.Client.Mono\nGratis.AI.Odin.Client.Mono.csproj", "{A395E734-7B8A-4472-A790-A983C31F0571}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGratis.AI.Odin.Client.Godot", "Odin.Client.Godot\nGratis.AI.Odin.Client.Godot.csproj", "{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,14 +28,14 @@ Global
 		{A395E734-7B8A-4472-A790-A983C31F0571}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
 		{A395E734-7B8A-4472-A790-A983C31F0571}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A395E734-7B8A-4472-A790-A983C31F0571}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8079439-3999-2AD8-D062-CF90DB3460D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8079439-3999-2AD8-D062-CF90DB3460D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8079439-3999-2AD8-D062-CF90DB3460D9}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
-		{C8079439-3999-2AD8-D062-CF90DB3460D9}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
-		{C8079439-3999-2AD8-D062-CF90DB3460D9}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
-		{C8079439-3999-2AD8-D062-CF90DB3460D9}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
-		{C8079439-3999-2AD8-D062-CF90DB3460D9}.Release|Any CPU.ActiveCfg = ExportDebug|Any CPU
-		{C8079439-3999-2AD8-D062-CF90DB3460D9}.Release|Any CPU.Build.0 = ExportDebug|Any CPU
+		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.Release|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.Release|Any CPU.Build.0 = ExportDebug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
