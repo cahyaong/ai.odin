@@ -1,15 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ISystem.cs" company="nGratis">
+// <copyright file="SystemMetadataAttribute.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
 // <author>Cahya Ong — cahya.ong@gmail.com</author>
-// <creation_timestamp>Sunday, February 23, 2025 6:26:26 AM UTC</creation_timestamp>
+// <creation_timestamp>Thursday, February 27, 2025 2:48:04 AM UTC</creation_timestamp>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace nGratis.AI.Odin.Engine;
 
-public interface ISystem
+[AttributeUsage(AttributeTargets.Class)]
+public class SystemMetadataAttribute : Attribute
 {
-    void Process(uint tick);
+    public int OrderingIndex { get; init; }
 }

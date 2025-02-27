@@ -18,7 +18,7 @@ public class DiagnosticSystem : ISystem
         this._diagnosticRenderer = diagnosticRenderer;
     }
 
-    public void Process(uint tick)
+    public void Process(uint tick, IGameState _)
     {
         this._diagnosticRenderer.UpdateStatistic("Tick", tick.ToString());
     }

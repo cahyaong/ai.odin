@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://ddem0vynqad2d"]
+
+[ext_resource type="Script" path="res://Common/AppBootstrapper.cs" id="1_re8e8"]
+[ext_resource type="Script" path="res://Common/TimeTracker.cs" id="2_7om47"]
+[ext_resource type="PackedScene" uid="uid://y2biswnrb7sa" path="res://Common.UI/HeadUpDisplay.tscn" id="3_xphvh"]
+[ext_resource type="Script" path="res://ECS.Entity/EntityFactory.cs" id="4_u4io5"]
+
+[node name="Universe" type="Node2D"]
+
+[node name="AppBootstrapper" type="Node" parent="."]
+script = ExtResource("1_re8e8")
+
+[node name="HeadUpDisplay" parent="." instance=ExtResource("3_xphvh")]
+
+[node name="TimeTracker" type="Node" parent="."]
+script = ExtResource("2_7om47")
+
+[node name="EntityFactory" type="Node" parent="."]
+script = ExtResource("4_u4io5")
+
+[node name="EntityPool" type="Node" parent="."]

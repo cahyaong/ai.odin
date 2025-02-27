@@ -9,18 +9,37 @@
 
 namespace nGratis.AI.Odin.Engine;
 
+using System.Collections.Immutable;
+using System.Reflection;
+
 public class GameController : IGameController
 {
+    private readonly IGameState _gameState;
+
     private readonly ITimeTracker _timeTracker;
 
     private readonly IReadOnlyCollection<ISystem> _systems;
 
-    public GameController(ITimeTracker timeTracker, IReadOnlyCollection<ISystem> systems)
+    public GameController(
+        ITimeTracker timeTracker,
+        IEntityFactory entityFactory,
+        IReadOnlyCollection<ISystem> systems)
     {
+        this._gameState = new GameState
+        {
+            Universe = entityFactory.CreateUniverse(256, 256)
+        };
+
         this._timeTracker = timeTracker;
         this._timeTracker.TimeChanged += this.OnTimeChanged;
 
-        this._systems = systems;
+        this._systems = systems
+            .OrderBy(system => system
+                .GetType()
+                .GetTypeInfo()
+                .GetCustomAttribute<SystemMetadataAttribute>()?
+                .OrderingIndex ?? 0)
+            .ToImmutableArray();
     }
 
     public void Start()
@@ -35,6 +54,6 @@ public class GameController : IGameController
 
     private void OnTimeChanged(object? _, TimeChangedEventArgs args)
     {
-        this._systems.ForEach(system => system.Process(args.Tick));
+        this._systems.ForEach(system => system.Process(args.Tick, this._gameState));
     }
 }

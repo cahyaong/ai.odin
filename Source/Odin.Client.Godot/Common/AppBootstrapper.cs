@@ -17,9 +17,12 @@ public partial class AppBootstrapper : Node
 {
     public override void _Ready()
     {
+        var rootNode = this.GetParent();
+
         var container = new ContainerBuilder()
-            .RegisterInfrastructure(this.GetParent())
-            .RegisterSystem()
+            .RegisterInfrastructure(rootNode)
+            .RegisterEntityCoordinator(rootNode)
+            .RegisterSystem(rootNode)
             .Build();
 
         container
@@ -52,10 +55,27 @@ internal static class AutofacExtensions
         return containerBuilder;
     }
 
-    public static ContainerBuilder RegisterSystem(this ContainerBuilder containerBuilder)
+    public static ContainerBuilder RegisterEntityCoordinator(this ContainerBuilder containerBuilder, Node rootNode)
     {
         containerBuilder
-            .RegisterAssemblyTypes(Assembly.GetAssembly(typeof(ISystem)) ?? Assembly.GetExecutingAssembly())
+            .Register(_ => rootNode.GetNode<EntityFactory>(nameof(EntityFactory)))
+            .InstancePerLifetimeScope()
+            .As<IEntityFactory>();
+
+        containerBuilder
+            .RegisterType<EntityManager>()
+            .InstancePerLifetimeScope()
+            .As<IEntityManager>();
+
+        return containerBuilder;
+    }
+
+    public static ContainerBuilder RegisterSystem(this ContainerBuilder containerBuilder, Node rootNode)
+    {
+        containerBuilder
+            .RegisterAssemblyTypes(
+                Assembly.GetAssembly(typeof(ISystem)) ?? Assembly.GetExecutingAssembly(),
+                Assembly.GetExecutingAssembly())
             .Where(type => type.IsAssignableTo<ISystem>())
             .InstancePerLifetimeScope()
             .As<ISystem>();
