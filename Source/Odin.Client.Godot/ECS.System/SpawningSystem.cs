@@ -29,11 +29,6 @@ public class SpawningSystem : ISystem
 
     public void Process(uint tick, IGameState gameState)
     {
-        if (tick % 3 != 0)
-        {
-            return;
-        }
-
         var entity = this._entityFactory.CreateEntity();
         var positionComponent = entity.FindComponent<PositionComponent>();
 

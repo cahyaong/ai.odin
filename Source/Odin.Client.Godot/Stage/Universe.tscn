@@ -10,6 +10,10 @@
 [node name="AppBootstrapper" type="Node" parent="."]
 script = ExtResource("1_re8e8")
 
+[node name="MainCamera" type="Camera2D" parent="."]
+position = Vector2(640, 360)
+zoom = Vector2(2, 2)
+
 [node name="HeadUpDisplay" parent="." instance=ExtResource("3_xphvh")]
 
 [node name="TimeTracker" type="Node" parent="."]

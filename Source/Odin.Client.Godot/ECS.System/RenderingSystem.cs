@@ -15,6 +15,8 @@ using nGratis.AI.Odin.Engine;
 [SystemMetadata(OrderingIndex = int.MaxValue)]
 public partial class RenderingSystem : ISystem
 {
+    private static readonly float PixelPerUnit = 16;
+
     private readonly IEntityManager _entityManager;
 
     public RenderingSystem(IEntityManager entityManager)
@@ -31,7 +33,9 @@ public partial class RenderingSystem : ISystem
                 var positionComponent = entity.FindComponent<PositionComponent>();
                 var renderingComponent = entity.FindComponent<RenderingComponent>();
 
-                renderingComponent.EntityNode.Position = new Vector2(positionComponent.X, positionComponent.Y);
+                renderingComponent.EntityNode.Position = new Vector2(
+                    positionComponent.X * PixelPerUnit,
+                    positionComponent.Y * PixelPerUnit);
             });
     }
 }

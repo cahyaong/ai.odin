@@ -27,7 +27,7 @@ public class GameController : IGameController
     {
         this._gameState = new GameState
         {
-            Universe = entityFactory.CreateUniverse(256, 256)
+            Universe = entityFactory.CreateUniverse(64, 32)
         };
 
         this._timeTracker = timeTracker;
