@@ -11,5 +11,5 @@ namespace nGratis.AI.Odin.Engine;
 
 public class GameState : IGameState
 {
-    public required IUniverse Universe { get; set; }
+    public required IUniverse Universe { get; init; }
 }

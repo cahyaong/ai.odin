@@ -27,7 +27,10 @@ public partial class TimeTracker : Node, ITimeTracker
     }
 
     [CanBeNull]
-    public event EventHandler<TimeChangedEventArgs> TimeChanged;
+    public event EventHandler<DeltaChangedEventArgs> DeltaChanged;
+
+    [CanBeNull]
+    public event EventHandler<TickChangedEventArgs> TickChanged;
 
     public void Start()
     {
@@ -46,28 +49,45 @@ public partial class TimeTracker : Node, ITimeTracker
             return;
         }
 
+        this.PublishDeltaChangedEvent(delta);
+
         this._unprocessedDelta += delta;
 
         while (this._unprocessedDelta >= 1.0)
         {
             this._unprocessedDelta--;
             this._tick++;
-            this.PublishTimeChangedEvent();
+            this.PublishTickChangedEvent(this._tick);
         }
     }
 
-    private void PublishTimeChangedEvent()
+    private void PublishDeltaChangedEvent(double delta)
     {
-        if (this.TimeChanged == null)
+        if (this.DeltaChanged == null)
         {
             return;
         }
 
-        var args = new TimeChangedEventArgs
+        var args = new DeltaChangedEventArgs
         {
-            Tick = this._tick
+            Value = delta
         };
 
-        this.TimeChanged.Invoke(this, args);
+        this.DeltaChanged.Invoke(this, args);
+    }
+
+    private void PublishTickChangedEvent(uint tick)
+    {
+        if (this.TickChanged == null)
+        {
+            return;
+        }
+
+        var args = new TickChangedEventArgs
+        {
+            Value = tick
+        };
+
+        this.TickChanged.Invoke(this, args);
     }
 }

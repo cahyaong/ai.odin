@@ -11,5 +11,7 @@ namespace nGratis.AI.Odin.Engine;
 
 public interface ISystem
 {
-    void Process(uint tick, IGameState gameState);
+    void ProcessVariableDuration(double delta, IGameState gameState);
+
+    void ProcessFixedDuration(uint tick, IGameState gameState);
 }

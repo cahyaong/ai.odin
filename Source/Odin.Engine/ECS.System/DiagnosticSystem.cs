@@ -9,7 +9,7 @@
 
 namespace nGratis.AI.Odin.Engine;
 
-public class DiagnosticSystem : ISystem
+public class DiagnosticSystem : BaseSystem
 {
     private readonly IDiagnosticRenderer _diagnosticRenderer;
 
@@ -18,7 +18,7 @@ public class DiagnosticSystem : ISystem
         this._diagnosticRenderer = diagnosticRenderer;
     }
 
-    public void Process(uint tick, IGameState _)
+    public override void ProcessFixedDuration(uint tick, IGameState gameState)
     {
         this._diagnosticRenderer.UpdateStatistic("Tick", tick.ToString());
     }

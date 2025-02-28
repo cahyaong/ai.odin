@@ -36,6 +36,11 @@ internal static class AutofacExtensions
     public static ContainerBuilder RegisterInfrastructure(this ContainerBuilder containerBuilder, Node rootNode)
     {
         containerBuilder
+            .Register(_ => rootNode.GetNode<Camera>("MainCamera"))
+            .InstancePerLifetimeScope()
+            .As<ICamera>();
+
+        containerBuilder
             .Register(_ => rootNode.GetNode<TimeTracker>(nameof(TimeTracker)))
             .InstancePerLifetimeScope()
             .As<ITimeTracker>();

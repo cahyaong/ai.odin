@@ -1,15 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IGameState.cs" company="nGratis">
+// <copyright file="BaseSystem.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
 // <author>Cahya Ong — cahya.ong@gmail.com</author>
-// <creation_timestamp>Wednesday, February 26, 2025 7:20:28 AM UTC</creation_timestamp>
+// <creation_timestamp>Friday, February 28, 2025 3:34:49 AM UTC</creation_timestamp>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace nGratis.AI.Odin.Engine;
 
-public interface IGameState
+public abstract class BaseSystem : ISystem
 {
-    IUniverse Universe { get; }
+    public virtual void ProcessVariableDuration(double delta, IGameState gameState)
+    {
+    }
+
+    public virtual void ProcessFixedDuration(uint tick, IGameState gameState)
+    {
+    }
 }

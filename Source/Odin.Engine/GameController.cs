@@ -31,7 +31,8 @@ public class GameController : IGameController
         };
 
         this._timeTracker = timeTracker;
-        this._timeTracker.TimeChanged += this.OnTimeChanged;
+        this._timeTracker.DeltaChanged += this.OnDeltaChanged;
+        this._timeTracker.TickChanged += this.OnTickChanged;
 
         this._systems = systems
             .OrderBy(system => system
@@ -52,8 +53,15 @@ public class GameController : IGameController
         this._timeTracker.End();
     }
 
-    private void OnTimeChanged(object? _, TimeChangedEventArgs args)
+    private void OnDeltaChanged(object? _, DeltaChangedEventArgs args)
     {
-        this._systems.ForEach(system => system.Process(args.Tick, this._gameState));
+        this._systems
+            .ForEach(system => system.ProcessVariableDuration(args.Value, this._gameState));
+    }
+
+    private void OnTickChanged(object? _, TickChangedEventArgs args)
+    {
+        this._systems
+            .ForEach(system => system.ProcessFixedDuration(args.Value, this._gameState));
     }
 }

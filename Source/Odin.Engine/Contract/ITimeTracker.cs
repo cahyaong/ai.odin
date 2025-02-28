@@ -11,14 +11,21 @@ namespace nGratis.AI.Odin.Engine;
 
 public interface ITimeTracker
 {
-    event EventHandler<TimeChangedEventArgs> TimeChanged;
+    event EventHandler<DeltaChangedEventArgs> DeltaChanged;
+
+    event EventHandler<TickChangedEventArgs> TickChanged;
 
     void Start();
 
     void End();
 }
 
-public class TimeChangedEventArgs : EventArgs
+public class DeltaChangedEventArgs : EventArgs
 {
-    public uint Tick { get; init; }
+    public double Value { get; init; }
+}
+
+public class TickChangedEventArgs : EventArgs
+{
+    public uint Value { get; init; }
 }

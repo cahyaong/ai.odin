@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="RenderingSystem.cs" company="nGratis">
 //  The MIT License -- Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using nGratis.AI.Odin.Engine;
 
 [SystemMetadata(OrderingIndex = int.MaxValue)]
-public partial class RenderingSystem : ISystem
+public partial class RenderingSystem : BaseSystem
 {
     private static readonly float PixelPerUnit = 16;
 
@@ -24,7 +24,7 @@ public partial class RenderingSystem : ISystem
         this._entityManager = entityManager;
     }
 
-    public void Process(uint tick, IGameState _)
+    public override void ProcessFixedDuration(uint _, IGameState __)
     {
         this._entityManager
             .FindEntities(typeof(PositionComponent), typeof(RenderingComponent))
