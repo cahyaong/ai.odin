@@ -14,4 +14,12 @@ public interface ICamera
     void ZoomIn();
 
     void ZoomOut();
+
+    void PanLeft();
+
+    void PanRight();
+
+    void PanUp();
+
+    void PanDown();
 }

@@ -15,61 +15,82 @@ using nGratis.AI.Odin.Engine;
 
 public partial class Camera : Camera2D, ICamera
 {
-    private static readonly IReadOnlyDictionary<int, float> ZoomValueByZoomLevelLookup;
+    private static readonly Vector2 HorizontalPanningOffset = new(Constant.PixelPerUnit, 0);
+    private static readonly Vector2 VerticalPanningOffset = new(0, Constant.PixelPerUnit);
+
+    private static readonly IReadOnlyDictionary<int, Vector2> ZoomingValueByZoomingLevelLookup;
 
     static Camera()
     {
-        Camera.ZoomValueByZoomLevelLookup = new Dictionary<int, float>
+        Camera.ZoomingValueByZoomingLevelLookup = new Dictionary<int, Vector2>
         {
-            [0] = 0.5f,
-            [1] = 1,
-            [2] = 2,
-            [3] = 4,
+            [0] = new(0.5f, 0.5f),
+            [1] = new(1, 1),
+            [2] = new(2, 2),
+            [3] = new(4, 4),
         };
     }
 
     public Camera()
     {
-        this.MinZoomLevel = Camera
-            .ZoomValueByZoomLevelLookup.Keys
+        this.MinZoomingLevel = Camera
+            .ZoomingValueByZoomingLevelLookup.Keys
             .Min();
 
-        this.MaxZoomLevel = Camera
-            .ZoomValueByZoomLevelLookup.Keys
+        this.MaxZoomingLevel = Camera
+            .ZoomingValueByZoomingLevelLookup.Keys
             .Max();
 
         this.ZoomIn();
     }
 
-    public int ZoomLevel { get; private set; }
+    public int ZoomingLevel { get; private set; }
 
-    public int MinZoomLevel { get; init; }
+    public int MinZoomingLevel { get; init; }
 
-    public int MaxZoomLevel { get; init; }
+    public int MaxZoomingLevel { get; init; }
 
     public void ZoomIn()
     {
-        if (this.ZoomLevel >= this.MaxZoomLevel)
+        if (this.ZoomingLevel >= this.MaxZoomingLevel)
         {
             return;
         }
 
-        this.ZoomLevel++;
+        this.ZoomingLevel++;
 
-        var zoomValue = Camera.ZoomValueByZoomLevelLookup[this.ZoomLevel];
-        this.Zoom = new Vector2(zoomValue, zoomValue);
+        this.Zoom = Camera.ZoomingValueByZoomingLevelLookup[this.ZoomingLevel];
     }
 
     public void ZoomOut()
     {
-        if (this.ZoomLevel <= this.MinZoomLevel)
+        if (this.ZoomingLevel <= this.MinZoomingLevel)
         {
             return;
         }
 
-        this.ZoomLevel--;
+        this.ZoomingLevel--;
 
-        var zoomValue = Camera.ZoomValueByZoomLevelLookup[this.ZoomLevel];
-        this.Zoom = new Vector2(zoomValue, zoomValue);
+        this.Zoom = Camera.ZoomingValueByZoomingLevelLookup[this.ZoomingLevel];
+    }
+
+    public void PanLeft()
+    {
+        this.Position -= Camera.HorizontalPanningOffset;
+    }
+
+    public void PanRight()
+    {
+        this.Position += Camera.HorizontalPanningOffset;
+    }
+
+    public void PanUp()
+    {
+        this.Position -= Camera.VerticalPanningOffset;
+    }
+
+    public void PanDown()
+    {
+        this.Position += Camera.VerticalPanningOffset;
     }
 }

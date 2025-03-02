@@ -21,15 +21,33 @@ public class InputHandlingSystem : BaseSystem
         this._camera = camera;
     }
 
-    public override void ProcessVariableDuration(double delta, IGameState gameState)
+    public override void ProcessVariableDuration(double _, IGameState __)
     {
-        if (Input.IsActionJustPressed("UI.ZoomIn"))
+        if (Input.IsActionJustPressed("UI.ZoomingIn"))
         {
             this._camera.ZoomIn();
         }
-        else if (Input.IsActionJustPressed("UI.ZoomOut"))
+        else if (Input.IsActionJustPressed("UI.ZoomingOut"))
         {
             this._camera.ZoomOut();
+        }
+
+        if (Input.IsActionPressed("UI.PanningLeft"))
+        {
+            this._camera.PanLeft();
+        }
+        else if (Input.IsActionPressed("UI.PanningRight"))
+        {
+            this._camera.PanRight();
+        }
+
+        if (Input.IsActionPressed("UI.PanningUp"))
+        {
+            this._camera.PanUp();
+        }
+        else if (Input.IsActionPressed("UI.PanningDown"))
+        {
+            this._camera.PanDown();
         }
     }
 }
