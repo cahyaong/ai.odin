@@ -48,9 +48,9 @@ internal static class AutofacExtensions
         containerBuilder
             .Register(_ => rootNode
                 .GetNode<HeadUpDisplay>(nameof(HeadUpDisplay))
-                .DiagnosticRenderer)
+                .StatisticOverlay)
             .InstancePerLifetimeScope()
-            .As<IDiagnosticRenderer>();
+            .As<IStatisticOverlay>();
 
         containerBuilder
             .RegisterType<GameController>()

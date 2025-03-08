@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IDiagnosticRenderer.cs" company="nGratis">
+// <copyright file="IStatisticOverlay.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
@@ -9,7 +9,7 @@
 
 namespace nGratis.AI.Odin.Engine;
 
-public interface IDiagnosticRenderer
+public interface IStatisticOverlay
 {
-    void UpdateStatistic(string key, string value);
+    void UpdateMetric(string key, string value);
 }

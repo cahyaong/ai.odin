@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiagnosticRenderer.cs" company="nGratis">
+// <copyright file="StatisticOverlay.cs" company="nGratis">
 //  The MIT License -- Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
@@ -14,41 +14,41 @@ using System.Collections.Immutable;
 using System.Linq;
 using nGratis.AI.Odin.Engine;
 
-public partial class DiagnosticRenderer : CanvasLayer, IDiagnosticRenderer
+public partial class StatisticOverlay : CanvasLayer, IStatisticOverlay
 {
     private static class Default
     {
-        public const string StatisticLabel = "<DR.STATISTIC>";
+        public const string MetricLabel = "<SO.METRIC>";
     }
 
-    private readonly IDictionary<string, string> _statisticValueByKeyLookup;
+    private readonly IDictionary<string, string> _metricValueByMetricKeyLookup;
 
-    private RichTextLabel _statisticLabel;
+    private RichTextLabel _metricLabel;
 
-    public DiagnosticRenderer()
+    public StatisticOverlay()
     {
-        this._statisticValueByKeyLookup = new Dictionary<string, string>();
+        this._metricValueByMetricKeyLookup = new Dictionary<string, string>();
     }
 
     public override void _Ready()
     {
-        this._statisticLabel = this.GetNode<RichTextLabel>("StatisticLabel");
+        this._metricLabel = this.GetNode<RichTextLabel>("MetricLabel");
     }
 
     public override void _Process(double _)
     {
         var formattedStatisticChunks = this
-            ._statisticValueByKeyLookup
+            ._metricValueByMetricKeyLookup
             .Select(pair => $"[b]{pair.Key}:[/b] {pair.Value}")
             .ToImmutableArray();
 
-        this._statisticLabel.Text = formattedStatisticChunks.Any()
+        this._metricLabel.Text = formattedStatisticChunks.Any()
             ? string.Join(System.Environment.NewLine, formattedStatisticChunks)
-            : Default.StatisticLabel;
+            : Default.MetricLabel;
     }
 
-    public void UpdateStatistic(string key, string value)
+    public void UpdateMetric(string key, string value)
     {
-        this._statisticValueByKeyLookup[key] = value;
+        this._metricValueByMetricKeyLookup[key] = value;
     }
 }

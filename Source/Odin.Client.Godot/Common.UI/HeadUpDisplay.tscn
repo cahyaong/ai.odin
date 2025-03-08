@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://y2biswnrb7sa"]
 
 [ext_resource type="Script" path="res://Common.UI/HeadUpDisplay.cs" id="1_c3tkl"]
-[ext_resource type="Script" path="res://Common.UI/DiagnosticRenderer.cs" id="2_rap4b"]
+[ext_resource type="Script" path="res://Common.UI/StatisticOverlay.cs" id="2_lliuc"]
 
 [node name="HeadUpDisplay" type="Control"]
 layout_mode = 3
@@ -12,10 +12,10 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_c3tkl")
 
-[node name="DiagnosticRenderer" type="CanvasLayer" parent="."]
-script = ExtResource("2_rap4b")
+[node name="StatisticOverlay" type="CanvasLayer" parent="."]
+script = ExtResource("2_lliuc")
 
-[node name="StatisticLabel" type="RichTextLabel" parent="DiagnosticRenderer"]
+[node name="MetricLabel" type="RichTextLabel" parent="StatisticOverlay"]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -25,4 +25,4 @@ offset_right = -16.0
 offset_bottom = 80.0
 grow_horizontal = 0
 bbcode_enabled = true
-text = "[i]<DR.STATISTIC>[/i]"
+text = "[i]<SO.METRIC>[/i]"

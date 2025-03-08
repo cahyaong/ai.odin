@@ -11,15 +11,15 @@ namespace nGratis.AI.Odin.Engine;
 
 public class DiagnosticSystem : BaseSystem
 {
-    private readonly IDiagnosticRenderer _diagnosticRenderer;
+    private readonly IStatisticOverlay _statisticOverlay;
 
-    public DiagnosticSystem(IDiagnosticRenderer diagnosticRenderer)
+    public DiagnosticSystem(IStatisticOverlay statisticOverlay)
     {
-        this._diagnosticRenderer = diagnosticRenderer;
+        this._statisticOverlay = statisticOverlay;
     }
 
     public override void ProcessFixedDuration(uint tick, IGameState gameState)
     {
-        this._diagnosticRenderer.UpdateStatistic("Tick", tick.ToString());
+        this._statisticOverlay.UpdateMetric("Tick", tick.ToString());
     }
 }

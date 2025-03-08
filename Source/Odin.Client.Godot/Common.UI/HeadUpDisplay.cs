@@ -13,5 +13,5 @@ using nGratis.AI.Odin.Engine;
 
 public partial class HeadUpDisplay : Control
 {
-    public IDiagnosticRenderer DiagnosticRenderer => this.GetNode<DiagnosticRenderer>("DiagnosticRenderer");
+    public IStatisticOverlay StatisticOverlay => this.GetNode<StatisticOverlay>(nameof(StatisticOverlay));
 }
