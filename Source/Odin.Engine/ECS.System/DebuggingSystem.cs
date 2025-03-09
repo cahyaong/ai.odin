@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiagnosticSystem.cs" company="nGratis">
+// <copyright file="DebuggingSystem.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
@@ -9,17 +9,20 @@
 
 namespace nGratis.AI.Odin.Engine;
 
-public class DiagnosticSystem : BaseSystem
+public class DebuggingSystem : BaseSystem
 {
     private readonly IStatisticOverlay _statisticOverlay;
+    private readonly IDiagnosticOverlay _diagnosticOverlay;
 
-    public DiagnosticSystem(IStatisticOverlay statisticOverlay)
+    public DebuggingSystem(IStatisticOverlay statisticOverlay, IDiagnosticOverlay diagnosticOverlay)
     {
         this._statisticOverlay = statisticOverlay;
+        this._diagnosticOverlay = diagnosticOverlay;
     }
 
     public override void ProcessFixedDuration(uint tick, IGameState gameState)
     {
         this._statisticOverlay.UpdateMetric("Tick", tick.ToString());
+        this._diagnosticOverlay.Update(gameState);
     }
 }

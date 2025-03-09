@@ -53,6 +53,11 @@ internal static class AutofacExtensions
             .As<IStatisticOverlay>();
 
         containerBuilder
+            .Register(_ => rootNode.GetNode<DiagnosticOverlay>(nameof(DiagnosticOverlay)))
+            .InstancePerLifetimeScope()
+            .As<IDiagnosticOverlay>();
+
+        containerBuilder
             .RegisterType<GameController>()
             .InstancePerLifetimeScope()
             .As<IGameController>();

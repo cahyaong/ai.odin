@@ -15,6 +15,7 @@ using nGratis.AI.Odin.Engine;
 
 public partial class Camera : Camera2D, ICamera
 {
+    private static readonly Vector2 InitialPositionOffset = new Vector2(128, 128);
     private static readonly Vector2 HorizontalPanningOffset = new(Constant.PixelPerUnit, 0);
     private static readonly Vector2 VerticalPanningOffset = new(0, Constant.PixelPerUnit);
 
@@ -40,8 +41,13 @@ public partial class Camera : Camera2D, ICamera
         this.MaxZoomingLevel = Camera
             .ZoomingValueByZoomingLevelLookup.Keys
             .Max();
+    }
 
+    public override void _Ready()
+    {
         this.ZoomIn();
+
+        this.Position = this.GetViewportRect().Size / 2 - Camera.InitialPositionOffset;
     }
 
     public int ZoomingLevel { get; private set; }
