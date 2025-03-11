@@ -13,7 +13,7 @@ config_version=5
 config/name="nGratis.AI.Odin.Client.Godot"
 config/version="0.1"
 run/main_scene="res://Stage/Universe.tscn"
-config/features=PackedStringArray("4.3", "C#", "Forward Plus")
+config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 
 [display]
 

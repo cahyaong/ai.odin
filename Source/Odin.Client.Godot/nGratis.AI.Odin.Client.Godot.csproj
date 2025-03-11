@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Godot.NET.Sdk/4.3.0">
+<Project Sdk="Godot.NET.Sdk/4.4.0">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <BaseIntermediateOutputPath>$(GodotProjectDir).godot\mono\temp\obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
@@ -11,6 +11,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\launchSettings.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="paket.references" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
