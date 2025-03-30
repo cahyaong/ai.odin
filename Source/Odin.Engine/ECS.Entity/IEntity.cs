@@ -11,6 +11,8 @@ namespace nGratis.AI.Odin.Engine;
 
 public interface IEntity
 {
+    string Id { get; }
+
     void AddComponent(params IComponent[] components);
 
     void RemoveComponents();

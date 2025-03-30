@@ -10,31 +10,43 @@
 namespace nGratis.AI.Odin.Client.Godot;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using nGratis.AI.Odin.Engine;
 
+[SystemMetadata(OrderingIndex = int.MinValue + 128)]
 public class EntitySpawningSystem : BaseSystem
 {
     private readonly IEntityFactory _entityFactory;
 
-    private readonly IEntityManager _entityManager;
-
     private readonly Random _random;
 
     public EntitySpawningSystem(IEntityFactory entityFactory, IEntityManager entityManager)
+        : base(entityManager)
     {
         this._entityFactory = entityFactory;
-        this._entityManager = entityManager;
         this._random = new Random();
     }
 
     public override void ProcessFixedDuration(uint tick, IGameState gameState)
     {
+        Enumerable
+            .Range(0, this._random.Next(1, 3))
+            .Select(_ => this.CreateEntity(gameState.Universe))
+            .ForEach(this.EntityManager.AddEntity);
+    }
+
+    private IEntity CreateEntity(IUniverse universe)
+    {
         var entity = this._entityFactory.CreateEntity();
-        var positionComponent = entity.FindComponent<PositionComponent>();
+        var physicsComponent = entity.FindComponent<PhysicsComponent>();
 
-        positionComponent.X = this._random.NextSingle() * gameState.Universe.Width;
-        positionComponent.Y = this._random.NextSingle() * gameState.Universe.Height;
+        physicsComponent.Position = new Point
+        {
+            X = this._random.NextSingle() * universe.Width,
+            Y = this._random.NextSingle() * universe.Height
+        };
 
-        this._entityManager.AddEntity(entity);
+        return entity;
     }
 }

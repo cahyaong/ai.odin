@@ -11,7 +11,9 @@ namespace nGratis.AI.Odin.Engine;
 
 public interface IEntityManager
 {
+    uint TotalCount { get; }
+
     void AddEntity(IEntity entity);
 
-    IEnumerable<IEntity> FindEntities(params Type[] componentTypes);
+    IReadOnlyCollection<IEntity> FindEntities(params IReadOnlyCollection<Type> componentTypes);
 }

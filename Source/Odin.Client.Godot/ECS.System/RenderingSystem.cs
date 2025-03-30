@@ -9,31 +9,30 @@
 
 namespace nGratis.AI.Odin.Client.Godot;
 
+using System;
 using System.Collections.Generic;
 using nGratis.AI.Odin.Engine;
 
 [SystemMetadata(OrderingIndex = int.MaxValue)]
-public partial class RenderingSystem : BaseSystem
+public partial class RenderingSystem : BaseFixedSystem
 {
-    private readonly IEntityManager _entityManager;
-
     public RenderingSystem(IEntityManager entityManager)
+        : base(entityManager)
     {
-        this._entityManager = entityManager;
     }
 
-    public override void ProcessFixedDuration(uint _, IGameState __)
-    {
-        this._entityManager
-            .FindEntities(typeof(PositionComponent), typeof(RenderingComponent))
-            .ForEach(entity =>
-            {
-                var positionComponent = entity.FindComponent<PositionComponent>();
-                var renderingComponent = entity.FindComponent<RenderingComponent>();
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(PhysicsComponent),
+        typeof(RenderingComponent)
+    ];
 
-                renderingComponent.EntityNode.Position = new Vector2(
-                    positionComponent.X * Constant.PixelPerUnit,
-                    positionComponent.Y * Constant.PixelPerUnit);
-            });
+    protected override void ProcessEntity(uint _, IGameState __, IEntity entity)
+    {
+        var physicsComponent = entity.FindComponent<PhysicsComponent>();
+        var renderingComponent = entity.FindComponent<RenderingComponent>();
+
+        var scaledCoordinate = physicsComponent.Position * Constant.PixelPerUnit;
+        renderingComponent.EntityNode.Position = scaledCoordinate.ToVector2();
     }
 }

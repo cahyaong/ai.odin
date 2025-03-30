@@ -9,20 +9,27 @@
 
 namespace nGratis.AI.Odin.Engine;
 
+[SystemMetadata(OrderingIndex = int.MaxValue)]
 public class DebuggingSystem : BaseSystem
 {
-    private readonly IStatisticOverlay _statisticOverlay;
+    private readonly IStatisticsOverlay _statisticsOverlay;
     private readonly IDiagnosticOverlay _diagnosticOverlay;
 
-    public DebuggingSystem(IStatisticOverlay statisticOverlay, IDiagnosticOverlay diagnosticOverlay)
+    public DebuggingSystem(
+        IStatisticsOverlay statisticsOverlay,
+        IDiagnosticOverlay diagnosticOverlay,
+        IEntityManager entityManager)
+        : base(entityManager)
     {
-        this._statisticOverlay = statisticOverlay;
+        this._statisticsOverlay = statisticsOverlay;
         this._diagnosticOverlay = diagnosticOverlay;
     }
 
     public override void ProcessFixedDuration(uint tick, IGameState gameState)
     {
-        this._statisticOverlay.UpdateMetric("Tick", tick.ToString());
+        this._statisticsOverlay.UpdateMetric("Tick", tick.ToString());
+        this._statisticsOverlay.UpdateMetric("Entity Count", this.EntityManager.TotalCount.ToString("N0"));
+
         this._diagnosticOverlay.Update(gameState);
     }
 }

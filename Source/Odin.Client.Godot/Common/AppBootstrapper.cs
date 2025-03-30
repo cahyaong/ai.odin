@@ -22,7 +22,7 @@ public partial class AppBootstrapper : Node
         var container = new ContainerBuilder()
             .RegisterInfrastructure(rootNode)
             .RegisterEntityCoordinator(rootNode)
-            .RegisterSystem(rootNode)
+            .RegisterSystem()
             .Build();
 
         container
@@ -48,12 +48,12 @@ internal static class AutofacExtensions
         containerBuilder
             .Register(_ => rootNode
                 .GetNode<HeadUpDisplay>(nameof(HeadUpDisplay))
-                .StatisticOverlay)
+                .StatisticsOverlay)
             .InstancePerLifetimeScope()
-            .As<IStatisticOverlay>();
+            .As<IStatisticsOverlay>();
 
         containerBuilder
-            .Register(_ => rootNode.GetNode<DiagnosticOverlay>(nameof(DiagnosticOverlay)))
+            .Register(_ => rootNode.GetNode<DiagnosticsOverlay>(nameof(DiagnosticsOverlay)))
             .InstancePerLifetimeScope()
             .As<IDiagnosticOverlay>();
 
@@ -80,7 +80,7 @@ internal static class AutofacExtensions
         return containerBuilder;
     }
 
-    public static ContainerBuilder RegisterSystem(this ContainerBuilder containerBuilder, Node rootNode)
+    public static ContainerBuilder RegisterSystem(this ContainerBuilder containerBuilder)
     {
         containerBuilder
             .RegisterAssemblyTypes(

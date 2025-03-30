@@ -14,21 +14,21 @@ using nGratis.Cop.Olympus.Contract;
 
 public partial class EntityFactory : Node, IEntityFactory
 {
-    private readonly PackedScene _entityScene;
+    private readonly PackedScene _packedScene;
 
-    private Node _entityPoolNode;
+    private Node _poolNode;
 
-    private uint _entityTotalCount;
+    private uint _totalCount;
 
     public EntityFactory()
     {
-        this._entityScene = (PackedScene)ResourceLoader.Load("res://ECS.Entity/Entity.tscn");
-        this._entityTotalCount = 0;
+        this._packedScene = (PackedScene)ResourceLoader.Load("res://ECS.Entity/Entity.tscn");
+        this._totalCount = 0;
     }
 
     public override void _Ready()
     {
-        this._entityPoolNode = this
+        this._poolNode = this
             .GetParent()
             .GetNode("EntityPool");
     }
@@ -45,8 +45,11 @@ public partial class EntityFactory : Node, IEntityFactory
 
         return new Universe
         {
-            Width = width,
-            Height = height
+            Size = new Size
+            {
+                Width = width,
+                Height = height
+            }
         };
     }
 
@@ -54,19 +57,20 @@ public partial class EntityFactory : Node, IEntityFactory
     {
         var entity = new Entity
         {
-            Id = $"[_ENTITY_{this._entityTotalCount++:D4}_]"
+            Id = $"[_ENTITY_{this._totalCount++:D4}_]"
         };
 
-        var entityNode = (Node2D)this._entityScene.Instantiate();
+        var entityNode = (Node2D)this._packedScene.Instantiate();
 
         entity.AddComponent(
-            new PositionComponent(),
+            new IntelligenceComponent(),
+            new PhysicsComponent(),
             new RenderingComponent
             {
                 EntityNode = entityNode
             });
 
-        this._entityPoolNode.AddChild(entityNode);
+        this._poolNode.AddChild(entityNode);
 
         return entity;
     }

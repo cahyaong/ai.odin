@@ -10,8 +10,10 @@
 namespace nGratis.AI.Odin.Engine;
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using nGratis.Cop.Olympus.Contract;
 
+[DebuggerDisplay("<Entity> {this.Id}")]
 public record Entity : IEntity
 {
     private readonly IDictionary<Type, IComponent> _componentByComponentTypeLookup;

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DiagnosticOverlay.cs" company="nGratis">
+// <copyright file="DiagnosticsOverlay.cs" company="nGratis">
 //  The MIT License -- Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
@@ -11,7 +11,7 @@ namespace nGratis.AI.Odin.Client.Godot;
 
 using nGratis.AI.Odin.Engine;
 
-public partial class DiagnosticOverlay : Node, IDiagnosticOverlay
+public partial class DiagnosticsOverlay : Node, IDiagnosticOverlay
 {
     private static readonly Color DebuggingColor = Color.Color8(215, 123, 186);
 
@@ -37,7 +37,7 @@ public partial class DiagnosticOverlay : Node, IDiagnosticOverlay
                 Width = 2,
                 BeginCapMode = Line2D.LineCapMode.Box,
                 EndCapMode = Line2D.LineCapMode.Box,
-                DefaultColor = DiagnosticOverlay.DebuggingColor
+                DefaultColor = DiagnosticsOverlay.DebuggingColor
             };
 
             this.AddChild(mapBoundary);

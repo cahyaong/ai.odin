@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="IUniverse.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
@@ -11,7 +11,9 @@ namespace nGratis.AI.Odin.Engine;
 
 public interface IUniverse
 {
-    float Width { get; init; }
+    public Size Size { get; }
 
-    float Height { get; init; }
+    public float Width => this.Size.Width;
+
+    public float Height => this.Size.Height;
 }

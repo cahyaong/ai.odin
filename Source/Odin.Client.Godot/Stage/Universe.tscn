@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://gjykprxxtv8" path="res://Common/TimeTracker.cs" id="2_7om47"]
 [ext_resource type="Script" uid="uid://bevoo3eie4gfn" path="res://Common.UI/Camera.cs" id="2_lqfsg"]
 [ext_resource type="PackedScene" uid="uid://y2biswnrb7sa" path="res://Common.UI/HeadUpDisplay.tscn" id="3_xphvh"]
-[ext_resource type="Script" uid="uid://bgu6j3u36cest" path="res://Common.UI/DiagnosticOverlay.cs" id="4_sxru4"]
+[ext_resource type="Script" uid="uid://bgu6j3u36cest" path="res://Common.UI/DiagnosticsOverlay.cs" id="4_sxru4"]
 [ext_resource type="Script" uid="uid://buvjgkdkijg5m" path="res://ECS.Entity/EntityFactory.cs" id="4_u4io5"]
 
 [node name="Universe" type="Node2D"]
@@ -18,7 +18,7 @@ script = ExtResource("2_lqfsg")
 
 [node name="HeadUpDisplay" parent="." instance=ExtResource("3_xphvh")]
 
-[node name="DiagnosticOverlay" type="Node" parent="."]
+[node name="DiagnosticsOverlay" type="Node" parent="."]
 script = ExtResource("4_sxru4")
 
 [node name="TimeTracker" type="Node" parent="."]

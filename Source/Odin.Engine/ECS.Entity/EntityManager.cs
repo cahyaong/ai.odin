@@ -20,6 +20,10 @@ public class EntityManager : IEntityManager
         this._entitiesByComponentTypeLookup = new Dictionary<Type, IList<IEntity>>();
     }
 
+    public static IEntityManager Unknown => UnknownEntityManager.Instance;
+
+    public uint TotalCount { get; private set; }
+
     public void AddEntity(IEntity entity)
     {
         entity
@@ -35,15 +39,17 @@ public class EntityManager : IEntityManager
                     this._entitiesByComponentTypeLookup.Add(component.GetType(), new List<IEntity> { entity });
                 }
             });
+
+        this.TotalCount++;
     }
 
-    public IEnumerable<IEntity> FindEntities(params Type[] componentTypes)
+    public IReadOnlyCollection<IEntity> FindEntities(params IReadOnlyCollection<Type> componentTypes)
     {
         // TODO (SHOULD): Optimize filtering by starting from component type with the least entities!
 
-        if (!this._entitiesByComponentTypeLookup.TryGetValue(componentTypes[0], out var entities))
+        if (!this._entitiesByComponentTypeLookup.TryGetValue(componentTypes.First(), out var entities))
         {
-            return Enumerable.Empty<IEntity>();
+            return [];
         }
 
         var remainingComponentTypes = componentTypes

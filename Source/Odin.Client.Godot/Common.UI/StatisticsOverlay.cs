@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StatisticOverlay.cs" company="nGratis">
+// <copyright file="StatisticsOverlay.cs" company="nGratis">
 //  The MIT License -- Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
@@ -14,7 +14,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using nGratis.AI.Odin.Engine;
 
-public partial class StatisticOverlay : CanvasLayer, IStatisticOverlay
+public partial class StatisticsOverlay : CanvasLayer, IStatisticsOverlay
 {
     private static class Default
     {
@@ -25,7 +25,7 @@ public partial class StatisticOverlay : CanvasLayer, IStatisticOverlay
 
     private RichTextLabel _metricLabel;
 
-    public StatisticOverlay()
+    public StatisticsOverlay()
     {
         this._metricValueByMetricKeyLookup = new Dictionary<string, string>();
     }
