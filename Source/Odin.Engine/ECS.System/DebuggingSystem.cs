@@ -38,7 +38,9 @@ public class DebuggingSystem : BaseSystem
 
         if (this._accumulatedDelta >= 1.0)
         {
-            this._statisticsOverlay.UpdateMetric("FPS", this._framePerSecond);
+            this._statisticsOverlay.Update(gameState
+                .DebuggingStatistics
+                .AddMetric("FPS", this._framePerSecond));
 
             this._framePerSecond = 0;
             this._accumulatedDelta--;
@@ -47,8 +49,10 @@ public class DebuggingSystem : BaseSystem
 
     public override void ProcessFixedDuration(uint tick, IGameState gameState)
     {
-        this._statisticsOverlay.UpdateMetric("Tick", tick.ToString());
-        this._statisticsOverlay.UpdateMetric("Entity Count", this.EntityManager.TotalCount);
+        this._statisticsOverlay.Update(gameState
+            .DebuggingStatistics
+            .AddMetric("Tick", tick)
+            .AddMetric("Entity Count", this.EntityManager.TotalCount));
 
         this._diagnosticOverlay.Update(gameState);
     }

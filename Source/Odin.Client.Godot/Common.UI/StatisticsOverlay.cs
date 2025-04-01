@@ -9,9 +9,9 @@
 
 namespace nGratis.AI.Odin.Client.Godot;
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using JetBrains.Annotations;
 using nGratis.AI.Odin.Engine;
 
 public partial class StatisticsOverlay : CanvasLayer, IStatisticsOverlay
@@ -21,14 +21,10 @@ public partial class StatisticsOverlay : CanvasLayer, IStatisticsOverlay
         public const string MetricLabel = "<SO.METRIC>";
     }
 
-    private readonly IDictionary<string, string> _metricValueByMetricKeyLookup;
-
     private RichTextLabel _metricLabel;
 
-    public StatisticsOverlay()
-    {
-        this._metricValueByMetricKeyLookup = new Dictionary<string, string>();
-    }
+    [CanBeNull]
+    private IStatistics _statistics;
 
     public override void _Ready()
     {
@@ -37,9 +33,23 @@ public partial class StatisticsOverlay : CanvasLayer, IStatisticsOverlay
 
     public override void _Process(double _)
     {
+        if (this._statistics == null)
+        {
+            return;
+        }
+
+        var maxMetricKeyLength = this
+            ._statistics.MetricKeys
+            .Max(metricKey => metricKey.Length);
+
         var formattedStatisticChunks = this
-            ._metricValueByMetricKeyLookup
-            .Select(pair => $"[b]{pair.Key}:[/b] {pair.Value}")
+            ._statistics.MetricKeys
+            .Select(metricKey => new
+                {
+                    MetricKey = metricKey,
+                    MetricValue = this._statistics.FindMetric(metricKey)
+                })
+            .Select(anon => $"[b]{anon.MetricKey.PadLeft(maxMetricKeyLength)}:[/b] {anon.MetricValue}")
             .ToImmutableArray();
 
         this._metricLabel.Text = formattedStatisticChunks.Any()
@@ -47,8 +57,8 @@ public partial class StatisticsOverlay : CanvasLayer, IStatisticsOverlay
             : Default.MetricLabel;
     }
 
-    public void UpdateMetric(string key, string value)
+    public void Update(IStatistics statistics)
     {
-        this._metricValueByMetricKeyLookup[key] = value;
+        this._statistics = statistics;
     }
 }

@@ -11,5 +11,12 @@ namespace nGratis.AI.Odin.Engine;
 
 public class GameState : IGameState
 {
+    public GameState()
+    {
+        this.DebuggingStatistics = new Statistics();
+    }
+
     public required IUniverse Universe { get; init; }
+
+    public IStatistics DebuggingStatistics { get; }
 }

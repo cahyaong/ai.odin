@@ -10,6 +10,7 @@
 namespace nGratis.AI.Odin.Engine;
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Reflection;
 
 public class GameController : IGameController
@@ -19,6 +20,8 @@ public class GameController : IGameController
     private readonly ITimeTracker _timeTracker;
 
     private readonly IReadOnlyCollection<ISystem> _systems;
+
+    private TimeSpan _maxVariableExecutionPeriod;
 
     public GameController(
         ITimeTracker timeTracker,
@@ -41,6 +44,8 @@ public class GameController : IGameController
                 .GetCustomAttribute<SystemMetadataAttribute>()?
                 .OrderingIndex ?? 0)
             .ToImmutableArray();
+
+        this._maxVariableExecutionPeriod = TimeSpan.Zero;
     }
 
     public void Start()
@@ -55,13 +60,34 @@ public class GameController : IGameController
 
     private void OnDeltaChanged(object? _, DeltaChangedEventArgs args)
     {
+        var stopwatch = Stopwatch.StartNew();
+
         this._systems
             .ForEach(system => system.ProcessVariableDuration(args.Value, this._gameState));
+
+        stopwatch.Stop();
+
+        if (stopwatch.Elapsed > this._maxVariableExecutionPeriod)
+        {
+            this._maxVariableExecutionPeriod = stopwatch.Elapsed;
+        }
     }
 
     private void OnTickChanged(object? _, TickChangedEventArgs args)
     {
+        var stopwatch = Stopwatch.StartNew();
+
         this._systems
             .ForEach(system => system.ProcessFixedDuration(args.Value, this._gameState));
+
+        stopwatch.Stop();
+
+        var fixedExecutionPeriod = stopwatch.Elapsed;
+
+        this._gameState.DebuggingStatistics
+            .AddMetric("Variable Execution (ms)", this._maxVariableExecutionPeriod.TotalMilliseconds)
+            .AddMetric("Fixed Execution (ms)", fixedExecutionPeriod.TotalMilliseconds);
+
+        this._maxVariableExecutionPeriod = TimeSpan.Zero;
     }
 }

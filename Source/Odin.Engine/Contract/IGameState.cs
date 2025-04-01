@@ -12,4 +12,6 @@ namespace nGratis.AI.Odin.Engine;
 public interface IGameState
 {
     IUniverse Universe { get; }
+
+    IStatistics DebuggingStatistics { get; }
 }
