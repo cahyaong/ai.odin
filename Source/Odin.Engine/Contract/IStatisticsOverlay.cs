@@ -12,4 +12,6 @@ namespace nGratis.AI.Odin.Engine;
 public interface IStatisticsOverlay
 {
     void UpdateMetric(string key, string value);
+
+    void UpdateMetric(string key, uint value) => this.UpdateMetric(key, value.ToString("N0"));
 }

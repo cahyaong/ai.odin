@@ -15,6 +15,9 @@ public class DebuggingSystem : BaseSystem
     private readonly IStatisticsOverlay _statisticsOverlay;
     private readonly IDiagnosticOverlay _diagnosticOverlay;
 
+    private uint _framePerSecond;
+    private double _accumulatedDelta;
+
     public DebuggingSystem(
         IStatisticsOverlay statisticsOverlay,
         IDiagnosticOverlay diagnosticOverlay,
@@ -23,12 +26,29 @@ public class DebuggingSystem : BaseSystem
     {
         this._statisticsOverlay = statisticsOverlay;
         this._diagnosticOverlay = diagnosticOverlay;
+
+        this._framePerSecond = 0;
+        this._accumulatedDelta = 0.0;
+    }
+
+    public override void ProcessVariableDuration(double delta, IGameState gameState)
+    {
+        this._framePerSecond++;
+        this._accumulatedDelta += delta;
+
+        if (this._accumulatedDelta >= 1.0)
+        {
+            this._statisticsOverlay.UpdateMetric("FPS", this._framePerSecond);
+
+            this._framePerSecond = 0;
+            this._accumulatedDelta--;
+        }
     }
 
     public override void ProcessFixedDuration(uint tick, IGameState gameState)
     {
         this._statisticsOverlay.UpdateMetric("Tick", tick.ToString());
-        this._statisticsOverlay.UpdateMetric("Entity Count", this.EntityManager.TotalCount.ToString("N0"));
+        this._statisticsOverlay.UpdateMetric("Entity Count", this.EntityManager.TotalCount);
 
         this._diagnosticOverlay.Update(gameState);
     }

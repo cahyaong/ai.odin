@@ -17,13 +17,13 @@ public partial class TimeTracker : Node, ITimeTracker
 {
     private bool _isPaused;
     private uint _tick;
-    private double _unprocessedDelta;
+    private double _accumulatedDelta;
 
     public TimeTracker()
     {
         this._isPaused = true;
         this._tick = 0;
-        this._unprocessedDelta = 0.0;
+        this._accumulatedDelta = 0.0;
     }
 
     [CanBeNull]
@@ -51,11 +51,11 @@ public partial class TimeTracker : Node, ITimeTracker
 
         this.PublishDeltaChangedEvent(delta);
 
-        this._unprocessedDelta += delta;
+        this._accumulatedDelta += delta;
 
-        while (this._unprocessedDelta >= 1.0)
+        while (this._accumulatedDelta >= 1.0)
         {
-            this._unprocessedDelta--;
+            this._accumulatedDelta--;
             this._tick++;
             this.PublishTickChangedEvent(this._tick);
         }
