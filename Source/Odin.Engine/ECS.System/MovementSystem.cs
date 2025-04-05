@@ -11,7 +11,8 @@ namespace nGratis.AI.Odin.Engine;
 
 public class MovementSystem : BaseFixedSystem
 {
-    private static readonly float MaxSpeed = 2.0f;
+    private static readonly float MaxWalkingSpeed = 2.0f;
+    private static readonly float MaxRunningSpeed = 4.0f;
     private readonly Random _random;
 
     public MovementSystem(IEntityManager entityManager)
@@ -29,12 +30,23 @@ public class MovementSystem : BaseFixedSystem
     protected override void ProcessEntity(uint _, IGameState gameState, IEntity entity)
     {
         var intelligenceComponent = entity.FindComponent<IntelligenceComponent>();
+        var isMoving = intelligenceComponent.EntityState is EntityState.Walking or EntityState.Running;
+
+        if (!isMoving)
+        {
+            return;
+        }
+
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
+
+        var maxSpeed = intelligenceComponent.EntityState == EntityState.Walking
+            ? MovementSystem.MaxWalkingSpeed
+            : MovementSystem.MaxRunningSpeed;
 
         var velocity = new Vector
         {
-            X = this._random.NextSingle() * MovementSystem.MaxSpeed,
-            Y = this._random.NextSingle() * MovementSystem.MaxSpeed
+            X = this._random.NextSingle() * maxSpeed,
+            Y = this._random.NextSingle() * maxSpeed
         };
 
         var deltaPosition = intelligenceComponent.TargetPosition - physicsComponent.Position;

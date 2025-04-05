@@ -13,8 +13,14 @@ public class IntelligenceComponent : IComponent
 {
     public IntelligenceComponent()
     {
+        this.EntityState = EntityState.Unknown;
+        this.RemainingTickCount = 0;
         this.TargetPosition = Point.Unknown;
     }
+
+    public EntityState EntityState { get; set; }
+
+    public uint RemainingTickCount { get; set; }
 
     public Point TargetPosition { get; set; }
 }

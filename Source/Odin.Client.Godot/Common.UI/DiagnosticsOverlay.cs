@@ -26,14 +26,14 @@ public partial class DiagnosticsOverlay : Node, IDiagnosticOverlay
 
             var mapBoundary = new Line2D
             {
-                Points = new[]
-                {
+                Points =
+                [
                     new Vector2(0, 0),
                     new Vector2(mapWidth, 0),
                     new Vector2(mapWidth, mapHeight),
                     new Vector2(0, mapHeight),
                     new Vector2(0, 0)
-                },
+                ],
                 Width = 2,
                 BeginCapMode = Line2D.LineCapMode.Box,
                 EndCapMode = Line2D.LineCapMode.Box,

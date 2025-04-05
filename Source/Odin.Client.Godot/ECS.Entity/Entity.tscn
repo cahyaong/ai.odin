@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://b4tmohyoitdhf"]
-
-[ext_resource type="Texture2D" uid="uid://dw7tep3h4ubaa" path="res://Common.Art/placeholder.png" id="1_ittye"]
-
-[node name="Organism" type="Node2D"]
-
-[node name="Sprite" type="Sprite2D" parent="."]
-texture = ExtResource("1_ittye")

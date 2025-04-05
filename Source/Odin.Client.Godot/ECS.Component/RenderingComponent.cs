@@ -13,5 +13,5 @@ using nGratis.AI.Odin.Engine;
 
 public record RenderingComponent : IComponent
 {
-    public required Node2D EntityNode { get; init; }
+    public required RenderableEntity RenderableEntity { get; init; }
 }

@@ -22,7 +22,7 @@ public partial class EntityFactory : Node, IEntityFactory
 
     public EntityFactory()
     {
-        this._packedScene = (PackedScene)ResourceLoader.Load("res://ECS.Entity/Entity.tscn");
+        this._packedScene = (PackedScene)ResourceLoader.Load("res://ECS.Entity/RenderableEntity.tscn");
         this._totalCount = 0;
     }
 
@@ -60,17 +60,21 @@ public partial class EntityFactory : Node, IEntityFactory
             Id = $"[_ENTITY_{this._totalCount++:D4}_]"
         };
 
-        var entityNode = (Node2D)this._packedScene.Instantiate();
+        var renderableEntity = (RenderableEntity)this._packedScene.Instantiate();
 
         entity.AddComponent(
-            new IntelligenceComponent(),
+            new IntelligenceComponent
+            {
+                EntityState = EntityState.Idle,
+                RemainingTickCount = 3
+            },
             new PhysicsComponent(),
             new RenderingComponent
             {
-                EntityNode = entityNode
+                RenderableEntity = renderableEntity
             });
 
-        this._poolNode.AddChild(entityNode);
+        this._poolNode.AddChild(renderableEntity);
 
         return entity;
     }
