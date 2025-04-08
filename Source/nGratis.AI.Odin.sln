@@ -10,8 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{86771C6E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nGratis.AI.Odin.Client.Mono", "Odin.Client.Mono\nGratis.AI.Odin.Client.Mono.csproj", "{A395E734-7B8A-4472-A790-A983C31F0571}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGratis.AI.Odin.Client.Godot", "Odin.Client.Godot\nGratis.AI.Odin.Client.Godot.csproj", "{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nGratis.AI.Odin.Engine", "Odin.Engine\nGratis.AI.Odin.Engine.csproj", "{152132D7-331B-1450-B69E-58C4D649A32E}"
@@ -26,14 +24,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A395E734-7B8A-4472-A790-A983C31F0571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A395E734-7B8A-4472-A790-A983C31F0571}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A395E734-7B8A-4472-A790-A983C31F0571}.ExportDebug|Any CPU.ActiveCfg = Release|Any CPU
-		{A395E734-7B8A-4472-A790-A983C31F0571}.ExportDebug|Any CPU.Build.0 = Release|Any CPU
-		{A395E734-7B8A-4472-A790-A983C31F0571}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A395E734-7B8A-4472-A790-A983C31F0571}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
-		{A395E734-7B8A-4472-A790-A983C31F0571}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A395E734-7B8A-4472-A790-A983C31F0571}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BB01126-96B4-BE8A-A8E3-61E8DACD9E99}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
