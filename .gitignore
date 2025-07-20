@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Claude Code specicic ignores
+.claude/*.local.*
+.claude-workspace/
+
 # Godot 4+ specific ignores
 .godot/
 /android/
