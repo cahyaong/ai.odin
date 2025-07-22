@@ -1,0 +1,6 @@
+﻿group _Test
+    FluentAssertions
+    Microsoft.NET.Test.Sdk
+    Moq
+    xunit
+    xunit.runner.visualstudio

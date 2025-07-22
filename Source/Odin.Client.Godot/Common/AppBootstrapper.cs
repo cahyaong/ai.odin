@@ -12,6 +12,7 @@ namespace nGratis.AI.Odin.Client.Godot;
 using System.Reflection;
 using Autofac;
 using nGratis.AI.Odin.Engine;
+using nGratis.AI.Odin.Glue;
 
 public partial class AppBootstrapper : Node
 {
@@ -21,6 +22,7 @@ public partial class AppBootstrapper : Node
 
         var container = new ContainerBuilder()
             .RegisterInfrastructure(rootNode)
+            .RegisterStorage()
             .RegisterEntityCoordinator(rootNode)
             .RegisterSystem()
             .Build();
@@ -65,10 +67,20 @@ internal static class AutofacExtensions
         return containerBuilder;
     }
 
+    public static ContainerBuilder RegisterStorage(this ContainerBuilder containerBuilder)
+    {
+        containerBuilder
+            .RegisterType<EmbeddedDataStore>()
+            .InstancePerLifetimeScope()
+            .As<IDataStore>();
+
+        return containerBuilder;
+    }
+
     public static ContainerBuilder RegisterEntityCoordinator(this ContainerBuilder containerBuilder, Node rootNode)
     {
         containerBuilder
-            .Register(_ => rootNode.GetNode<EntityFactory>(nameof(EntityFactory)))
+            .RegisterType<EntityFactory>()
             .InstancePerLifetimeScope()
             .As<IEntityFactory>();
 
@@ -76,6 +88,16 @@ internal static class AutofacExtensions
             .RegisterType<EntityManager>()
             .InstancePerLifetimeScope()
             .As<IEntityManager>();
+
+        containerBuilder
+            .RegisterType<Engine.ComponentFactory>()
+            .InstancePerLifetimeScope()
+            .As<IComponentFactory>();
+
+        containerBuilder
+            .Register(_ => rootNode.GetNode<ComponentFactory>(nameof(ComponentFactory)))
+            .InstancePerLifetimeScope()
+            .As<IComponentFactory>();
 
         return containerBuilder;
     }

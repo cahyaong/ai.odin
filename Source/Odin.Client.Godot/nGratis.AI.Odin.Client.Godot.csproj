@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\External\cop.olympus\Source\Olympus.Contract\nGratis.Cop.Olympus.Contract.csproj" />
     <ProjectReference Include="..\Odin.Engine\nGratis.AI.Odin.Engine.csproj" />
+    <ProjectReference Include="..\Odin.Glue\nGratis.AI.Odin.Glue.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\launchSettings.json" />

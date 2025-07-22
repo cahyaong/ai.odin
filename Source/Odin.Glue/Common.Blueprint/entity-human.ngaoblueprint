@@ -1,0 +1,5 @@
+id: 'Human'
+component-blueprints:
+  - id: 'Intelligence'
+  - id: 'Physics'
+  - id: 'Rendering'

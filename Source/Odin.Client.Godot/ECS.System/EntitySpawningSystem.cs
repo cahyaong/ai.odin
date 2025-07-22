@@ -38,7 +38,7 @@ public class EntitySpawningSystem : BaseSystem
 
     private IEntity CreateEntity(IUniverse universe)
     {
-        var entity = this._entityFactory.CreateEntity();
+        var entity = this._entityFactory.CreateEntity("Human");
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
 
         physicsComponent.Position = new Point

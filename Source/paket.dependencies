@@ -7,3 +7,15 @@ nuget JetBrains.Annotations
 nuget System.Reactive
 nuget System.Reactive.Linq
 nuget YamlDotNet
+
+group _Test
+
+    storage: none
+    framework: net9.0
+    source https://api.nuget.org/v3/index.json
+
+    nuget FluentAssertions
+    nuget Microsoft.NET.Test.Sdk
+    nuget Moq
+    nuget xunit
+    nuget xunit.runner.visualstudio

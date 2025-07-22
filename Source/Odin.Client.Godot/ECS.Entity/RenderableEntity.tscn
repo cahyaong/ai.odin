@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://b4tmohyoitdhf"]
+[gd_scene load_steps=11 format=3 uid="uid://b4tmohyoitdhf"]
 
-[ext_resource type="Texture2D" uid="uid://dspn6ig6b2f6g" path="res://Common.Art/entity-state.png" id="1_tiu1o"]
+[ext_resource type="Texture2D" uid="uid://dspn6ig6b2f6g" path="res://Common.Art/entity-placeholder-16x16.png" id="1_tiu1o"]
 [ext_resource type="Script" uid="uid://c0qypjkp7wblj" path="res://ECS.Entity/RenderableEntity.cs" id="1_yptqa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ovuip"]
@@ -10,6 +10,18 @@ region = Rect2(0, 48, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_ckrmw"]
 atlas = ExtResource("1_tiu1o")
 region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yptqa"]
+atlas = ExtResource("1_tiu1o")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ew6x5"]
+atlas = ExtResource("1_tiu1o")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ivw3"]
+atlas = ExtResource("1_tiu1o")
+region = Rect2(48, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_urn5w"]
 atlas = ExtResource("1_tiu1o")
@@ -32,10 +44,19 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ckrmw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yptqa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ew6x5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ivw3")
 }],
 "loop": true,
 "name": &"idle",
-"speed": 1.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
