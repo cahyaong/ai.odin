@@ -1,17 +1,19 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IDataStore.cs" company="nGratis">
+// <copyright file="SpriteSheetBlueprint.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
 // <author>Cahya Ong — cahya.ong@gmail.com</author>
-// <creation_timestamp>Wednesday, May 28, 2025 3:02:39 AM UTC</creation_timestamp>
+// <creation_timestamp>Saturday, July 26, 2025 5:07:41 AM UTC</creation_timestamp>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace nGratis.AI.Odin.Engine;
 
-public interface IDataStore
+public record SpriteSheetBlueprint
 {
-    IEnumerable<EntityBlueprint> LoadEntityBlueprints();
+    public required string Id { get; init; }
 
-    IEnumerable<SpriteSheetBlueprint> LoadSpriteSheetBlueprints();
+    public required Size SpriteSize { get; init; }
+
+    public required IEnumerable<AnimationBlueprint> AnimationBlueprints { get; init; }
 }

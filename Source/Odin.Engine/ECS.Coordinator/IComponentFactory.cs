@@ -11,5 +11,5 @@ namespace nGratis.AI.Odin.Engine;
 
 public interface IComponentFactory
 {
-    IComponent CreateComponent(ComponentBlueprint blueprint);
+    IComponent CreateComponent(ComponentBlueprint componentBlueprint);
 }

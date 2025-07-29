@@ -1,0 +1,15 @@
+id: 'Humanoid'
+sprite-size: (W:16, H:16)
+animation-blueprints:
+  - id: 'Idle'
+    starting-cell: (R:0, C:0)
+    ending-cell: (R:0, C:3)
+  - id: 'Walking'
+    starting-cell: (R:1, C:0)
+    ending-cell: (R:1, C:3)
+  - id: 'Running'
+    starting-cell: (R:2, C:0)
+    ending-cell: (R:2, C:3)
+  - id: 'Dead'
+    starting-cell: (R:3, C:0)
+    ending-cell: (R:3, C:3)

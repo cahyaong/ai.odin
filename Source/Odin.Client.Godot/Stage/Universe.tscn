@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://bevoo3eie4gfn" path="res://Common.UI/Camera.cs" id="2_lqfsg"]
 [ext_resource type="PackedScene" uid="uid://y2biswnrb7sa" path="res://Common.UI/HeadUpDisplay.tscn" id="3_xphvh"]
 [ext_resource type="Script" uid="uid://bgu6j3u36cest" path="res://Common.UI/DiagnosticsOverlay.cs" id="4_sxru4"]
-[ext_resource type="Script" uid="uid://5qrkvn6bdm2o" path="res://ECS.Coordinator/ComponentFactory.cs" id="6_j3tb7"]
+[ext_resource type="PackedScene" uid="uid://ckttn4idgfbsy" path="res://ECS.Coordinator/EntityCoordinator.tscn" id="6_j3tb7"]
 
 [node name="Universe" type="Node2D"]
 
@@ -24,7 +24,5 @@ script = ExtResource("4_sxru4")
 [node name="TimeTracker" type="Node" parent="."]
 script = ExtResource("2_7om47")
 
-[node name="EntityPool" type="Node" parent="."]
-
-[node name="ComponentFactory" type="Node" parent="."]
-script = ExtResource("6_j3tb7")
+[node name="EntityCoordinator" parent="." node_paths=PackedStringArray("AppBootstrapper") instance=ExtResource("6_j3tb7")]
+AppBootstrapper = NodePath("../AppBootstrapper")

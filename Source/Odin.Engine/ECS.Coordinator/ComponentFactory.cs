@@ -24,10 +24,10 @@ public class ComponentFactory : IComponentFactory
         };
     }
 
-    public IComponent CreateComponent(ComponentBlueprint blueprint)
+    public IComponent CreateComponent(ComponentBlueprint componentBlueprint)
     {
-        return this._componentCreatorByIdLookup.TryGetValue(blueprint.Id, out var createComponent)
-            ? createComponent(blueprint)
+        return this._componentCreatorByIdLookup.TryGetValue(componentBlueprint.Id, out var createComponent)
+            ? createComponent(componentBlueprint)
             : Component.Unknown;
     }
 

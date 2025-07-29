@@ -21,7 +21,8 @@ public class EmbeddedDataStore : IDataStore
 
         var blueprintNames = assembly
             .GetManifestResourceNames()
-            .Where(name => name.EndsWith(OdinMime.Blueprint.FileExtension, StringComparison.OrdinalIgnoreCase));
+            .Where(name => name.EndsWith(OdinMime.Blueprint.FileExtension, StringComparison.OrdinalIgnoreCase))
+            .Where(name => name.Contains("entity-"));
 
         foreach (var blueprintName in blueprintNames)
         {
@@ -34,6 +35,30 @@ public class EmbeddedDataStore : IDataStore
                 yield return blueprintReader
                     .ReadToEnd()
                     .DeserializeFromYaml<EntityBlueprint>();
+            }
+        }
+    }
+
+    public IEnumerable<SpriteSheetBlueprint> LoadSpriteSheetBlueprints()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+
+        var blueprintNames = assembly
+            .GetManifestResourceNames()
+            .Where(name => name.EndsWith(OdinMime.Blueprint.FileExtension, StringComparison.OrdinalIgnoreCase))
+            .Where(name => name.Contains("spritesheet-"));
+
+        foreach (var blueprintName in blueprintNames)
+        {
+            using var blueprintStream = assembly.GetManifestResourceStream(blueprintName);
+
+            if (blueprintStream is not null)
+            {
+                using var blueprintReader = new StreamReader(blueprintStream);
+
+                yield return blueprintReader
+                    .ReadToEnd()
+                    .DeserializeFromYaml<SpriteSheetBlueprint>();
             }
         }
     }

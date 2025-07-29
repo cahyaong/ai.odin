@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="RenderableEntity.cs" company="nGratis">
 //  The MIT License -- Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
@@ -9,32 +9,23 @@
 
 namespace nGratis.AI.Odin.Client.Godot;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using nGratis.AI.Odin.Engine;
 using nGratis.Cop.Olympus.Contract;
 
 public partial class RenderableEntity : Node2D
 {
-    private static readonly IReadOnlyDictionary<EntityState, string> AnimationNameByEntityStateLookup;
+    private readonly AnimatedSprite2D _animatedSprite;
 
-    static RenderableEntity()
+    public RenderableEntity()
     {
-        RenderableEntity.AnimationNameByEntityStateLookup = Enum
-            .GetValues<EntityState>()
-            .Where(entityState => entityState != EntityState.Unknown)
-            .ToImmutableDictionary(
-                entityState => entityState,
-                entityState => entityState.ToString().ToLowerInvariant());
+        this._animatedSprite = new AnimatedSprite2D();
+
+        this.AddChild(this._animatedSprite);
     }
 
-    public AnimatedSprite2D AnimatedSprite { get; private set; }
-
-    public override void _Ready()
+    public void UpdateSpritesheet(SpriteFrames spriteFrames)
     {
-        this.AnimatedSprite = this.GetNode<AnimatedSprite2D>(nameof(RenderableEntity.AnimatedSprite));
+        this._animatedSprite.SpriteFrames = spriteFrames;
     }
 
     public void UpdateAnimationState(EntityState entityState)
@@ -43,6 +34,6 @@ public partial class RenderableEntity : Node2D
             .Require(entityState, nameof(entityState))
             .Is.Not.Default();
 
-        this.AnimatedSprite.Play(RenderableEntity.AnimationNameByEntityStateLookup[entityState]);
+        this._animatedSprite.Play(entityState.ToString());
     }
 }

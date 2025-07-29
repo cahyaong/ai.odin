@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://ckttn4idgfbsy"]
+
+[ext_resource type="Script" uid="uid://b6mg1bvo0nug2" path="res://ECS.Coordinator/EntityCoordinator.cs" id="1_0fxqd"]
+[ext_resource type="Script" uid="uid://5qrkvn6bdm2o" path="res://ECS.Coordinator/ComponentFactory.cs" id="1_hm7ul"]
+[ext_resource type="Script" uid="uid://c0b6ikrom3bal" path="res://ECS.Coordinator/EntityPool.cs" id="1_l8biv"]
+[ext_resource type="Script" uid="uid://d2b8cmvmnbu8g" path="res://ECS.Coordinator/SpriteSheetFactory.cs" id="2_rro0b"]
+
+[node name="EntityCoordinator" type="Node"]
+script = ExtResource("1_0fxqd")
+
+[node name="EntityPool" type="Node" parent="."]
+script = ExtResource("1_l8biv")
+
+[node name="SpriteSheetFactory" type="Node" parent="."]
+script = ExtResource("2_rro0b")
+
+[node name="ComponentFactory" type="Node" parent="." node_paths=PackedStringArray("EntityPool", "SpriteSheetFactory")]
+script = ExtResource("1_hm7ul")
+EntityPool = NodePath("../EntityPool")
+SpriteSheetFactory = NodePath("../SpriteSheetFactory")

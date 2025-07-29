@@ -10,37 +10,64 @@
 namespace nGratis.AI.Odin.Client.Godot;
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using nGratis.AI.Odin.Engine;
 
 public partial class ComponentFactory : Node, IComponentFactory
 {
-    private readonly PackedScene _renderableEntity;
+    private readonly PackedScene _renderableEntityTemplate;
 
-    private Node _entityPool;
+    private IReadOnlyDictionary<string, SpriteSheetBlueprint> _spriteSheetBlueprintByIdLookup;
 
     public ComponentFactory()
     {
-        this._renderableEntity = (PackedScene)ResourceLoader.Load("res://ECS.Entity/RenderableEntity.tscn");
+        this._renderableEntityTemplate = (PackedScene)ResourceLoader.Load("res://ECS.Entity/RenderableEntity.tscn");
     }
+
+    [Export]
+    public EntityPool EntityPool { get; private set; }
+
+    [Export]
+    public SpriteSheetFactory SpriteSheetFactory { get; private set; }
 
     public override void _Ready()
     {
-        this._entityPool = this
-            .GetParent()
-            .GetNode<Node>("EntityPool");
+        this._spriteSheetBlueprintByIdLookup = this
+            .GetParent<EntityCoordinator>()
+            .DataStore
+            .LoadSpriteSheetBlueprints()
+            .ToImmutableDictionary(blueprint => blueprint.Id);
     }
 
-    public IComponent CreateComponent(ComponentBlueprint blueprint)
+    public IComponent CreateComponent(ComponentBlueprint componentBlueprint)
     {
-        var isRenderingBlueprint = blueprint.Id.Equals("Rendering", StringComparison.OrdinalIgnoreCase);
+        var isRenderingBlueprint = componentBlueprint.Id.Equals("Rendering", StringComparison.OrdinalIgnoreCase);
 
         if (!isRenderingBlueprint)
         {
             return Component.Unknown;
         }
 
-        var renderableEntity = (RenderableEntity)this._renderableEntity.Instantiate();
-        this._entityPool.AddChild(renderableEntity);
+        var renderingComponentBlueprint = new RenderingComponentBlueprint(componentBlueprint);
+
+        var hasSpriteSheetBlueprint = this._spriteSheetBlueprintByIdLookup.TryGetValue(
+            renderingComponentBlueprint.SpritesheetBlueprintId,
+            out var spritesheetBlueprint);
+
+        if (!hasSpriteSheetBlueprint)
+        {
+            return Component.Unknown;
+        }
+
+        var spriteFrames = this.SpriteSheetFactory.CreateSpriteFrames(
+            spritesheetBlueprint,
+            renderingComponentBlueprint.TextureName);
+
+        var renderableEntity = (RenderableEntity)this._renderableEntityTemplate.Instantiate();
+        renderableEntity.UpdateSpritesheet(spriteFrames);
+
+        this.EntityPool.AddChild(renderableEntity);
 
         return new RenderingComponent
         {

@@ -16,6 +16,8 @@ using nGratis.AI.Odin.Glue;
 
 public partial class AppBootstrapper : Node
 {
+    public IDataStore DataStore { get; private set; }
+
     public override void _Ready()
     {
         var rootNode = this.GetParent();
@@ -26,6 +28,9 @@ public partial class AppBootstrapper : Node
             .RegisterEntityCoordinator(rootNode)
             .RegisterSystem()
             .Build();
+
+        this.DataStore = container
+            .Resolve<IDataStore>();
 
         container
             .Resolve<IGameController>()
@@ -95,7 +100,7 @@ internal static class AutofacExtensions
             .As<IComponentFactory>();
 
         containerBuilder
-            .Register(_ => rootNode.GetNode<ComponentFactory>(nameof(ComponentFactory)))
+            .Register(_ => (ComponentFactory)rootNode.FindChild(nameof(ComponentFactory)))
             .InstancePerLifetimeScope()
             .As<IComponentFactory>();
 

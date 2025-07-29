@@ -1,5 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="YamlSerializationExtensionsTests.cs" company="nGratis">
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="YamlSerializationExtensionsTests.EntityBlueprint.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
@@ -16,9 +16,9 @@ using nGratis.AI.Odin.Engine;
 using Xunit;
 using YamlDotNet.Serialization;
 
-public class YamlSerializationExtensionsTests
+public class YamlSerializationExtensionsTests_EntityBlueprint
 {
-    public class SerializeToYamlMethod_EntityBlueprint
+    public class SerializeToYamlMethod
     {
         [Fact]
         public void WhenGettingValidEntityBlueprint_ShouldSerializeImportantFields()
@@ -27,7 +27,7 @@ public class YamlSerializationExtensionsTests
 
             var entityBlueprint = new EntityBlueprint
             {
-                Id = "[_MOCK_ID_]",
+                Id = "[_MOCK_ENTITY_ID_]",
                 ComponentBlueprints =
                 [
                     new ComponentBlueprint
@@ -45,11 +45,7 @@ public class YamlSerializationExtensionsTests
                         Parameter = new Parameter(new Dictionary<string, object>
                         {
                             ["[_MOCK_PARAMETER_KEY_31_]"] = "[_MOCK_PARAMETER_VALUE_31_]",
-                            ["[_MOCK_PARAMETER_KEY_32_]"] = new Size
-                            {
-                                Width = 8,
-                                Height = 16
-                            }
+                            ["[_MOCK_PARAMETER_KEY_32_]"] = new Size { Width = 8, Height = 16 }
                         })
                     }
                 ]
@@ -66,7 +62,7 @@ public class YamlSerializationExtensionsTests
         }
     }
 
-    public class DeserializeFromYamlMethod_EntityBlueprint
+    public class DeserializeFromYamlMethod
     {
         [Fact]
         public void WhenGettingValidYamlContent_ShouldDeserializeImportantFields()
@@ -84,7 +80,7 @@ public class YamlSerializationExtensionsTests
 
             entityBlueprint
                 .Id
-                .Should().Be("[_MOCK_ID_]", "because entity blueprint should have ID");
+                .Should().Be("[_MOCK_ENTITY_ID_]", "because entity blueprint should have ID");
 
             entityBlueprint
                 .ComponentBlueprints
@@ -99,7 +95,7 @@ public class YamlSerializationExtensionsTests
             componentBlueprintByIdLookup
                 .Keys
                 .Should()
-                .HaveCount(3, "because component blueprints should have unique key").And
+                .HaveCount(3, "because component blueprints should have unique ID").And
                 .BeEquivalentTo("[_MOCK_COMPONENT_ID_01_]", "[_MOCK_COMPONENT_ID_02_]", "[_MOCK_COMPONENT_ID_03_]");
 
             componentBlueprintByIdLookup
@@ -147,7 +143,7 @@ public class YamlSerializationExtensionsTests
     internal static class Yaml
     {
         public static string EntityBlueprint => @"
-id: '[_MOCK_ID_]'
+id: '[_MOCK_ENTITY_ID_]'
 component-blueprints:
   - id: '[_MOCK_COMPONENT_ID_01_]'
     parameter: None

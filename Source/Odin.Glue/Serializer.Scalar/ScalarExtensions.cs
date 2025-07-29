@@ -15,9 +15,9 @@ using System.Reflection;
 using nGratis.AI.Odin.Glue;
 using nGratis.Cop.Olympus.Contract;
 
-public static class ScalarExtensions
+internal static class ScalarExtensions
 {
-    private static readonly IReadOnlyDictionary<Type, IScalarHandler> ScalarHandlerByTargetTypeLookup;
+    internal static readonly IReadOnlyDictionary<Type, IScalarHandler> ScalarHandlerByTargetTypeLookup;
 
     static ScalarExtensions()
     {

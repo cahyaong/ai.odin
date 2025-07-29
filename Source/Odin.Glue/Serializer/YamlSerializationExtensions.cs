@@ -24,12 +24,14 @@ public static class YamlSerializationExtensions
         .WithIndentedSequences()
         .WithNamingConvention(YamlSerializationExtensions.NamingConvention)
         .WithTypeConverter(ParameterYamlConverter.Instance)
+        .WithTypeConverter(ScalarYamlConverter.Instance)
         .DisableAliases()
         .Build();
 
     private static readonly IDeserializer Deserializer = new DeserializerBuilder()
         .WithNamingConvention(YamlSerializationExtensions.NamingConvention)
         .WithTypeConverter(ParameterYamlConverter.Instance)
+        .WithTypeConverter(ScalarYamlConverter.Instance)
         .Build();
 
     public static string SerializeToYaml<T>(this T value)

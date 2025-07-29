@@ -3,3 +3,6 @@ component-blueprints:
   - id: 'Intelligence'
   - id: 'Physics'
   - id: 'Rendering'
+    parameter:
+       'SpritesheetBlueprintId': 'Humanoid'
+       'TextureName': 'entity-placeholder-16x16'
