@@ -1,7 +1,11 @@
 id: 'Human'
 component-blueprints:
-  - id: 'Intelligence'
+  - id: 'Trait'
+    parameter:
+      'EnergyConsumptionRateByEntityState': <Lookup> (Idle:0.1, Walking:0.2, Running:0.3)
+  - id: 'Vitality'  
   - id: 'Physics'
+  - id: 'Intelligence'
   - id: 'Rendering'
     parameter:
        'SpritesheetBlueprintId': 'Humanoid'

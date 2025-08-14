@@ -138,13 +138,13 @@ public class YamlSerializationExtensionsTests_SpriteSheetBlueprint
     {
         public static string SpriteSheetBlueprint => @"
 id: '[_MOCK_BLUEPRINT_ID_]'
-sprite-size: (W:16, H:32)
+sprite-size: <Size> (W:16, H:32)
 animation-blueprints:
   - id: '[_MOCK_ANIMATION_ID_01_]'
-    starting-cell: (R:1, C:3)
-    ending-cell: (R:5, C:7)
+    starting-cell: <Cell> (R:1, C:3)
+    ending-cell: <Cell> (R:5, C:7)
   - id: '[_MOCK_ANIMATION_ID_02_]'
-    starting-cell: (R:2, C:4)
-    ending-cell: (R:6, C:8)";
+    starting-cell: <Cell> (R:2, C:4)
+    ending-cell: <Cell> (R:6, C:8)";
     }
 }

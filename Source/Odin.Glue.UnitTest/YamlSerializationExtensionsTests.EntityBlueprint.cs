@@ -9,6 +9,7 @@
 
 namespace nGratis.AI.Odin.Glue.UnitTest;
 
+using System.Collections;
 using System.Collections.Immutable;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -45,7 +46,13 @@ public class YamlSerializationExtensionsTests_EntityBlueprint
                         Parameter = new Parameter(new Dictionary<string, object>
                         {
                             ["[_MOCK_PARAMETER_KEY_31_]"] = "[_MOCK_PARAMETER_VALUE_31_]",
-                            ["[_MOCK_PARAMETER_KEY_32_]"] = new Size { Width = 8, Height = 16 }
+                            ["[_MOCK_PARAMETER_KEY_32_]"] = new Size { Width = 8, Height = 16 },
+                            ["[_MOCK_PARAMETER_KEY_33_]"] = new Cell { Row = 1, Column = 3 },
+                            ["[_MOCK_PARAMETER_KEY_34_]"] = new Dictionary<string, string>
+                            {
+                                ["[_MOCK_KEY_A_]"] = "[_MOCK_VALUE_A_]",
+                                ["[_MOCK_KEY_B_]"] = "[_MOCK_VALUE_B_]"
+                            }
                         })
                     }
                 ]
@@ -120,8 +127,12 @@ public class YamlSerializationExtensionsTests_EntityBlueprint
             componentBlueprintByIdLookup["[_MOCK_COMPONENT_ID_03_]"]
                 .Parameter.Keys
                 .Should()
-                .HaveCount(2, "because third component parameters should have unique key").And
-                .BeEquivalentTo("[_MOCK_PARAMETER_KEY_31_]", "[_MOCK_PARAMETER_KEY_32_]");
+                .HaveCount(4, "because third component parameters should have unique key").And
+                .BeEquivalentTo(
+                    "[_MOCK_PARAMETER_KEY_31_]",
+                    "[_MOCK_PARAMETER_KEY_32_]",
+                    "[_MOCK_PARAMETER_KEY_33_]",
+                    "[_MOCK_PARAMETER_KEY_34_]");
 
             using (new AssertionScope())
             {
@@ -136,6 +147,22 @@ public class YamlSerializationExtensionsTests_EntityBlueprint
                     .Should().Be(
                         new Size { Width = 8, Height = 16 },
                         "because third component blueprint should have parameter with valid size");
+
+                componentBlueprintByIdLookup["[_MOCK_COMPONENT_ID_03_]"]
+                    .Parameter.FindValue<Cell>("[_MOCK_PARAMETER_KEY_33_]")
+                    .Should().Be(
+                        new Cell { Row = 1, Column = 3 },
+                        "because third component blueprint should have parameter with valid cell");
+
+                componentBlueprintByIdLookup["[_MOCK_COMPONENT_ID_03_]"]
+                    .Parameter.FindValue<IDictionary>("[_MOCK_PARAMETER_KEY_34_]")
+                    .Should().BeEquivalentTo(
+                        new Dictionary<string, object>
+                        {
+                            ["[_MOCK_KEY_A_]"] = "[_MOCK_VALUE_A_]",
+                            ["[_MOCK_KEY_B_]"] = "[_MOCK_VALUE_B_]"
+                        },
+                        "because third component blueprint should have parameter with valid lookup");
             }
         }
     }
@@ -152,6 +179,8 @@ component-blueprints:
   - id: '[_MOCK_COMPONENT_ID_03_]'
     parameter:
       '[_MOCK_PARAMETER_KEY_31_]': '[_MOCK_PARAMETER_VALUE_31_]'
-      '[_MOCK_PARAMETER_KEY_32_]': (W:8, H:16)";
+      '[_MOCK_PARAMETER_KEY_32_]': <Size> (W:8, H:16)
+      '[_MOCK_PARAMETER_KEY_33_]': <Cell> (R:1, C:3)
+      '[_MOCK_PARAMETER_KEY_34_]': <Lookup> ([_MOCK_KEY_A_]:[_MOCK_VALUE_A_], [_MOCK_KEY_B_]:[_MOCK_VALUE_B_])";
     }
 }

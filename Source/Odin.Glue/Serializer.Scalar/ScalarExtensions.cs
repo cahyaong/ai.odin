@@ -33,9 +33,16 @@ internal static class ScalarExtensions
 
     public static Scalar AsScalar(this object value)
     {
-        var text = ScalarExtensions.ScalarHandlerByTargetTypeLookup.TryGetValue(value.GetType(), out var handler)
-            ? handler.Write(value)
-            : value.ToString();
+        if (!ScalarExtensions.ScalarHandlerByTargetTypeLookup.TryGetValue(value.GetType(), out var matchedHandler))
+        {
+            var valueType = value.GetType();
+
+            matchedHandler = ScalarExtensions
+                .ScalarHandlerByTargetTypeLookup.Values
+                .FirstOrDefault(handler => valueType.IsAssignableTo(handler.TargetType));
+        }
+
+        var text = matchedHandler?.Write(value) ?? value.ToString();
 
         return new Scalar(text ?? DefinedText.Unknown);
     }

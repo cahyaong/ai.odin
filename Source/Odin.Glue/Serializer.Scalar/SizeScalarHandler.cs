@@ -48,11 +48,11 @@ internal class SizeScalarHandler : IScalarHandler
                 ("Actual Type", value.GetType().FullName ?? DefinedText.Unknown));
         }
 
-        return $"(W:{size.Width}, H:{size.Height})";
+        return $"<Size> (W:{size.Width}, H:{size.Height})";
     }
 
     private static class Pattern
     {
-        public static readonly Regex Size = new(@"^\(W:(?<width>\d+), H:(?<height>\d+)\)$");
+        public static readonly Regex Size = new(@"^\<Size\>\s*\(W:(?<width>\d+),\s*H:(?<height>\d+)\)$");
     }
 }

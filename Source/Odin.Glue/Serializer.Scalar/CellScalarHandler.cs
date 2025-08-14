@@ -48,11 +48,11 @@ public class CellScalarHandler : IScalarHandler
                 ("Actual Type", value.GetType().FullName ?? DefinedText.Unknown));
         }
 
-        return $"(R:{cell.Row}, C:{cell.Column})";
+        return $"<Cell> (R:{cell.Row}, C:{cell.Column})";
     }
 
     private static class Pattern
     {
-        public static readonly Regex Cell = new(@"^\(R:(?<row>-?\d+), C:(?<column>-?\d+)\)$");
+        public static readonly Regex Cell = new(@"^\<Cell\>\s*\(R:(?<row>-?\d+),\s*C:(?<column>-?\d+)\)$");
     }
 }
