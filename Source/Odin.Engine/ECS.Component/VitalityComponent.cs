@@ -11,5 +11,13 @@ namespace nGratis.AI.Odin.Engine;
 
 public class VitalityComponent : IComponent
 {
+    public VitalityComponent()
+    {
+        this.EntityState = EntityState.Unknown;
+        this.Energy = 0;
+    }
+
+    public EntityState EntityState { get; set; }
+
     public float Energy { get; set; }
 }

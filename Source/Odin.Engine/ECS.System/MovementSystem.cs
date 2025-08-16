@@ -23,14 +23,15 @@ public class MovementSystem : BaseFixedSystem
 
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
+        typeof(VitalityComponent),
         typeof(IntelligenceComponent),
         typeof(PhysicsComponent)
     ];
 
     protected override void ProcessEntity(uint _, IGameState gameState, IEntity entity)
     {
-        var intelligenceComponent = entity.FindComponent<IntelligenceComponent>();
-        var isMoving = intelligenceComponent.EntityState is EntityState.Walking or EntityState.Running;
+        var vitalityComponent = entity.FindComponent<VitalityComponent>();
+        var isMoving = vitalityComponent.EntityState is EntityState.Walking or EntityState.Running;
 
         if (!isMoving)
         {
@@ -39,7 +40,7 @@ public class MovementSystem : BaseFixedSystem
 
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
 
-        var maxSpeed = intelligenceComponent.EntityState == EntityState.Walking
+        var maxSpeed = vitalityComponent.EntityState is EntityState.Walking
             ? MovementSystem.MaxWalkingSpeed
             : MovementSystem.MaxRunningSpeed;
 
@@ -49,6 +50,7 @@ public class MovementSystem : BaseFixedSystem
             Y = this._random.NextSingle() * maxSpeed
         };
 
+        var intelligenceComponent = entity.FindComponent<IntelligenceComponent>();
         var deltaPosition = intelligenceComponent.TargetPosition - physicsComponent.Position;
 
         physicsComponent.Velocity = deltaPosition.Sign() * velocity;

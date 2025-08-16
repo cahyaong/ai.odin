@@ -23,20 +23,20 @@ public partial class RenderingSystem : BaseFixedSystem
 
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
-        typeof(IntelligenceComponent),
+        typeof(VitalityComponent),
         typeof(PhysicsComponent),
         typeof(RenderingComponent)
     ];
 
     protected override void ProcessEntity(uint _, IGameState __, IEntity entity)
     {
-        var intelligenceComponent = entity.FindComponent<IntelligenceComponent>();
+        var vitalityComponent = entity.FindComponent<VitalityComponent>();
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
         var renderingComponent = entity.FindComponent<RenderingComponent>();
 
         var scaledCoordinate = physicsComponent.Position * Constant.PixelPerUnit;
         renderingComponent.RenderableEntity.Position = scaledCoordinate.ToVector2();
 
-        renderingComponent.RenderableEntity.UpdateAnimationState(intelligenceComponent.EntityState);
+        renderingComponent.RenderableEntity.UpdateAnimationState(vitalityComponent.EntityState);
     }
 }

@@ -2,7 +2,7 @@ id: 'Human'
 component-blueprints:
   - id: 'Trait'
     parameter:
-      'EnergyConsumptionRateByEntityState': <Lookup> (Idle:0.1, Walking:0.2, Running:0.3)
+      'EnergyConsumptionRateByEntityStateLookup': <Lookup> (Idle:2, Walking:3, Running:5)
   - id: 'Vitality'  
   - id: 'Physics'
   - id: 'Intelligence'

@@ -34,7 +34,7 @@ public class ComponentFactory : IComponentFactory
         {
             EnergyConsumptionRateByEntityStateLookup = componentBlueprint
                 .Parameter
-                .FindValue<IDictionary>("EnergyConsumptionRateByEntityState")
+                .FindValue<IDictionary>(nameof(TraitComponent.EnergyConsumptionRateByEntityStateLookup))
                 .Cast<KeyValuePair<string, string>>()
                 .Select(pair => new
                 {
@@ -49,6 +49,7 @@ public class ComponentFactory : IComponentFactory
     {
         return new VitalityComponent
         {
+            EntityState = EntityState.Idle,
             Energy = 100.0f
         };
     }
@@ -64,7 +65,6 @@ public class ComponentFactory : IComponentFactory
     {
         return new IntelligenceComponent
         {
-            EntityState = EntityState.Idle,
             RemainingTickCount = 3
         };
     }

@@ -22,12 +22,16 @@ public class DecisionMakingSystem : BaseFixedSystem
 
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
+        typeof(VitalityComponent),
         typeof(IntelligenceComponent),
         typeof(PhysicsComponent)
     ];
 
     protected override void ProcessEntity(uint _, IGameState gameState, IEntity entity)
     {
+        var vitalityComponent = entity.FindComponent<VitalityComponent>();
+        var isValid = vitalityComponent.EntityState is not EntityState.Unknown and not EntityState.Dead;
+
         var intelligenceComponent = entity.FindComponent<IntelligenceComponent>();
         intelligenceComponent.RemainingTickCount--;
 
@@ -36,7 +40,7 @@ public class DecisionMakingSystem : BaseFixedSystem
             return;
         }
 
-        switch (intelligenceComponent.EntityState)
+        switch (vitalityComponent.EntityState)
         {
             case EntityState.Idle:
                 this.HandleIdleState(entity, gameState.Universe);
@@ -53,6 +57,7 @@ public class DecisionMakingSystem : BaseFixedSystem
 
     private void HandleIdleState(IEntity entity, IUniverse universe)
     {
+        var vitalityComponent = entity.FindComponent<VitalityComponent>();
         var intelligenceComponent = entity.FindComponent<IntelligenceComponent>();
         var shouldMove = this._random.NextSingle() < 0.25f;
 
@@ -64,12 +69,13 @@ public class DecisionMakingSystem : BaseFixedSystem
                 Y = this._random.NextSingle() * universe.Height
             };
 
-            intelligenceComponent.EntityState = EntityState.Walking;
+            vitalityComponent.EntityState = EntityState.Walking;
         }
     }
 
     private void HandleMovingState(IEntity entity)
     {
+        var vitalityComponent = entity.FindComponent<VitalityComponent>();
         var intelligenceComponent = entity.FindComponent<IntelligenceComponent>();
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
 
@@ -80,14 +86,14 @@ public class DecisionMakingSystem : BaseFixedSystem
         if (hasReachedTargetPosition)
         {
             intelligenceComponent.TargetPosition = Point.Unknown;
-            intelligenceComponent.EntityState = EntityState.Idle;
+            vitalityComponent.EntityState = EntityState.Idle;
         }
 
         var shouldStop = this._random.NextSingle() < 0.25f;
 
         if (shouldStop)
         {
-            intelligenceComponent.EntityState = EntityState.Idle;
+            vitalityComponent.EntityState = EntityState.Idle;
         }
         else
         {
@@ -95,7 +101,7 @@ public class DecisionMakingSystem : BaseFixedSystem
 
             if (shouldChangeSpeed)
             {
-                intelligenceComponent.EntityState = intelligenceComponent.EntityState == EntityState.Walking
+                vitalityComponent.EntityState = vitalityComponent.EntityState is EntityState.Walking
                     ? EntityState.Running
                     : EntityState.Walking;
             }
