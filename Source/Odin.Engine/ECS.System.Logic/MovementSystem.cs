@@ -31,18 +31,22 @@ public class MovementSystem : BaseFixedSystem
     protected override void ProcessEntity(uint _, IGameState gameState, IEntity entity)
     {
         var vitalityComponent = entity.FindComponent<VitalityComponent>();
-        var isMoving = vitalityComponent.EntityState is EntityState.Walking or EntityState.Running;
 
-        if (!isMoving)
+        if (vitalityComponent.IsDead)
         {
             return;
         }
 
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
 
-        var maxSpeed = vitalityComponent.EntityState is EntityState.Walking
-            ? MovementSystem.MaxWalkingSpeed
-            : MovementSystem.MaxRunningSpeed;
+        if (!physicsComponent.IsMoving)
+        {
+            return;
+        }
+
+        var maxSpeed = physicsComponent.MotionState is MotionState.Walking
+            ? MaxWalkingSpeed
+            : MaxRunningSpeed;
 
         var velocity = new Vector
         {

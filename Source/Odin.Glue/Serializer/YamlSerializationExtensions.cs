@@ -11,13 +11,15 @@
 
 namespace YamlDotNet.Serialization;
 
+using nGratis.AI.Odin.Engine;
 using nGratis.AI.Odin.Glue;
 using nGratis.Cop.Olympus.Contract;
+using YamlDotNet.Core;
 using YamlDotNet.Serialization.NamingConventions;
 
 public static class YamlSerializationExtensions
 {
-    public static readonly INamingConvention NamingConvention = HyphenatedNamingConvention.Instance;
+    private static readonly INamingConvention NamingConvention = HyphenatedNamingConvention.Instance;
 
     private static readonly ISerializer Serializer = new SerializerBuilder()
         .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
@@ -32,6 +34,8 @@ public static class YamlSerializationExtensions
         .WithNamingConvention(YamlSerializationExtensions.NamingConvention)
         .WithTypeConverter(ParameterYamlConverter.Instance)
         .WithTypeConverter(ScalarYamlConverter.Instance)
+        .WithTypeConverter(new ScalarOrSequenceYamlConverter<EntityBlueprint>())
+        .WithTypeConverter(new ScalarOrSequenceYamlConverter<SpriteSheetBlueprint>())
         .Build();
 
     public static string SerializeToYaml<T>(this T value)
@@ -51,5 +55,10 @@ public static class YamlSerializationExtensions
         return YamlSerializationExtensions
             .Deserializer
             .Deserialize<T>(value.Trim());
+    }
+
+    internal static T Deserialize<T>(this IParser parser)
+    {
+        return YamlSerializationExtensions.Deserializer.Deserialize<T>(parser);
     }
 }

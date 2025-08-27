@@ -12,9 +12,10 @@ namespace nGratis.AI.Odin.Client.Godot;
 using System;
 using System.Collections.Generic;
 using nGratis.AI.Odin.Engine;
+using nGratis.Cop.Olympus.Contract;
 
 [SystemMetadata(OrderingIndex = int.MaxValue)]
-public partial class RenderingSystem : BaseFixedSystem
+public class RenderingSystem : BaseFixedSystem
 {
     public RenderingSystem(IEntityManager entityManager)
         : base(entityManager)
@@ -37,6 +38,35 @@ public partial class RenderingSystem : BaseFixedSystem
         var scaledCoordinate = physicsComponent.Position * Constant.PixelPerUnit;
         renderingComponent.RenderableEntity.Position = scaledCoordinate.ToVector2();
 
-        renderingComponent.RenderableEntity.UpdateAnimationState(vitalityComponent.EntityState);
+        var animationName = DefinedText.Unknown;
+
+        if (vitalityComponent.IsDead)
+        {
+            animationName = AnimationName.Dying;
+        }
+        else if (entity.TryFindComponent<HarvestableComponent>(out var harvestableComponent))
+        {
+            animationName = RenderingSystem
+                .RoundToNearestQuarterPercentage(harvestableComponent.Amount, harvestableComponent.AmountMax)
+                .ToString();
+        }
+        else
+        {
+            animationName = physicsComponent.MotionState.ToString();
+        }
+
+        renderingComponent.RenderableEntity.UpdateAnimationState(animationName);
+    }
+
+    private static ushort RoundToNearestQuarterPercentage(ushort value, ushort valueMax)
+    {
+        var percentage = value / (float)valueMax * 100;
+
+        return (ushort)((int)(percentage / 25) * 25);
+    }
+
+    private static class AnimationName
+    {
+        public static readonly string Dying = nameof(AnimationName.Dying);
     }
 }

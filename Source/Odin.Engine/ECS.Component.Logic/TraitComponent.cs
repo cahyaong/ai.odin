@@ -11,9 +11,13 @@ namespace nGratis.AI.Odin.Engine;
 
 public class TraitComponent : IComponent
 {
-    public IReadOnlyDictionary<EntityState, float> EnergyConsumptionRateByEntityStateLookup { private get; init; }
+    public required IReadOnlyDictionary<MotionState, float> EnergyConsumptionRateByEntityStateLookup
+    {
+        private get; 
+        init;
+    }
 
-    public float FindEnergyConsumptionRate(EntityState entityState) => this
+    public float FindEnergyConsumptionRate(MotionState motionState) => this
         .EnergyConsumptionRateByEntityStateLookup
-        .GetValueOrDefault(entityState, 0.0f);
+        .GetValueOrDefault(motionState, 0.0f);
 }

@@ -24,11 +24,11 @@ public record RenderingComponentBlueprint
         this._componentBlueprint = componentBlueprint;
     }
 
-    public string SpritesheetBlueprintId => this
+    public string SpriteSheetBlueprintId => this
         ._componentBlueprint.Parameter
-        .FindValue<string>(nameof(this.SpritesheetBlueprintId));
+        .FindValue(nameof(this.SpriteSheetBlueprintId));
 
     public string TextureName => this
         ._componentBlueprint.Parameter
-        .FindValue<string>(nameof(this.TextureName));
+        .FindValue(nameof(this.TextureName));
 }

@@ -16,7 +16,7 @@ using nGratis.Cop.Olympus.Contract;
 
 public class EntityFactory : IEntityFactory
 {
-    private readonly IReadOnlyDictionary<string, EntityBlueprint> _entityBlueprintByIdLookup;
+    private readonly IReadOnlyDictionary<string, EntityBlueprint> _entityBlueprintByBlueprintIdLookup;
 
     private readonly IReadOnlyList<IComponentFactory> _componentFactories;
 
@@ -24,7 +24,7 @@ public class EntityFactory : IEntityFactory
 
     public EntityFactory(IDataStore dataStore, IEnumerable<IComponentFactory> componentFactories)
     {
-        this._entityBlueprintByIdLookup = dataStore
+        this._entityBlueprintByBlueprintIdLookup = dataStore
             .LoadEntityBlueprints()
             .ToImmutableDictionary(blueprint => blueprint.Id);
 
@@ -54,17 +54,19 @@ public class EntityFactory : IEntityFactory
 
     public IEntity CreateEntity(string blueprintId)
     {
+        // TODO (SHOULD): Add default rendering component or add tracking when blueprint is not found for given ID!
+
+        if (!this._entityBlueprintByBlueprintIdLookup.TryGetValue(blueprintId, out var entityBlueprint))
+        {
+            throw new OdinException(
+                "Blueprint must be defined for given ID!",
+                ("ID", blueprintId));
+        }
+
         var entity = new Entity
         {
             Id = $"ENTITY-{blueprintId}-{this._totalCount++:D4}"
         };
-
-        // TODO (SHOULD): Add default rendering component or add tracking when blueprint is not found for given ID!
-
-        if (!this._entityBlueprintByIdLookup.TryGetValue(blueprintId, out var entityBlueprint))
-        {
-            return entity;
-        }
 
         foreach (var componentBlueprint in entityBlueprint.ComponentBlueprints)
         {

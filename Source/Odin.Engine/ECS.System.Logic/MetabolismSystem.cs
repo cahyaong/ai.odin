@@ -19,25 +19,27 @@ public class MetabolismSystem : BaseFixedSystem
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(TraitComponent),
-        typeof(VitalityComponent)
+        typeof(VitalityComponent),
+        typeof(PhysicsComponent)
     ];
 
     protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
     {
         var vitalityComponent = entity.FindComponent<VitalityComponent>();
-        var isValid = vitalityComponent.EntityState is not EntityState.Unknown and not EntityState.Dead;
 
-        if (!isValid)
+        if (vitalityComponent.IsDead)
         {
             return;
         }
 
         var traitComponent = entity.FindComponent<TraitComponent>();
-        vitalityComponent.Energy -= traitComponent.FindEnergyConsumptionRate(vitalityComponent.EntityState);
+        var physicsComponent = entity.FindComponent<PhysicsComponent>();
+
+        vitalityComponent.Energy -= traitComponent.FindEnergyConsumptionRate(physicsComponent.MotionState);
 
         if (vitalityComponent.Energy <= 0)
         {
-            vitalityComponent.EntityState = EntityState.Dead;
+            vitalityComponent.IsDead = true;
         }
     }
 }

@@ -9,6 +9,8 @@
 
 namespace nGratis.AI.Odin.Engine;
 
+using nGratis.Cop.Olympus.Contract;
+
 public record Parameter : IParameter
 {
     private readonly IReadOnlyDictionary<string, object> _valueByKeyLookup;
@@ -21,6 +23,19 @@ public record Parameter : IParameter
     public static Parameter None { get; } = new(new Dictionary<string, object>());
 
     public IEnumerable<string> Keys => this._valueByKeyLookup.Keys;
+
+    public string FindValue(string key)
+    {
+        if (!this._valueByKeyLookup.TryGetValue(key, out var value))
+        {
+            throw new OdinException(
+                "Parameter entry is not defined!",
+                ("Expected Key", key),
+                ("Actual Keys", this.Keys.ToPrettifiedText()));
+        }
+
+        return value.ToString() ?? DefinedText.Null;
+    }
 
     public T FindValue<T>(string key)
     {

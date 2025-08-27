@@ -9,6 +9,8 @@
 
 namespace nGratis.AI.Odin.Engine;
 
+using System.Diagnostics.CodeAnalysis;
+
 public interface IEntity
 {
     string Id { get; }
@@ -24,4 +26,6 @@ public interface IEntity
     IEnumerable<IComponent> FindComponents();
 
     TComponent FindComponent<TComponent>() where TComponent : IComponent;
+
+    bool TryFindComponent<TComponent>([MaybeNullWhen(false)] out TComponent component) where TComponent : IComponent;
 }

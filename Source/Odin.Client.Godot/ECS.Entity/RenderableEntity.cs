@@ -9,12 +9,15 @@
 
 namespace nGratis.AI.Odin.Client.Godot;
 
-using nGratis.AI.Odin.Engine;
 using nGratis.Cop.Olympus.Contract;
 
 public partial class RenderableEntity : Node2D
 {
+    // TODO (SHOULD): Implement fallback sprite if requested name is missing!
+
     private readonly AnimatedSprite2D _animatedSprite;
+
+    private string _activeName;
 
     public RenderableEntity()
     {
@@ -28,12 +31,18 @@ public partial class RenderableEntity : Node2D
         this._animatedSprite.SpriteFrames = spriteFrames;
     }
 
-    public void UpdateAnimationState(EntityState entityState)
+    public void UpdateAnimationState(string name)
     {
         Guard
-            .Require(entityState, nameof(entityState))
-            .Is.Not.Default();
+            .Require(name, nameof(name))
+            .Is.Not.Empty();
+        
+        if (this._activeName == name)
+        {
+            return;
+        }
 
-        this._animatedSprite.Play(entityState.ToString());
+        this._animatedSprite.Play(name);
+        this._activeName = name;
     }
 }

@@ -10,6 +10,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Common.Blueprint\entity-human.ngaoblueprint" />
+    <EmbeddedResource Include="Common.Blueprint\entity-bush.ngaoblueprint" />
+    <EmbeddedResource Include="Common.Blueprint\spritesheet-bush.ngaoblueprint" />
     <EmbeddedResource Include="Common.Blueprint\spritesheet-humanoid.ngaoblueprint" />
   </ItemGroup>
   <ItemGroup>

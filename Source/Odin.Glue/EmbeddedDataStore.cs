@@ -17,49 +17,41 @@ public class EmbeddedDataStore : IDataStore
 {
     public IEnumerable<EntityBlueprint> LoadEntityBlueprints()
     {
-        var assembly = Assembly.GetExecutingAssembly();
-
-        var blueprintNames = assembly
-            .GetManifestResourceNames()
-            .Where(name => name.EndsWith(OdinMime.Blueprint.FileExtension, StringComparison.OrdinalIgnoreCase))
-            .Where(name => name.Contains("entity-"));
-
-        foreach (var blueprintName in blueprintNames)
-        {
-            using var blueprintStream = assembly.GetManifestResourceStream(blueprintName);
-
-            if (blueprintStream is not null)
-            {
-                using var blueprintReader = new StreamReader(blueprintStream);
-
-                yield return blueprintReader
-                    .ReadToEnd()
-                    .DeserializeFromYaml<EntityBlueprint>();
-            }
-        }
+        return EmbeddedDataStore.LoadBlueprints<EntityBlueprint>("entity");
     }
 
     public IEnumerable<SpriteSheetBlueprint> LoadSpriteSheetBlueprints()
+    {
+        return EmbeddedDataStore.LoadBlueprints<SpriteSheetBlueprint>("spritesheet");
+    }
+
+    private static IEnumerable<T> LoadBlueprints<T>(string discriminator)
     {
         var assembly = Assembly.GetExecutingAssembly();
 
         var blueprintNames = assembly
             .GetManifestResourceNames()
             .Where(name => name.EndsWith(OdinMime.Blueprint.FileExtension, StringComparison.OrdinalIgnoreCase))
-            .Where(name => name.Contains("spritesheet-"));
+            .Where(name => name.Contains($"{discriminator}-"));
+
+        var deserializedBlueprints = new List<T>();
 
         foreach (var blueprintName in blueprintNames)
         {
             using var blueprintStream = assembly.GetManifestResourceStream(blueprintName);
 
-            if (blueprintStream is not null)
+            if (blueprintStream is null)
             {
-                using var blueprintReader = new StreamReader(blueprintStream);
-
-                yield return blueprintReader
-                    .ReadToEnd()
-                    .DeserializeFromYaml<SpriteSheetBlueprint>();
+                continue;
             }
+
+            using var blueprintReader = new StreamReader(blueprintStream);
+
+            deserializedBlueprints.AddRange(blueprintReader
+                .ReadToEnd()
+                .DeserializeFromYaml<IEnumerable<T>>());
         }
+
+        return deserializedBlueprints;
     }
 }

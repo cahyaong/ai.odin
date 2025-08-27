@@ -52,7 +52,7 @@ public partial class ComponentFactory : Node, IComponentFactory
         var renderingComponentBlueprint = new RenderingComponentBlueprint(componentBlueprint);
 
         var hasSpriteSheetBlueprint = this._spriteSheetBlueprintByIdLookup.TryGetValue(
-            renderingComponentBlueprint.SpritesheetBlueprintId,
+            renderingComponentBlueprint.SpriteSheetBlueprintId,
             out var spritesheetBlueprint);
 
         if (!hasSpriteSheetBlueprint)

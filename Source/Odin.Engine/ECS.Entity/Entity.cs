@@ -11,6 +11,7 @@ namespace nGratis.AI.Odin.Engine;
 
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using nGratis.Cop.Olympus.Contract;
 
 [DebuggerDisplay("<Entity> {this.Id}")]
@@ -74,11 +75,26 @@ public record Entity : IEntity
         if (!this._componentByComponentTypeLookup.TryGetValue(typeof(TComponent), out var component))
         {
             throw new OdinException(
-                "Entity does not have target component!",
+                "Entity must have target component!",
                 ("ID", this.Id),
                 ("Component Type", typeof(TComponent).FullName ?? DefinedText.Unknown));
         }
 
         return (TComponent)component;
+    }
+
+    public bool TryFindComponent<TComponent>([MaybeNullWhen(false)] out TComponent component)
+        where TComponent : IComponent
+    {
+        if (!this._componentByComponentTypeLookup.TryGetValue(typeof(TComponent), out var matchedComponent))
+        {
+            component = default;
+
+            return false;
+        }
+
+        component = (TComponent)matchedComponent;
+
+        return true;
     }
 }

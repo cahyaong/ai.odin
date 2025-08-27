@@ -1,0 +1,17 @@
+﻿- id: 'BlueberryBush'
+  component-blueprints:
+    - id: 'Vitality'
+    - id: 'Physics'
+    - id: 'Harvestable'
+      parameter:
+        'ResourceBlueprintId': 'Berry'
+        'AmountMax': 8
+    - id: 'Rendering'
+      parameter:
+        'SpriteSheetBlueprintId': 'Bush'
+        'TextureName': 'entity-placeholder-8x8'
+- id: 'Blueberry'
+  component-blueprints:
+    - id: 'Rejuvenation'
+      parameter:
+        'Energy': 10

@@ -31,14 +31,19 @@ public class EntitySpawningSystem : BaseSystem
     public override void ProcessFixedDuration(uint tick, IGameState gameState)
     {
         Enumerable
+            .Range(0, this._random.Next(1, 5))
+            .Select(_ => this.CreateEntity(gameState.Universe, "Human"))
+            .ForEach(this.EntityManager.AddEntity);
+
+        Enumerable
             .Range(0, this._random.Next(1, 3))
-            .Select(_ => this.CreateEntity(gameState.Universe))
+            .Select(_ => this.CreateEntity(gameState.Universe, "BlueberryBush"))
             .ForEach(this.EntityManager.AddEntity);
     }
 
-    private IEntity CreateEntity(IUniverse universe)
+    private IEntity CreateEntity(IUniverse universe, string blueprintId)
     {
-        var entity = this._entityFactory.CreateEntity("Human");
+        var entity = this._entityFactory.CreateEntity(blueprintId);
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
 
         physicsComponent.Position = new Point

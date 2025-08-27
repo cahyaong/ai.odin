@@ -13,11 +13,11 @@ public class IntelligenceComponent : IComponent
 {
     public IntelligenceComponent()
     {
-        this.RemainingTickCount = 0;
         this.TargetPosition = Point.Unknown;
+        this.RemainingTick = ushort.MaxValue;
     }
 
-    public uint RemainingTickCount { get; set; }
-
     public Point TargetPosition { get; set; }
+
+    public ushort RemainingTick { get; set; }
 }

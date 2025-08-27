@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EntityState.cs" company="nGratis">
+// <copyright file="MotionState.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
@@ -9,11 +9,13 @@
 
 namespace nGratis.AI.Odin.Engine;
 
-public enum EntityState
+public enum MotionState
 {
     Unknown = 0,
-    Idle,
+
+    Idling,
     Walking,
     Running,
-    Dead
+
+    Immobilized
 }

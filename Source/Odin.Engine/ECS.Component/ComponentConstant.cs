@@ -1,23 +1,23 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="VitalityComponent.cs" company="nGratis">
+// <copyright file="ComponentConstant.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
 // <author>Cahya Ong — cahya.ong@gmail.com</author>
-// <creation_timestamp>Sunday, August 3, 2025 6:03:23 PM UTC</creation_timestamp>
+// <creation_timestamp>Sunday, August 24, 2025 6:33:38 PM UTC</creation_timestamp>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace nGratis.AI.Odin.Engine;
 
-public class VitalityComponent : IComponent
+public static class ComponentConstant
 {
-    public VitalityComponent()
+    public static class Harvestable
     {
-        this.EntityState = EntityState.Unknown;
-        this.Energy = 0;
+        public const ushort UpdatingTickRate = 10;
     }
 
-    public EntityState EntityState { get; set; }
-
-    public float Energy { get; set; }
+    public static class Vitality
+    {
+        public const float EnergyMax = 100f;
+    }
 }

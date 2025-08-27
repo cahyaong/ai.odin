@@ -1,23 +1,19 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PhysicsComponent.cs" company="nGratis">
+// <copyright file="ComponentCreatorAttribute.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
 // <author>Cahya Ong — cahya.ong@gmail.com</author>
-// <creation_timestamp>Tuesday, March 11, 2025 6:01:02 AM UTC</creation_timestamp>
+// <creation_timestamp>Saturday, August 23, 2025 5:52:33 PM UTC</creation_timestamp>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace nGratis.AI.Odin.Engine;
 
-public record PhysicsComponent : IComponent
+using JetBrains.Annotations;
+
+[AttributeUsage(AttributeTargets.Method)]
+[MeansImplicitUse(ImplicitUseTargetFlags.WithMembers)]
+public sealed class ComponentCreatorAttribute : Attribute
 {
-    public PhysicsComponent()
-    {
-        this.Position = Point.Unknown;
-        this.Velocity = Vector.Unknown;
-    }
-
-    public Point Position { get; set; }
-
-    public Vector Velocity { get; set; }
+    public required Type CreatedType { get; init; }
 }
