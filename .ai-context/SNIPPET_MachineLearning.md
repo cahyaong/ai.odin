@@ -2,7 +2,9 @@
 
 ## Overview
 
-This document contains comprehensive code implementation snippets for the machine learning systems within our Entity Component System (ECS) framework. Each section provides component definitions and system implementations in C# for creating intelligent, evolving agents through genetic algorithms, neuroevolution, and reinforcement learning. These snippets work together to create emergent AI behaviors through sophisticated learning system interactions.
+This document contains comprehensive code implementation snippets for the machine learning systems within our Entity Component System (ECS) framework. Each section provides component definitions and system implementations in C# for creating intelligent, evolving agents through genetic algorithms, neuroevolution, and reinforcement learning.
+
+**Note:** Currently, basic genetic traits concepts and experience collection framework exist. All code examples follow the existing ECS architecture patterns and will integrate with current `VitalityComponent` and `TraitComponent` implementations.
 
 ## Machine Learning Architecture Overview
 

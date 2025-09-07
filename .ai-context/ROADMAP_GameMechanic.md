@@ -361,6 +361,7 @@ Each mechanic provides rich training data for agent learning across all complexi
 
 ### P0: Core Mechanics Foundation (Highest Priority)
 - [x] ✅ **Basic metabolism system implemented** (energy consumption, death transitions)
+- [x] ✅ **Basic resource growth system implemented** (HarvestableComponent, GrowthSystem for regeneration)
 - [ ] Enhanced multi-resource survival (hunger, thirst, temperature)
 - [ ] Comprehensive resource management with quality and spoilage
 - [ ] Building construction with material requirements and automation

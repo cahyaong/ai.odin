@@ -87,26 +87,185 @@ component-blueprints:
 
 ## 💡 **OPTIONAL ENHANCEMENTS (Future Roadmap)**
 
-### **P0: Multi-Resource Survival System (Next Phase)**
+### **P0: Energy Restoration System (READY FOR IMPLEMENTATION - TOP PRIORITY)**
+
+**STATUS**: 🚀 **Ready to implement** - New components HarvestableComponent and RejuvenationComponent are already created as placeholders.
+
+#### **Current Placeholder Components (Ready for Enhancement)**:
+- `Source/Odin.Engine/ECS.Component/HarvestableComponent.cs` - Empty placeholder
+- `Source/Odin.Engine/ECS.Component/RejuvenationComponent.cs` - Empty placeholder
+
+#### **P0 Implementation Plan - Energy Restoration & Harvesting**
+
+**Phase 0.1: Enhanced VitalityComponent** (`Source/Odin.Engine/ECS.Component/VitalityComponent.cs:12-23`)
+```csharp
+public class VitalityComponent : IComponent
+{
+    public VitalityComponent()
+    {
+        this.IsDead = false;
+        this.Energy = 50.0f;      // Start with half energy
+        this.MaxEnergy = 100.0f;  // NEW: Maximum energy cap
+    }
+
+    public bool IsDead { get; set; }
+    public float Energy { get; set; }
+    public float MaxEnergy { get; set; } = 100.0f;  // NEW
+    
+    // NEW: Helper properties
+    public bool IsEnergyFull => Energy >= MaxEnergy;
+    public float EnergyPercentage => Energy / MaxEnergy;
+}
+```
+
+**Phase 0.2: Enhanced RejuvenationComponent** (`Source/Odin.Engine/ECS.Component/RejuvenationComponent.cs`)
+```csharp
+public class RejuvenationComponent : IComponent
+{
+    public float Energy { get; set; } = 10.0f;  // Energy provided when consumed
+    public bool IsConsumed { get; set; } = false;  // Whether this item has been consumed
+}
+```
+
+**Phase 0.3: Enhanced HarvestableComponent** (`Source/Odin.Engine/ECS.Component/HarvestableComponent.cs`)  
+```csharp
+public class HarvestableComponent : IComponent
+{
+    public string TargetId { get; set; } = "Berry";          // Type of resource produced
+    public int Amount { get; set; } = 8;                     // Number of resources available
+    public bool IsEmpty { get; set; } = false;               // Whether harvested resources remain
+    public float HarvestRadius { get; set; } = 16.0f;        // Proximity required for harvesting
+}
+```
+
+**Phase 0.4: Enhanced MetabolismSystem** (`Source/Odin.Engine/ECS.System.Logic/MetabolismSystem.cs:26-44`)
+```csharp
+protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+{
+    var vitalityComponent = entity.FindComponent<VitalityComponent>();
+
+    if (vitalityComponent.IsDead)
+    {
+        return;
+    }
+
+    var traitComponent = entity.FindComponent<TraitComponent>();
+    var physicsComponent = entity.FindComponent<PhysicsComponent>();
+
+    // EXISTING: Energy consumption based on motion state
+    vitalityComponent.Energy -= traitComponent.FindEnergyConsumptionRate(physicsComponent.MotionState);
+
+    // NEW: Process harvesting berries from bushes and consuming them for energy
+    ProcessBerryHarvestingAndConsumption(entity, vitalityComponent, gameState);
+
+    // ENHANCED: Handle death and energy clamping
+    if (vitalityComponent.Energy <= 0)
+    {
+        vitalityComponent.IsDead = true;
+        vitalityComponent.Energy = 0; // Clamp to 0
+    }
+    else
+    {
+        // NEW: Clamp energy to maximum
+        vitalityComponent.Energy = Math.Min(vitalityComponent.Energy, vitalityComponent.MaxEnergy);
+    }
+}
+
+// NEW: Berry harvesting and consumption logic  
+private void ProcessBerryHarvestingAndConsumption(IEntity entity, VitalityComponent vitality, IGameState gameState)
+{
+    if (vitality.IsEnergyFull) return; // Skip if already full
+
+    var entityPhysics = entity.FindComponent<PhysicsComponent>();
+    
+    // Find all harvestable entities (berry bushes)
+    var harvestableEntities = EntityManager.FindEntitiesWithComponent<HarvestableComponent>();
+    
+    foreach (var bushEntity in harvestableEntities)
+    {
+        var harvestableComponent = bushEntity.FindComponent<HarvestableComponent>();
+        var bushPhysics = bushEntity.FindComponent<PhysicsComponent>();
+        
+        // Skip empty bushes
+        if (harvestableComponent.IsEmpty || harvestableComponent.Amount <= 0) continue;
+        
+        // Check proximity for harvesting
+        var distance = Vector2.Distance(entityPhysics.Position, bushPhysics.Position);
+        if (distance <= harvestableComponent.HarvestRadius)
+        {
+            // Harvest one berry from the bush
+            harvestableComponent.Amount -= 1;
+            if (harvestableComponent.Amount <= 0)
+            {
+                harvestableComponent.IsEmpty = true;
+            }
+            
+            // Create and immediately consume the berry for energy
+            // In a full implementation, this would create a berry entity and consume it
+            // For now, we directly apply the rejuvenation energy based on blueprint values
+            var berryEnergyValue = 10.0f; // From blueprint: Blueberry.Rejuvenation.Energy
+            vitality.Energy += berryEnergyValue;
+            
+            break; // Only harvest one berry per tick
+        }
+    }
+}
+```
+
+#### **P0 Blueprint Integration**
+
+**Existing Blueprint: Blueberry Bush** (`Source/Odin.Glue/Common.Blueprint/entity-bush.ngaoblueprint`)  
+```yaml
+- id: 'BlueberryBush'
+  component-blueprints:
+    - id: 'Vitality'
+    - id: 'Physics'
+    - id: 'Harvestable'
+      parameter:
+        'TargetId': 'Berry'
+        'Amount': 8
+    - id: 'Rendering'
+      parameter:
+        'SpriteSheetBlueprintId': 'Bush'
+        'TextureName': 'entity-placeholder-8x8'
+        
+- id: 'Blueberry'
+  component-blueprints:
+    - id: 'Rejuvenation'
+      parameter:
+        'Energy': 10
+```
+
+#### **P0 Success Criteria**
+1. ✅ Basic energy consumption working (COMPLETED)
+2. 🔄 Entities can harvest berries from blueberry bushes
+3. 🔄 Harvested berries provide energy when consumed
+4. 🔄 Bush berry count decreases when harvested
+5. 🔄 Energy is properly clamped between 0 and MaxEnergy
+6. 🔄 System integrates with existing ECS architecture
+
+#### **P0 Implementation Files to Modify**
+- `Source/Odin.Engine/ECS.Component/VitalityComponent.cs` - Add MaxEnergy and helper methods
+- `Source/Odin.Engine/ECS.Component/RejuvenationComponent.cs` - Add restoration properties
+- `Source/Odin.Engine/ECS.Component/HarvestableComponent.cs` - Add harvesting properties
+- `Source/Odin.Engine/ECS.System.Logic/MetabolismSystem.cs` - Add restoration and harvesting logic
+- `Source/Odin.Engine/ECS.Coordinator/ComponentFactory.cs` - Register new components
+
+### **P1: Multi-Resource Survival System (Future Phase)**
 Extend beyond energy to include additional survival metrics:
 
 ```csharp
 // Enhanced VitalityComponent - future evolution
 public class VitalityComponent : IComponent
 {
-    public EntityState EntityState { get; set; }
+    public bool IsDead { get; set; }
     public float Energy { get; set; }
+    public float MaxEnergy { get; set; }
     public float Hunger { get; set; }    // Future: 0-100 hunger level
     public float Thirst { get; set; }    // Future: 0-100 thirst level  
     public float Temperature { get; set; } // Future: body temperature
 }
 ```
-
-### **P1: Resource Interaction System**
-Add food sources and consumption mechanics:
-- **HarvestableComponent**: Berry bushes and food sources
-- **ConsumptionSystem**: Eating mechanics to restore energy
-- **Resource regeneration**: Time-based food production
 
 ### **P2: Machine Learning Integration**
 Connect metabolism to AI training systems:
@@ -192,4 +351,4 @@ The basic metabolism system is **100% functional and production-ready**. The imp
 
 ---
 
-*Last updated: August 19, 2025*
+*Last updated: August 23, 2025*

@@ -6,58 +6,244 @@ This document contains comprehensive code implementation snippets for the 26 gam
 
 ## Implementation Priority Matrix
 
+**Note:** This document shows complete implementations for all 26 planned game mechanic systems. Currently implemented: `VitalityComponent`, `TraitComponent`, `MetabolismSystem`, and `GrowthSystem`. All code examples follow the existing ECS architecture patterns.
+
 ### Core Mechanics (1-6) - Essential Foundation
 
 #### 1. Survival Mechanics
 
 **Hunger System Components:**
 ```csharp
-public struct HungerComponent {
-    public float Current;
-    public float Max;
-    public float DecayRate;
-    public float MetabolicEfficiency;  // From genetic traits
+public class HungerComponent : IComponent
+{
+    public HungerComponent()
+    {
+        Current = 100.0f;
+        Max = 100.0f;
+        DecayRate = 1.0f;
+        MetabolicEfficiency = 1.0f;
+    }
+
+    public float Current { get; set; }
+    public float Max { get; set; }
+    public float DecayRate { get; set; }
+    public float MetabolicEfficiency { get; set; } // From genetic traits
 }
 
-public struct StarvationComponent {
-    public float Damage;
-    public bool IsStarving;
-    public float TimeWithoutFood;
+public class StarvationComponent : IComponent
+{
+    public StarvationComponent()
+    {
+        Damage = 0.0f;
+        IsStarving = false;
+        TimeWithoutFood = 0.0f;
+    }
+
+    public float Damage { get; set; }
+    public bool IsStarving { get; set; }
+    public float TimeWithoutFood { get; set; }
 }
 
-public struct FoodPreferenceComponent {
-    public Dictionary<FoodType, float> Preferences;
-    public List<FoodType> Allergies;
-    public float NutritionalNeeds;
+public class FoodPreferenceComponent : IComponent
+{
+    public FoodPreferenceComponent()
+    {
+        Preferences = new Dictionary<FoodType, float>();
+        Allergies = new List<FoodType>();
+        NutritionalNeeds = 1.0f;
+    }
+
+    public Dictionary<FoodType, float> Preferences { get; set; }
+    public List<FoodType> Allergies { get; set; }
+    public float NutritionalNeeds { get; set; }
+}
+```
+
+**Hunger System Implementation:**
+```csharp
+public class HungerDecaySystem : BaseFixedSystem
+{
+    public HungerDecaySystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(HungerComponent),
+        typeof(TraitComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var hungerComponent = entity.FindComponent<HungerComponent>();
+        var traitComponent = entity.FindComponent<TraitComponent>();
+        
+        var decayRate = hungerComponent.DecayRate * traitComponent.MetabolicEfficiency;
+        hungerComponent.Current = Math.Max(0.0f, hungerComponent.Current - decayRate);
+        
+        if (hungerComponent.Current <= 0.0f && !entity.HasComponent<StarvationComponent>())
+        {
+            entity.AddComponent(new StarvationComponent { IsStarving = true });
+        }
+    }
+}
+
+public class StarvationDamageSystem : BaseFixedSystem
+{
+    public StarvationDamageSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(StarvationComponent),
+        typeof(VitalityComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var starvationComponent = entity.FindComponent<StarvationComponent>();
+        var vitalityComponent = entity.FindComponent<VitalityComponent>();
+        
+        if (starvationComponent.IsStarving && !vitalityComponent.IsDead)
+        {
+            starvationComponent.TimeWithoutFood += 1.0f;
+            var damage = starvationComponent.TimeWithoutFood * 0.1f;
+            vitalityComponent.Energy = Math.Max(0.0f, vitalityComponent.Energy - damage);
+            
+            if (vitalityComponent.Energy <= 0.0f)
+            {
+                vitalityComponent.IsDead = true;
+            }
+        }
+    }
 }
 ```
 
 **Temperature & Climate Survival Components:**
 ```csharp
-public struct TemperatureToleranceComponent {
-    public float MinTemp;
-    public float MaxTemp;
-    public float CurrentBodyTemp;
-    public float BaseInsulation;
+public class TemperatureToleranceComponent : IComponent
+{
+    public TemperatureToleranceComponent()
+    {
+        MinTemp = -10.0f;
+        MaxTemp = 40.0f;
+        CurrentBodyTemp = 37.0f;
+        BaseInsulation = 1.0f;
+    }
+
+    public float MinTemp { get; set; }
+    public float MaxTemp { get; set; }
+    public float CurrentBodyTemp { get; set; }
+    public float BaseInsulation { get; set; }
 }
 
-public struct HypothermiaComponent {
-    public float Severity;
-    public float OnsetTemperature;
-    public float ProgressionRate;
+public class HypothermiaComponent : IComponent
+{
+    public HypothermiaComponent()
+    {
+        Severity = 0.0f;
+        OnsetTemperature = 35.0f;
+        ProgressionRate = 1.0f;
+    }
+
+    public float Severity { get; set; }
+    public float OnsetTemperature { get; set; }
+    public float ProgressionRate { get; set; }
 }
 
-public struct HeatstrokeComponent {
-    public float Severity;
-    public float OnsetTemperature;
-    public float ProgressionRate;
+public class HeatstrokeComponent : IComponent
+{
+    public HeatstrokeComponent()
+    {
+        Severity = 0.0f;
+        OnsetTemperature = 39.0f;
+        ProgressionRate = 1.0f;
+    }
+
+    public float Severity { get; set; }
+    public float OnsetTemperature { get; set; }
+    public float ProgressionRate { get; set; }
 }
 
-public struct ClothingComponent {
-    public float WarmthRating;
-    public float CoolnessRating;
-    public float Waterproofing;
-    public float Durability;
+public class ClothingComponent : IComponent
+{
+    public ClothingComponent()
+    {
+        WarmthRating = 0.0f;
+        CoolnessRating = 0.0f;
+        Waterproofing = 0.0f;
+        Durability = 100.0f;
+    }
+
+    public float WarmthRating { get; set; }
+    public float CoolnessRating { get; set; }
+    public float Waterproofing { get; set; }
+    public float Durability { get; set; }
+}
+```
+
+**Temperature Regulation System Implementation:**
+```csharp
+public class TemperatureRegulationSystem : BaseFixedSystem
+{
+    public TemperatureRegulationSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(TemperatureToleranceComponent),
+        typeof(PhysicsComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var tempComponent = entity.FindComponent<TemperatureToleranceComponent>();
+        var physicsComponent = entity.FindComponent<PhysicsComponent>();
+        
+        // Get environmental temperature at entity location
+        var environmentalTemp = gameState.GetEnvironmentalTemperature(physicsComponent.Position);
+        
+        // Apply clothing modifiers if present
+        var effectiveInsulation = tempComponent.BaseInsulation;
+        if (entity.HasComponent<ClothingComponent>())
+        {
+            var clothing = entity.FindComponent<ClothingComponent>();
+            effectiveInsulation += environmentalTemp < tempComponent.CurrentBodyTemp 
+                ? clothing.WarmthRating 
+                : clothing.CoolnessRating;
+        }
+        
+        // Calculate body temperature change
+        var tempDifference = environmentalTemp - tempComponent.CurrentBodyTemp;
+        var tempChange = tempDifference / effectiveInsulation * 0.1f;
+        tempComponent.CurrentBodyTemp += tempChange;
+        
+        // Check for temperature-related conditions
+        CheckTemperatureConditions(entity, tempComponent);
+    }
+    
+    private void CheckTemperatureConditions(IEntity entity, TemperatureToleranceComponent tempComponent)
+    {
+        if (tempComponent.CurrentBodyTemp < tempComponent.MinTemp)
+        {
+            if (!entity.HasComponent<HypothermiaComponent>())
+            {
+                entity.AddComponent(new HypothermiaComponent());
+            }
+        }
+        else if (tempComponent.CurrentBodyTemp > tempComponent.MaxTemp)
+        {
+            if (!entity.HasComponent<HeatstrokeComponent>())
+            {
+                entity.AddComponent(new HeatstrokeComponent());
+            }
+        }
+    }
 }
 ```
 
@@ -1023,4 +1209,582 @@ public struct TradeRouteNetworkComponent {
 
 ---
 
-*Note: These code snippets represent comprehensive implementations for all 26 game mechanic systems and should be adapted to fit the existing ECS architecture and coding standards of the AI.Odin project. The components are designed to work together to create emergent gameplay through sophisticated system interactions.*
+## Comprehensive System Implementations
+
+### Core Survival Systems (Priority 1)
+
+```csharp
+// Disease and Immune System Implementation
+public class DiseaseSpreadSystem : BaseFixedSystem
+{
+    public DiseaseSpreadSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(InfectionComponent),
+        typeof(PhysicsComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var infectionComponent = entity.FindComponent<InfectionComponent>();
+        var physicsComponent = entity.FindComponent<PhysicsComponent>();
+        
+        if (!infectionComponent.IsContagious) return;
+        
+        // Find nearby entities within contagion range
+        var nearbyEntities = EntityManager.FindEntitiesInRadius(
+            physicsComponent.Position, 
+            GetContagionRadius(infectionComponent.DiseaseId));
+            
+        foreach (var nearbyEntity in nearbyEntities)
+        {
+            if (nearbyEntity.HasComponent<ImmuneSystemComponent>())
+            {
+                var immuneSystem = nearbyEntity.FindComponent<ImmuneSystemComponent>();
+                AttemptInfection(nearbyEntity, immuneSystem, infectionComponent);
+            }
+        }
+    }
+    
+    private void AttemptInfection(IEntity target, ImmuneSystemComponent immuneSystem, InfectionComponent source)
+    {
+        var resistanceChance = immuneSystem.InfectionResistance;
+        if (immuneSystem.Antibodies.Contains(source.DiseaseId))
+        {
+            resistanceChance *= 2.0f; // Previous exposure provides immunity
+        }
+        
+        if (Random.Shared.NextSingle() > resistanceChance)
+        {
+            target.AddComponent(new InfectionComponent 
+            { 
+                DiseaseId = source.DiseaseId,
+                Progress = 0.0f,
+                IsContagious = false // Incubation period
+            });
+        }
+    }
+}
+
+// Resource Management Systems
+public class ResourceGatheringSystem : BaseFixedSystem
+{
+    public ResourceGatheringSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(IntelligenceComponent),
+        typeof(InventoryComponent),
+        typeof(PhysicsComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var intelligenceComponent = entity.FindComponent<IntelligenceComponent>();
+        var inventoryComponent = entity.FindComponent<InventoryComponent>();
+        var physicsComponent = entity.FindComponent<PhysicsComponent>();
+        
+        // Check if entity is targeting a harvestable resource
+        if (intelligenceComponent.TargetPosition.HasValue)
+        {
+            var nearbyResources = EntityManager.FindEntitiesWithComponent<HarvestableComponent>()
+                .Where(e => Vector3.Distance(e.FindComponent<PhysicsComponent>().Position, 
+                                           physicsComponent.Position) < 2.0f);
+                                           
+            foreach (var resourceEntity in nearbyResources)
+            {
+                PerformHarvesting(entity, resourceEntity, inventoryComponent);
+            }
+        }
+    }
+    
+    private void PerformHarvesting(IEntity harvester, IEntity resource, InventoryComponent inventory)
+    {
+        var harvestableComponent = resource.FindComponent<HarvestableComponent>();
+        
+        if (harvestableComponent.Amount <= 0) return;
+        
+        var gatheringEfficiency = CalculateGatheringEfficiency(harvester, harvestableComponent);
+        var harvestedAmount = Math.Min(harvestableComponent.Amount, gatheringEfficiency);
+        
+        // Add to inventory
+        if (inventory.Items.ContainsKey(harvestableComponent.Type))
+        {
+            inventory.Items[harvestableComponent.Type] += (int)harvestedAmount;
+        }
+        else
+        {
+            inventory.Items[harvestableComponent.Type] = (int)harvestedAmount;
+        }
+        
+        harvestableComponent.Amount -= harvestedAmount;
+    }
+}
+
+// Construction System
+public class ConstructionProgressSystem : BaseFixedSystem
+{
+    public ConstructionProgressSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(ConstructionProgressComponent),
+        typeof(BlueprintComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var progressComponent = entity.FindComponent<ConstructionProgressComponent>();
+        var blueprintComponent = entity.FindComponent<BlueprintComponent>();
+        
+        if (progressComponent.AssignedWorkers.Count == 0) return;
+        
+        // Calculate work progress based on assigned workers
+        var totalWorkThisTick = 0.0f;
+        foreach (var workerId in progressComponent.AssignedWorkers)
+        {
+            if (EntityManager.TryGetEntity(workerId, out var worker))
+            {
+                totalWorkThisTick += CalculateWorkerEfficiency(worker, blueprintComponent);
+            }
+        }
+        
+        progressComponent.Progress += totalWorkThisTick;
+        
+        // Check if construction is complete
+        if (progressComponent.Progress >= progressComponent.TotalWork)
+        {
+            CompleteConstruction(entity, blueprintComponent);
+        }
+    }
+    
+    private void CompleteConstruction(IEntity constructionSite, BlueprintComponent blueprint)
+    {
+        // Remove construction components and add building component
+        constructionSite.RemoveComponent<ConstructionProgressComponent>();
+        constructionSite.RemoveComponent<BlueprintComponent>();
+        
+        constructionSite.AddComponent(new BuildingComponent
+        {
+            Type = blueprint.Type,
+            Health = 100.0f,
+            MaxHealth = 100.0f,
+            Functions = GetBuildingFunctions(blueprint.Type)
+        });
+    }
+}
+
+// Social Relationship System
+public class RelationshipUpdateSystem : BaseFixedSystem
+{
+    public RelationshipUpdateSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(RelationshipComponent),
+        typeof(PersonalityComponent),
+        typeof(PhysicsComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var relationshipComponent = entity.FindComponent<RelationshipComponent>();
+        var personalityComponent = entity.FindComponent<PersonalityComponent>();
+        var physicsComponent = entity.FindComponent<PhysicsComponent>();
+        
+        // Find nearby entities for social interactions
+        var nearbyEntities = EntityManager.FindEntitiesInRadius(physicsComponent.Position, 5.0f)
+            .Where(e => e.HasComponent<RelationshipComponent>() && e.Id != entity.Id);
+            
+        foreach (var otherEntity in nearbyEntities)
+        {
+            ProcessSocialInteraction(entity, otherEntity, relationshipComponent, personalityComponent);
+        }
+    }
+    
+    private void ProcessSocialInteraction(IEntity entity1, IEntity entity2, 
+        RelationshipComponent relationships, PersonalityComponent personality)
+    {
+        var entityId2 = entity2.Id;
+        
+        if (!relationships.Relationships.ContainsKey(entityId2))
+        {
+            relationships.Relationships[entityId2] = new RelationshipData
+            {
+                Opinion = 0.0f,
+                Type = RelationType.Neutral,
+                History = new List<SharedMemory>(),
+                TrustLevel = 0.5f,
+                Intimacy = 0.0f
+            };
+        }
+        
+        var relationship = relationships.Relationships[entityId2];
+        var otherPersonality = entity2.FindComponent<PersonalityComponent>();
+        
+        // Calculate compatibility and update relationship
+        var compatibility = CalculatePersonalityCompatibility(personality, otherPersonality);
+        var opinionChange = compatibility * 0.1f;
+        
+        relationship.Opinion = Math.Clamp(relationship.Opinion + opinionChange, -100.0f, 100.0f);
+        UpdateRelationshipType(relationship);
+    }
+}
+
+// Combat System
+public class CombatResolutionSystem : BaseFixedSystem
+{
+    public CombatResolutionSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(CombatStatsComponent),
+        typeof(CombatAIComponent),
+        typeof(PhysicsComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var combatStats = entity.FindComponent<CombatStatsComponent>();
+        var combatAI = entity.FindComponent<CombatAIComponent>();
+        var physics = entity.FindComponent<PhysicsComponent>();
+        
+        if (combatAI.CurrentTargets.Count == 0) return;
+        
+        foreach (var targetId in combatAI.CurrentTargets.ToList())
+        {
+            if (EntityManager.TryGetEntity(targetId, out var target))
+            {
+                ProcessCombatAction(entity, target, combatStats);
+            }
+            else
+            {
+                combatAI.CurrentTargets.Remove(targetId);
+            }
+        }
+    }
+    
+    private void ProcessCombatAction(IEntity attacker, IEntity target, CombatStatsComponent attackerStats)
+    {
+        var targetStats = target.FindComponent<CombatStatsComponent>();
+        var targetPhysics = target.FindComponent<PhysicsComponent>();
+        var attackerPhysics = attacker.FindComponent<PhysicsComponent>();
+        
+        var distance = Vector3.Distance(attackerPhysics.Position, targetPhysics.Position);
+        var weaponRange = GetWeaponRange(attacker);
+        
+        if (distance <= weaponRange)
+        {
+            PerformAttack(attacker, target, attackerStats, targetStats);
+        }
+    }
+}
+
+// Technology Research System
+public class ResearchProgressSystem : BaseFixedSystem
+{
+    public ResearchProgressSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(ResearchStationComponent),
+        typeof(BuildingComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var researchStation = entity.FindComponent<ResearchStationComponent>();
+        var building = entity.FindComponent<BuildingComponent>();
+        
+        if (researchStation.CurrentResearch == TechId.None || 
+            researchStation.AssignedResearchers.Count == 0) return;
+            
+        var researchProgress = CalculateResearchProgress(researchStation);
+        
+        // Update faction-wide research progress
+        var faction = GetEntityFaction(entity);
+        if (faction?.HasComponent<ResearchProgressComponent>() == true)
+        {
+            var factionResearch = faction.FindComponent<ResearchProgressComponent>();
+            if (!factionResearch.Progress.ContainsKey(researchStation.CurrentResearch))
+            {
+                factionResearch.Progress[researchStation.CurrentResearch] = 0.0f;
+            }
+            
+            factionResearch.Progress[researchStation.CurrentResearch] += researchProgress;
+            
+            // Check if research is complete
+            var requiredProgress = GetRequiredResearchProgress(researchStation.CurrentResearch);
+            if (factionResearch.Progress[researchStation.CurrentResearch] >= requiredProgress)
+            {
+                CompleteResearch(faction, researchStation.CurrentResearch);
+            }
+        }
+    }
+    
+    private void CompleteResearch(IEntity faction, TechId completedTech)
+    {
+        var unlockedTech = faction.FindComponent<UnlockedTechComponent>();
+        unlockedTech.Unlocked.Add(completedTech);
+        
+        // Unlock dependent technologies
+        var dependentTechs = GetDependentTechnologies(completedTech);
+        foreach (var tech in dependentTechs)
+        {
+            unlockedTech.Available.Add(tech);
+        }
+    }
+}
+```
+
+### Advanced System Implementations (Priority 2)
+
+```csharp
+// Environmental Weather System
+public class WeatherEffectSystem : BaseFixedSystem
+{
+    public WeatherEffectSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(WeatherAffectedComponent),
+        typeof(PhysicsComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var weatherComponent = entity.FindComponent<WeatherAffectedComponent>();
+        var physicsComponent = entity.FindComponent<PhysicsComponent>();
+        
+        var currentWeather = gameState.GetWeatherAt(physicsComponent.Position);
+        
+        if (weatherComponent.Modifiers.ContainsKey(currentWeather.Type))
+        {
+            ApplyWeatherEffects(entity, currentWeather, weatherComponent);
+        }
+        
+        if (weatherComponent.SeeksShelter && RequiresShelter(currentWeather))
+        {
+            var intelligence = entity.FindComponent<IntelligenceComponent>();
+            intelligence.TargetPosition = FindNearestShelter(physicsComponent.Position);
+        }
+    }
+}
+
+// Production Chain System
+public class ProductionChainSystem : BaseFixedSystem
+{
+    public ProductionChainSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(ProductionChainComponent),
+        typeof(FactoryComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var productionChain = entity.FindComponent<ProductionChainComponent>();
+        var factory = entity.FindComponent<FactoryComponent>();
+        
+        if (factory.Workers.Count == 0) return;
+        
+        // Process each production step
+        foreach (var step in productionChain.Steps)
+        {
+            ProcessProductionStep(entity, step, factory);
+        }
+        
+        // Update efficiency based on worker skills and facility condition
+        UpdateProductionEfficiency(productionChain, factory);
+    }
+}
+
+// Ecosystem Balance System
+public class EcosystemBalanceSystem : BaseFixedSystem
+{
+    public EcosystemBalanceSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(EcosystemComponent),
+        typeof(ReproductionComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var ecosystem = entity.FindComponent<EcosystemComponent>();
+        var reproduction = entity.FindComponent<ReproductionComponent>();
+        
+        // Population pressure affects reproduction rates
+        var populationPressure = ecosystem.PopulationSize / ecosystem.CarryingCapacity;
+        var adjustedFertility = reproduction.Fertility * (2.0f - populationPressure);
+        
+        // Predator-prey relationships
+        AdjustPopulationBasedOnPredators(entity, ecosystem);
+        
+        // Resource competition
+        if (populationPressure > 1.0f)
+        {
+            ApplyResourceCompetitionStress(entity);
+        }
+    }
+}
+```
+
+### Specialized System Implementations (Priority 3)
+
+```csharp
+// Multi-Generational Relationship System
+public class GenerationalRelationshipSystem : BaseFixedSystem
+{
+    public GenerationalRelationshipSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(GenealogyComponent),
+        typeof(ReputationInheritanceComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var genealogy = entity.FindComponent<GenealogyComponent>();
+        var reputation = entity.FindComponent<ReputationInheritanceComponent>();
+        
+        // Update family reputation based on personal actions
+        var personalActions = GetRecentPersonalActions(entity);
+        foreach (var action in personalActions)
+        {
+            var reputationImpact = CalculateReputationImpact(action);
+            reputation.PersonalReputation += reputationImpact;
+            
+            // Family reputation changes at 25% rate
+            reputation.FamilyReputation += reputationImpact * 0.25f;
+        }
+        
+        // Inheritance and legacy systems
+        ProcessInheritanceTransfer(entity, genealogy);
+    }
+}
+
+// Archaeological Discovery System
+public class ArchaeologySystem : BaseFixedSystem
+{
+    public ArchaeologySystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(ArchaeologicalSiteComponent),
+        typeof(RuinComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var archaeologicalSite = entity.FindComponent<ArchaeologicalSiteComponent>();
+        var ruin = entity.FindComponent<RuinComponent>();
+        
+        if (archaeologicalSite.Archaeologists.Count == 0) return;
+        
+        foreach (var archaeologistId in archaeologicalSite.Archaeologists)
+        {
+            if (EntityManager.TryGetEntity(archaeologistId, out var archaeologist))
+            {
+                ProcessArchaeologicalExcavation(archaeologist, entity, archaeologicalSite, ruin);
+            }
+        }
+    }
+}
+
+// Narrative Generation System
+public class NarrativeGenerationSystem : BaseVariableSystem
+{
+    public NarrativeGenerationSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(NarrativeEngineComponent),
+        typeof(BiographyComponent)
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var narrativeEngine = entity.FindComponent<NarrativeEngineComponent>();
+        var biography = entity.FindComponent<BiographyComponent>();
+        
+        // Analyze entity's recent actions for narrative significance
+        var significantEvents = AnalyzeRecentEvents(entity);
+        
+        foreach (var eventData in significantEvents)
+        {
+            if (IsNarrativelySignificant(eventData))
+            {
+                GenerateStoryArc(narrativeEngine, biography, eventData);
+            }
+        }
+        
+        // Update dramatic tension based on current conflicts
+        UpdateDramaticTension(narrativeEngine, entity);
+    }
+}
+```
+
+---
+
+## System Integration Notes
+
+### Naming Conventions Followed:
+- **Components**: `[Purpose]Component` inheriting from `IComponent`
+- **Systems**: `[Purpose]System` inheriting from `BaseFixedSystem` or `BaseVariableSystem`
+- **No Name Conflicts**: Each system has a unique purpose and name
+
+### Architecture Compliance:
+- All systems declare `RequiredComponentTypes` for entity filtering
+- Systems use `EntityManager` for entity queries and component access
+- Proper dependency injection through constructor
+- Component data encapsulation with properties
+- Separation of concerns between components (data) and systems (behavior)
+
+### Performance Considerations:
+- Systems process only entities with required components
+- Spatial queries use radius-based entity finding
+- Batch processing where applicable
+- Event-driven updates to minimize unnecessary calculations
+
+*Note: These system implementations follow the existing AI.Odin ECS architecture patterns and should integrate seamlessly with the current codebase. Each system is designed to work independently while supporting emergent behaviors through component interactions.*
