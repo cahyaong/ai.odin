@@ -122,6 +122,394 @@ public class StarvationDamageSystem : BaseFixedSystem
 }
 ```
 
+**Stomach & Digestion System Components:**
+```csharp
+public class StomachComponent : IComponent
+{
+    public StomachComponent()
+    {
+        this.FoodItems = new Queue<FoodItem>();
+        this.Capacity = 3;
+        this.DigestionRate = 1.0f;
+    }
+    
+    public required int Capacity { get; init; }           // Blueprint-configurable
+    public required float DigestionRate { get; init; }    // 1.0 = instant, < 1.0 = gradual
+    public Queue<FoodItem> FoodItems { get; init; }
+    
+    public bool IsFull => FoodItems.Count >= Capacity;
+    public bool IsEmpty => FoodItems.Count == 0;
+    public int CurrentCount => FoodItems.Count;
+}
+
+public class FoodItem
+{
+    public required string Type { get; init; }            // "Berry", "Meat", "Water", etc.
+    public required float EnergyValue { get; init; }      // Total energy provided
+    public float DigestionProgress { get; set; } = 0.0f;  // 0.0 to 1.0
+    
+    // P2: Variable digestion rates per food type
+    public float DigestionSpeed { get; init; } = 1.0f;    // Overrides stomach rate if specified
+    
+    // P5: Advanced food properties
+    public float Freshness { get; set; } = 1.0f;          // 1.0 = fresh, 0.0 = spoiled
+    public float Quality { get; init; } = 1.0f;           // Affects energy value
+    public FoodEffect Effect { get; init; }               // Special effects
+    public bool RequiresCooking { get; init; } = false;
+}
+
+public enum FoodEffect
+{
+    None,
+    Healing,        // Restores health
+    Endurance,      // Reduces energy consumption temporarily
+    Speed,          // Increases movement speed
+    Warmth,         // Resistance to cold
+    Hydration       // Satisfies thirst
+}
+```
+
+**Enhanced Vitality Component (Multiple Energy Types):**
+```csharp
+// P0: Simple energy only
+public class VitalityComponent : IComponent
+{
+    public bool IsDead { get; set; }
+    public float Energy { get; set; }
+    public float MaxEnergy { get; set; } = 100.0f;
+    
+    public bool IsEnergyFull => Energy >= MaxEnergy;
+    public float EnergyPercentage => Energy / MaxEnergy;
+}
+
+// P3: Enhanced with dual energy system
+public class VitalityComponentEnhanced : IComponent
+{
+    // Immediate energy
+    public bool IsDead { get; set; }
+    public float Energy { get; set; }
+    public float MaxEnergy { get; set; } = 100.0f;
+    
+    // Stored energy (calories)
+    public float Calories { get; set; } = 200.0f;
+    public float MaxCalories { get; set; } = 500.0f;
+    
+    // Helper properties
+    public bool IsEnergyFull => Energy >= MaxEnergy;
+    public bool IsCaloriesFull => Calories >= MaxCalories;
+    public float EnergyPercentage => Energy / MaxEnergy;
+    public float CaloriesPercentage => Calories / MaxCalories;
+}
+```
+
+**Enhanced Metabolism System with Digestion:**
+```csharp
+public class MetabolismSystem : BaseFixedSystem
+{
+    public MetabolismSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(TraitComponent),
+        typeof(VitalityComponent),
+        typeof(PhysicsComponent),
+        typeof(StomachComponent)  // P1: Added for digestion
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var vitality = entity.FindComponent<VitalityComponent>();
+        if (vitality.IsDead) return;
+        
+        // 1. EXISTING: Energy consumption based on activity
+        var trait = entity.FindComponent<TraitComponent>();
+        var physics = entity.FindComponent<PhysicsComponent>();
+        vitality.Energy -= trait.FindEnergyConsumptionRate(physics.MotionState);
+        
+        // 2. P1: Food digestion from stomach
+        ProcessDigestion(entity, vitality);
+        
+        // 3. Energy bounds checking
+        if (vitality.Energy <= 0)
+        {
+            vitality.IsDead = true;
+            vitality.Energy = 0;
+        }
+        else
+        {
+            vitality.Energy = Math.Min(vitality.Energy, vitality.MaxEnergy);
+        }
+    }
+    
+    private void ProcessDigestion(IEntity entity, VitalityComponent vitality)
+    {
+        var stomach = entity.FindComponent<StomachComponent>();
+        
+        // Skip if no food or energy already full
+        if (stomach.IsEmpty || vitality.IsEnergyFull) return;
+        
+        var food = stomach.FoodItems.Peek();
+        
+        // Use per-item digestion speed if specified, otherwise use stomach rate
+        var digestionRate = food.DigestionSpeed > 0 ? food.DigestionSpeed : stomach.DigestionRate;
+        
+        // Apply digestion progress
+        food.DigestionProgress += digestionRate;
+        
+        // P0: Instant (rate=1.0) or P1: Gradual (rate<1.0) - both work!
+        if (food.DigestionProgress >= 1.0f)
+        {
+            // Fully digested - transfer energy
+            var energyProvided = food.EnergyValue * food.Quality * food.Freshness;
+            vitality.Energy += energyProvided;
+            stomach.FoodItems.Dequeue();
+        }
+    }
+}
+```
+
+**Enhanced Metabolism System with Dual Energy (P3):**
+```csharp
+public class MetabolismSystemWithCalories : BaseFixedSystem
+{
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var vitality = entity.FindComponent<VitalityComponentEnhanced>();
+        if (vitality.IsDead) return;
+        
+        // 1. Energy consumption (uses immediate energy)
+        var trait = entity.FindComponent<TraitComponent>();
+        var physics = entity.FindComponent<PhysicsComponent>();
+        vitality.Energy -= trait.FindEnergyConsumptionRate(physics.MotionState);
+        
+        // 2. Food digestion (converts to calories, not energy!)
+        ProcessDigestionToCalories(entity, vitality);
+        
+        // 3. Resting (converts calories to energy)
+        if (physics.MotionState == MotionState.Resting && vitality.Calories > 0)
+        {
+            var conversion = Math.Min(0.5f, vitality.Calories); // Convert 0.5 calories/tick
+            vitality.Calories -= conversion;
+            vitality.Energy += conversion;
+        }
+        
+        // 4. Starvation (no calories, faster energy drain)
+        if (vitality.Calories <= 0)
+        {
+            vitality.Energy -= 1.0f; // Additional starvation penalty
+        }
+        
+        // 5. Bounds checking
+        vitality.Energy = Math.Clamp(vitality.Energy, 0, vitality.MaxEnergy);
+        vitality.Calories = Math.Clamp(vitality.Calories, 0, vitality.MaxCalories);
+        
+        if (vitality.Energy <= 0)
+        {
+            vitality.IsDead = true;
+        }
+    }
+    
+    private void ProcessDigestionToCalories(IEntity entity, VitalityComponentEnhanced vitality)
+    {
+        var stomach = entity.FindComponent<StomachComponent>();
+        if (stomach.IsEmpty || vitality.IsCaloriesFull) return;
+        
+        var food = stomach.FoodItems.Peek();
+        food.DigestionProgress += stomach.DigestionRate;
+        
+        if (food.DigestionProgress >= 1.0f)
+        {
+            vitality.Calories += food.EnergyValue; // Store as calories
+            stomach.FoodItems.Dequeue();
+        }
+    }
+}
+```
+
+**Inventory System Component:**
+```csharp
+public class InventoryComponent : IComponent
+{
+    public InventoryComponent()
+    {
+        this.Items = new List<InventoryItem>();
+        this.Capacity = 10;
+        this.MaxWeight = 100.0f;
+        this.CurrentWeight = 0.0f;
+    }
+    
+    public required int Capacity { get; init; }         // Max item stacks
+    public required float MaxWeight { get; init; }      // Weight limit
+    public List<InventoryItem> Items { get; init; }
+    public float CurrentWeight { get; set; }
+    
+    public bool IsFull => Items.Count >= Capacity || CurrentWeight >= MaxWeight;
+    public bool IsEmpty => Items.Count == 0;
+    public int SlotsFree => Capacity - Items.Count;
+}
+
+public class InventoryItem
+{
+    public required string Type { get; init; }       // "Berry", "Meat", "Tool", etc.
+    public int Quantity { get; set; }
+    public float Quality { get; set; } = 1.0f;
+    public float Weight { get; init; }
+    public bool IsPerishable { get; init; }
+    public float Freshness { get; set; } = 1.0f;
+}
+```
+
+**Enhanced Harvesting System (Stomach-Aware):**
+```csharp
+public class HarvestingSystem : BaseFixedSystem
+{
+    public HarvestingSystem(IEntityManager entityManager)
+        : base(entityManager)
+    {
+    }
+
+    protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
+    [
+        typeof(IntelligenceComponent),
+        typeof(PhysicsComponent),
+        typeof(StomachComponent)  // P1: Added for stomach storage
+    ];
+
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var stomach = entity.FindComponent<StomachComponent>();
+        
+        // Can't harvest if stomach is full
+        if (stomach.IsFull) return;
+        
+        var intelligence = entity.FindComponent<IntelligenceComponent>();
+        if (intelligence.TargetEntityId == null) return;
+        
+        // Find target resource
+        if (!this.EntityManager.TryGetEntity(intelligence.TargetEntityId.Value, out var targetEntity))
+        {
+            intelligence.TargetEntityId = null;
+            return;
+        }
+        
+        var harvestable = targetEntity.FindComponent<HarvestableComponent>();
+        if (harvestable.Amount <= 0)
+        {
+            intelligence.TargetEntityId = null;
+            return;
+        }
+        
+        // Check harvest range
+        var entityPhysics = entity.FindComponent<PhysicsComponent>();
+        var targetPhysics = targetEntity.FindComponent<PhysicsComponent>();
+        var distance = CalculateDistance(entityPhysics.Position, targetPhysics.Position);
+        
+        if (distance > harvestable.HarvestRadius) return;
+        
+        // SUCCESS: Harvest food into stomach (NO energy manipulation!)
+        harvestable.Amount--;
+        stomach.FoodItems.Enqueue(new FoodItem
+        {
+            Type = harvestable.ResourceBlueprintId,
+            EnergyValue = harvestable.EnergyValue
+        });
+        
+        intelligence.TargetEntityId = null;
+    }
+    
+    private float CalculateDistance(Point p1, Point p2)
+    {
+        var dx = p1.X - p2.X;
+        var dy = p1.Y - p2.Y;
+        return MathF.Sqrt(dx * dx + dy * dy);
+    }
+}
+```
+
+**Enhanced Decision Making System (Stomach-Aware):**
+```csharp
+public class DecisionMakingSystem : BaseFixedSystem
+{
+    protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
+    {
+        var vitality = entity.FindComponent<VitalityComponent>();
+        var intelligence = entity.FindComponent<IntelligenceComponent>();
+        var stomach = entity.FindComponent<StomachComponent>();
+        
+        // Low energy detection
+        if (vitality.Energy < 30)
+        {
+            // Strategy 1: If have food in stomach, idle and let it digest
+            if (!stomach.IsEmpty)
+            {
+                intelligence.EntityState = EntityState.Idling;
+                var physics = entity.FindComponent<PhysicsComponent>();
+                physics.MotionState = MotionState.Idling;
+                physics.Velocity = Vector.Zero;
+                return;
+            }
+            
+            // Strategy 2: Stomach empty - need to find food
+            if (!stomach.IsFull)
+            {
+                var nearestBush = FindNearestBerryBush(entity, gameState);
+                
+                if (nearestBush != null)
+                {
+                    // Navigate to berry bush
+                    intelligence.TargetEntityId = nearestBush.Id;
+                    intelligence.TargetPosition = nearestBush.Position;
+                    return;
+                }
+            }
+            
+            // Strategy 3: No food available - fallback to resting
+            intelligence.EntityState = EntityState.Resting;
+            var physicsComp = entity.FindComponent<PhysicsComponent>();
+            physicsComp.MotionState = MotionState.Resting;
+            physicsComp.Velocity = Vector.Zero;
+            return;
+        }
+        
+        // Safe energy - resume normal behaviors
+        if (vitality.Energy > 70)
+        {
+            intelligence.TargetEntityId = null;
+            // Resume normal AI logic...
+        }
+    }
+    
+    private IEntity FindNearestBerryBush(IEntity entity, IGameState gameState)
+    {
+        var physics = entity.FindComponent<PhysicsComponent>();
+        var bushes = this.EntityManager.FindEntitiesWithComponent<HarvestableComponent>();
+        
+        IEntity nearest = null;
+        float minDistance = float.MaxValue;
+        
+        foreach (var bush in bushes)
+        {
+            var harvestable = bush.FindComponent<HarvestableComponent>();
+            if (harvestable.Amount <= 0) continue;
+            
+            var bushPhysics = bush.FindComponent<PhysicsComponent>();
+            var distance = CalculateDistance(physics.Position, bushPhysics.Position);
+            
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearest = bush;
+            }
+        }
+        
+        return nearest;
+    }
+}
+```
+
 **Temperature & Climate Survival Components:**
 ```csharp
 public class TemperatureToleranceComponent : IComponent

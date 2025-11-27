@@ -18,18 +18,30 @@ Our design philosophy emphasizes emergence over scripted content, providing play
 
 **Components:**
 - **Hunger System**: Dynamic hunger based on activity level and genetic traits, with starvation consequences and food preferences
+- **Stomach & Digestion System**: Food storage and gradual energy conversion with configurable digestion rates
+  - `StomachComponent`: Queue-based food storage (FIFO), blueprint-configurable capacity (default: 3 items)
+  - `FoodItem`: Tracks food type, energy value, and digestion progress (0.0 to 1.0)
+  - Supports instant digestion (rate=1.0) and gradual digestion (rate < 1.0) with same code
+- **Multiple Energy Types**: Dual energy system for sophisticated metabolism
+  - `Energy`: Immediate energy for actions (movement, combat, abilities)
+  - `Calories`: Stored energy that converts to Energy when resting
+  - Blueprint-configurable: separate max values and conversion rates
 - **Temperature & Climate Survival**: Environmental temperature effects with seasonal variations, hypothermia/heat stroke mechanics, and shelter systems
 - **Disease & Plague Systems**: Infectious diseases with contagion spread, immunity development, and natural population control
 
 **Systems:**
 - `HungerDecaySystem` - Decreases hunger over time based on metabolism
 - `StarvationSystem` - Applies health damage when hunger reaches 0
+- `MetabolismSystem` - Handles BOTH energy consumption AND food digestion from stomach
 - `TemperatureRegulationSystem` - Updates body temperature based on environment
 - `DiseaseSpreadSystem` - Handles contagion between nearby entities
 - `ImmuneResponseSystem` - Fights infections and builds immunity
 
 **Enhanced Features (Building on Current Implementation):**
 - Multi-resource survival (hunger, thirst, temperature) extending current energy system
+- Stomach-based food storage separating acquisition from digestion
+- Gradual digestion with configurable rates per food type
+- Dual energy system (Energy + Calories) for realistic metabolism
 - Disease and plague mechanics with contagion patterns
 - Environmental temperature effects requiring shelter and clothing
 - Natural population control through survival pressure
@@ -41,10 +53,20 @@ Our design philosophy emphasizes emergence over scripted content, providing play
 
 **Components:**
 - **Resource Gathering**: Renewable vs finite resources with skill-based efficiency and tool crafting
+- **Inventory System**: Personal item carrying separate from digestion
+  - `InventoryComponent`: Multi-item storage with configurable capacity
+  - Item flow: Harvest → Inventory → Stomach → Digestion → Energy
+  - Enables sharing, trading, and strategic resource planning
+- **Variable Food Processing**: Different food types with unique properties
+  - Digestion rates vary by food type (berries: fast, meat: slow, water: instant)
+  - Food quality levels affecting energy value (Poor: 50%, Excellent: 150%)
+  - Freshness/spoilage mechanics with preservation methods
+  - Cooking requirements and quality improvements
 - **Storage & Distribution**: Personal vs communal storage with spoilage mechanics and transport networks
 
 **Systems:**
 - `ResourceGatheringSystem` - Handles harvesting actions with skill-based efficiency
+- `HarvestingSystem` - Collects food into stomach or inventory based on agent decision
 - `ResourceRegrowthSystem` - Regenerates harvestable resources over time
 - `StorageManagementSystem` - Assigns items to appropriate storage locations
 - `HaulingSystem` - Creates and manages hauling tasks between locations
