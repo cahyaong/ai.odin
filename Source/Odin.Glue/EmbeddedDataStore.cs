@@ -15,6 +15,11 @@ using YamlDotNet.Serialization;
 
 public class EmbeddedDataStore : IDataStore
 {
+    public IEnumerable<ScenarioBlueprint> LoadScenarioBlueprints()
+    {
+        return EmbeddedDataStore.LoadBlueprints<ScenarioBlueprint>("scenario");
+    }
+
     public IEnumerable<EntityBlueprint> LoadEntityBlueprints()
     {
         return EmbeddedDataStore.LoadBlueprints<EntityBlueprint>("entity");

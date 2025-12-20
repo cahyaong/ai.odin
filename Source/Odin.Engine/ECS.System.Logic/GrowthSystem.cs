@@ -12,7 +12,7 @@ namespace nGratis.AI.Odin.Engine;
 public class GrowthSystem : BaseFixedSystem
 {
     public GrowthSystem(IEntityManager entityManager)
-        : base(entityManager)
+        : base(ScenarioBlueprint.None, entityManager)
     {
     }
 

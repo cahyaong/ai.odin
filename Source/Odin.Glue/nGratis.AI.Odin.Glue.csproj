@@ -11,6 +11,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Common.Blueprint\entity-human.ngaoblueprint" />
     <EmbeddedResource Include="Common.Blueprint\entity-bush.ngaoblueprint" />
+    <EmbeddedResource Include="Common.Blueprint\scenario-random.ngaoblueprint" />
     <EmbeddedResource Include="Common.Blueprint\spritesheet-bush.ngaoblueprint" />
     <EmbeddedResource Include="Common.Blueprint\spritesheet-humanoid.ngaoblueprint" />
   </ItemGroup>

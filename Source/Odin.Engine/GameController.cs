@@ -34,8 +34,6 @@ public class GameController : IGameController
         };
 
         this._timeTracker = timeTracker;
-        this._timeTracker.DeltaChanged += this.OnDeltaChanged;
-        this._timeTracker.TickChanged += this.OnTickChanged;
 
         this._systems = systems
             .OrderBy(system => system
@@ -50,12 +48,18 @@ public class GameController : IGameController
 
     public void Start()
     {
+        this._timeTracker.DeltaChanged += this.OnDeltaChanged;
+        this._timeTracker.TickChanged += this.OnTickChanged;
+
         this._timeTracker.Start();
     }
 
     public void End()
     {
         this._timeTracker.End();
+
+        this._timeTracker.DeltaChanged -= this.OnDeltaChanged;
+        this._timeTracker.TickChanged -= this.OnTickChanged;
     }
 
     private void OnDeltaChanged(object? _, DeltaChangedEventArgs args)

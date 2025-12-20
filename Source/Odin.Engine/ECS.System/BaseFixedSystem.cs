@@ -11,8 +11,8 @@ namespace nGratis.AI.Odin.Engine;
 
 public abstract class BaseFixedSystem : BaseSystem
 {
-    protected BaseFixedSystem(IEntityManager entityManager)
-        : base(entityManager)
+    protected BaseFixedSystem(ScenarioBlueprint scenarioBlueprint, IEntityManager entityManager)
+        : base(scenarioBlueprint, entityManager)
     {
     }
 

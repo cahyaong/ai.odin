@@ -34,6 +34,9 @@ public partial class TimeTracker : Node, ITimeTracker
 
     public void Start()
     {
+        this._tick = 0;
+        this._accumulatedDelta = 0.0;
+
         this._isPaused = false;
     }
 

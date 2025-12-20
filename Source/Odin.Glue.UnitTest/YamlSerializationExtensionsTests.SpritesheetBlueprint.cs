@@ -33,13 +33,13 @@ public class YamlSerializationExtensionsTests_SpriteSheetBlueprint
                 [
                     new AnimationBlueprint
                     {
-                        Id = "[_MOCK_ANIMATION_ID_01_]",
+                        Name = "[_MOCK_ANIMATION_ID_01_]",
                         StartingCell = new Cell { Row = 1, Column = 3 },
                         EndingCell = new Cell { Row = 5, Column = 7 }
                     },
                     new AnimationBlueprint
                     {
-                        Id = "[_MOCK_ANIMATION_ID_02_]",
+                        Name = "[_MOCK_ANIMATION_ID_02_]",
                         StartingCell = new Cell { Row = 2, Column = 4 },
                         EndingCell = new Cell { Row = 6, Column = 8 }
                     }
@@ -90,7 +90,7 @@ public class YamlSerializationExtensionsTests_SpriteSheetBlueprint
 
             var animationBlueprintByIdLookup = spriteSheetBlueprint
                 .AnimationBlueprints
-                .ToImmutableDictionary(animationBlueprint => animationBlueprint.Id);
+                .ToImmutableDictionary(animationBlueprint => animationBlueprint.Name);
 
             animationBlueprintByIdLookup
                 .Keys
@@ -140,10 +140,10 @@ public class YamlSerializationExtensionsTests_SpriteSheetBlueprint
 id: '[_MOCK_BLUEPRINT_ID_]'
 sprite-size: <Size> (W:16, H:32)
 animation-blueprints:
-  - id: '[_MOCK_ANIMATION_ID_01_]'
+  - name: '[_MOCK_ANIMATION_ID_01_]'
     starting-cell: <Cell> (R:1, C:3)
     ending-cell: <Cell> (R:5, C:7)
-  - id: '[_MOCK_ANIMATION_ID_02_]'
+  - name: '[_MOCK_ANIMATION_ID_02_]'
     starting-cell: <Cell> (R:2, C:4)
     ending-cell: <Cell> (R:6, C:8)";
     }

@@ -1,19 +1,17 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IDataStore.cs" company="nGratis">
+// <copyright file="Boundary.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
 // <author>Cahya Ong — cahya.ong@gmail.com</author>
-// <creation_timestamp>Wednesday, May 28, 2025 3:02:39 AM UTC</creation_timestamp>
+// <creation_timestamp>Sunday, September 7, 2025 2:52:16 AM UTC</creation_timestamp>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace nGratis.AI.Odin.Engine;
 
-public interface IDataStore
+public record Boundary
 {
-    IEnumerable<ScenarioBlueprint> LoadScenarioBlueprints();
+    public required Point StartingPoint { get; init; }
 
-    IEnumerable<EntityBlueprint> LoadEntityBlueprints();
-
-    IEnumerable<SpriteSheetBlueprint> LoadSpriteSheetBlueprints();
+    public required Point EndingPoint { get; init; }
 }

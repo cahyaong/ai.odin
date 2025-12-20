@@ -22,7 +22,7 @@ public class DebuggingSystem : BaseSystem
         IStatisticsOverlay statisticsOverlay,
         IDiagnosticOverlay diagnosticOverlay,
         IEntityManager entityManager)
-        : base(entityManager)
+        : base(ScenarioBlueprint.None, entityManager)
     {
         this._statisticsOverlay = statisticsOverlay;
         this._diagnosticOverlay = diagnosticOverlay;

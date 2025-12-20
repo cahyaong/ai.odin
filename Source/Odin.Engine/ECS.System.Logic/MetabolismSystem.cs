@@ -12,7 +12,7 @@ namespace nGratis.AI.Odin.Engine;
 public class MetabolismSystem : BaseFixedSystem
 {
     public MetabolismSystem(IEntityManager entityManager)
-        : base(entityManager)
+        : base(ScenarioBlueprint.None, entityManager)
     {
     }
 

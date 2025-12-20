@@ -16,7 +16,7 @@ public class MovementSystem : BaseFixedSystem
     private readonly Random _random;
 
     public MovementSystem(IEntityManager entityManager)
-        : base(entityManager)
+        : base(ScenarioBlueprint.None, entityManager)
     {
         this._random = new Random();
     }

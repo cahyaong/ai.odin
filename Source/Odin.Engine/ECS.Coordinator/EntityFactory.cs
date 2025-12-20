@@ -16,7 +16,7 @@ using nGratis.Cop.Olympus.Contract;
 
 public class EntityFactory : IEntityFactory
 {
-    private readonly IReadOnlyDictionary<string, EntityBlueprint> _entityBlueprintByBlueprintIdLookup;
+    private readonly IDictionary<string, EntityBlueprint> _entityBlueprintByBlueprintIdLookup;
 
     private readonly IReadOnlyList<IComponentFactory> _componentFactories;
 

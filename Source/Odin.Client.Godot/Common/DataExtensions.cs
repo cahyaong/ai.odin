@@ -13,5 +13,8 @@ namespace nGratis.AI.Odin.Engine;
 
 public static class DataExtensions
 {
-    public static Vector2 ToVector2(this Point point) => new(point.X, point.Y);
+    extension(Point point)
+    {
+        public Vector2 ToVector2() => new(point.X, point.Y);
+    }
 }

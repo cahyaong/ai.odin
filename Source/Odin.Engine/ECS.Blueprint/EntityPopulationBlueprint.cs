@@ -1,19 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IDataStore.cs" company="nGratis">
+// <copyright file="EntityPopulationBlueprint.cs" company="nGratis">
 //  The MIT License — Copyright (c) Cahya Ong
 //  See the LICENSE file in the project root for more information.
 // </copyright>
 // <author>Cahya Ong — cahya.ong@gmail.com</author>
-// <creation_timestamp>Wednesday, May 28, 2025 3:02:39 AM UTC</creation_timestamp>
+// <creation_timestamp>Sunday, December 7, 2025 4:32:13 AM UTC</creation_timestamp>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace nGratis.AI.Odin.Engine;
 
-public interface IDataStore
+public record EntityPopulationBlueprint
 {
-    IEnumerable<ScenarioBlueprint> LoadScenarioBlueprints();
+    public required string EntityId { get; init; }
 
-    IEnumerable<EntityBlueprint> LoadEntityBlueprints();
+    public required int Quantity { get; init; }
 
-    IEnumerable<SpriteSheetBlueprint> LoadSpriteSheetBlueprints();
+    public required PlacementBlueprint PlacementBlueprint { get; init; }
+
+    public required SpawningBlueprint SpawningBlueprint { get; init; }
 }

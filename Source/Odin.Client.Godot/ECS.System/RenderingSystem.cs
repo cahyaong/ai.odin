@@ -18,7 +18,7 @@ using nGratis.Cop.Olympus.Contract;
 public class RenderingSystem : BaseFixedSystem
 {
     public RenderingSystem(IEntityManager entityManager)
-        : base(entityManager)
+        : base(ScenarioBlueprint.None, entityManager)
     {
     }
 

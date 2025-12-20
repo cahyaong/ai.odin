@@ -11,8 +11,8 @@ namespace nGratis.AI.Odin.Engine;
 
 public abstract class BaseVariableSystem : BaseSystem
 {
-    protected BaseVariableSystem(IEntityManager entityManager)
-        : base(entityManager)
+    protected BaseVariableSystem(ScenarioBlueprint scenarioBlueprint, IEntityManager entityManager)
+        : base(scenarioBlueprint, entityManager)
     {
     }
 

@@ -16,107 +16,130 @@ using nGratis.AI.Odin.Glue;
 
 public partial class AppBootstrapper : Node
 {
+    private Node _rootNode;
+
     public IDataStore DataStore { get; private set; }
+
+    public IGameController GameController { get; private set; }
 
     public override void _Ready()
     {
-        var rootNode = this.GetParent();
+        this._rootNode = this.GetParent();
+
+        this.Bootstrap(ScenarioBlueprint.None);
+    }
+
+    public void Bootstrap(ScenarioBlueprint scenarioBlueprint)
+    {
+        if (this._rootNode is null)
+        {
+            throw new OdinException("Application bootstrapper is NOT ready!");
+        }
 
         var container = new ContainerBuilder()
-            .RegisterInfrastructure(rootNode)
+            .RegisterBlueprint(scenarioBlueprint)
+            .RegisterInfrastructure(this._rootNode)
             .RegisterStorage()
-            .RegisterEntityCoordinator(rootNode)
+            .RegisterEntityCoordinator(this._rootNode)
             .RegisterSystem()
             .Build();
 
-        this.DataStore = container
-            .Resolve<IDataStore>();
-
-        container
-            .Resolve<IGameController>()
-            .Start();
+        this.DataStore = container.Resolve<IDataStore>();
+        this.GameController = container.Resolve<IGameController>();
     }
 }
 
 internal static class AutofacExtensions
 {
-    public static ContainerBuilder RegisterInfrastructure(this ContainerBuilder containerBuilder, Node rootNode)
+    extension(ContainerBuilder containerBuilder)
     {
-        containerBuilder
-            .Register(_ => rootNode.GetNode<Camera>("MainCamera"))
-            .InstancePerLifetimeScope()
-            .As<ICamera>();
+        public ContainerBuilder RegisterBlueprint(ScenarioBlueprint scenarioBlueprint)
+        {
+            containerBuilder
+                .RegisterInstance(scenarioBlueprint)
+                .As<ScenarioBlueprint>();
 
-        containerBuilder
-            .Register(_ => rootNode.GetNode<TimeTracker>(nameof(TimeTracker)))
-            .InstancePerLifetimeScope()
-            .As<ITimeTracker>();
+            return containerBuilder;
+        }
 
-        containerBuilder
-            .Register(_ => rootNode
-                .GetNode<HeadUpDisplay>(nameof(HeadUpDisplay))
-                .StatisticsOverlay)
-            .InstancePerLifetimeScope()
-            .As<IStatisticsOverlay>();
+        public ContainerBuilder RegisterInfrastructure(Node rootNode)
+        {
+            containerBuilder
+                .Register(_ => rootNode.GetNode<Camera>("MainCamera"))
+                .InstancePerLifetimeScope()
+                .As<ICamera>();
 
-        containerBuilder
-            .Register(_ => rootNode.GetNode<DiagnosticsOverlay>(nameof(DiagnosticsOverlay)))
-            .InstancePerLifetimeScope()
-            .As<IDiagnosticOverlay>();
+            containerBuilder
+                .Register(_ => rootNode.GetNode<TimeTracker>(nameof(TimeTracker)))
+                .InstancePerLifetimeScope()
+                .As<ITimeTracker>();
 
-        containerBuilder
-            .RegisterType<GameController>()
-            .InstancePerLifetimeScope()
-            .As<IGameController>();
+            containerBuilder
+                .Register(_ => rootNode
+                    .GetNode<HeadUpDisplay>(nameof(HeadUpDisplay))
+                    .StatisticsOverlay)
+                .InstancePerLifetimeScope()
+                .As<IStatisticsOverlay>();
 
-        return containerBuilder;
-    }
+            containerBuilder
+                .Register(_ => rootNode.GetNode<DiagnosticsOverlay>(nameof(DiagnosticsOverlay)))
+                .InstancePerLifetimeScope()
+                .As<IDiagnosticOverlay>();
 
-    public static ContainerBuilder RegisterStorage(this ContainerBuilder containerBuilder)
-    {
-        containerBuilder
-            .RegisterType<EmbeddedDataStore>()
-            .InstancePerLifetimeScope()
-            .As<IDataStore>();
+            containerBuilder
+                .RegisterType<GameController>()
+                .InstancePerLifetimeScope()
+                .As<IGameController>();
 
-        return containerBuilder;
-    }
+            return containerBuilder;
+        }
 
-    public static ContainerBuilder RegisterEntityCoordinator(this ContainerBuilder containerBuilder, Node rootNode)
-    {
-        containerBuilder
-            .RegisterType<EntityFactory>()
-            .InstancePerLifetimeScope()
-            .As<IEntityFactory>();
+        public ContainerBuilder RegisterStorage()
+        {
+            containerBuilder
+                .RegisterType<EmbeddedDataStore>()
+                .InstancePerLifetimeScope()
+                .As<IDataStore>();
 
-        containerBuilder
-            .RegisterType<EntityManager>()
-            .InstancePerLifetimeScope()
-            .As<IEntityManager>();
+            return containerBuilder;
+        }
 
-        containerBuilder
-            .RegisterType<Engine.ComponentFactory>()
-            .InstancePerLifetimeScope()
-            .As<IComponentFactory>();
+        public ContainerBuilder RegisterEntityCoordinator(Node rootNode)
+        {
+            containerBuilder
+                .RegisterType<EntityFactory>()
+                .InstancePerLifetimeScope()
+                .As<IEntityFactory>();
 
-        containerBuilder
-            .Register(_ => (ComponentFactory)rootNode.FindChild(nameof(ComponentFactory)))
-            .InstancePerLifetimeScope()
-            .As<IComponentFactory>();
+            containerBuilder
+                .RegisterType<EntityManager>()
+                .InstancePerLifetimeScope()
+                .As<IEntityManager>();
 
-        return containerBuilder;
-    }
+            containerBuilder
+                .RegisterType<Engine.ComponentFactory>()
+                .InstancePerLifetimeScope()
+                .As<IComponentFactory>();
 
-    public static ContainerBuilder RegisterSystem(this ContainerBuilder containerBuilder)
-    {
-        containerBuilder
-            .RegisterAssemblyTypes(
-                Assembly.GetAssembly(typeof(ISystem)) ?? Assembly.GetExecutingAssembly(),
-                Assembly.GetExecutingAssembly())
-            .Where(type => type.IsAssignableTo<ISystem>())
-            .InstancePerLifetimeScope()
-            .As<ISystem>();
+            containerBuilder
+                .Register(_ => (ComponentFactory)rootNode.FindChild(nameof(ComponentFactory)))
+                .InstancePerLifetimeScope()
+                .As<IComponentFactory>();
 
-        return containerBuilder;
+            return containerBuilder;
+        }
+
+        public ContainerBuilder RegisterSystem()
+        {
+            containerBuilder
+                .RegisterAssemblyTypes(
+                    Assembly.GetAssembly(typeof(ISystem)) ?? Assembly.GetExecutingAssembly(),
+                    Assembly.GetExecutingAssembly())
+                .Where(type => type.IsAssignableTo<ISystem>())
+                .InstancePerLifetimeScope()
+                .As<ISystem>();
+
+            return containerBuilder;
+        }
     }
 }

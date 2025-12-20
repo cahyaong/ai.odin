@@ -34,6 +34,7 @@ public static class YamlSerializationExtensions
         .WithNamingConvention(YamlSerializationExtensions.NamingConvention)
         .WithTypeConverter(ParameterYamlConverter.Instance)
         .WithTypeConverter(ScalarYamlConverter.Instance)
+        .WithTypeConverter(new ScalarOrSequenceYamlConverter<ScenarioBlueprint>())
         .WithTypeConverter(new ScalarOrSequenceYamlConverter<EntityBlueprint>())
         .WithTypeConverter(new ScalarOrSequenceYamlConverter<SpriteSheetBlueprint>())
         .Build();

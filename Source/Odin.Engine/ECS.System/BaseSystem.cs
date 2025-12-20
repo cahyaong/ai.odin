@@ -11,10 +11,13 @@ namespace nGratis.AI.Odin.Engine;
 
 public abstract class BaseSystem : ISystem
 {
-    protected BaseSystem(IEntityManager entityManager)
+    protected BaseSystem(ScenarioBlueprint scenarioBlueprint, IEntityManager entityManager)
     {
+        this.ScenarioBlueprint = scenarioBlueprint;
         this.EntityManager = entityManager;
     }
+
+    protected ScenarioBlueprint ScenarioBlueprint { get; }
 
     protected IEntityManager EntityManager { get; }
 

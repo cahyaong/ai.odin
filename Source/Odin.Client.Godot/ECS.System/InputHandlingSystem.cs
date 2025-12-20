@@ -17,7 +17,7 @@ public class InputHandlingSystem : BaseSystem
     private readonly ICamera _camera;
 
     public InputHandlingSystem(ICamera camera)
-        : base(Engine.EntityManager.Unknown)
+        : base(ScenarioBlueprint.None, Engine.EntityManager.Unknown)
     {
         this._camera = camera;
     }

@@ -1,0 +1,20 @@
+﻿id: 'Random'
+universe-blueprint:
+  size: <Size> (W:128, H:128)
+entity-population-blueprints:
+  - entity-id: 'Human'
+    quantity: 50
+    placement-blueprint:
+       placement-strategy: 'Random'
+       center-point: <Point> (X:8, Y:8)
+       region-size: <Size> (W:16, H:16)
+    spawning-blueprint:
+      spawning-strategy: 'Initial'
+  - entity-id: 'BlueberryBush'
+    quantity: 25
+    placement-blueprint:
+       placement-strategy: 'Random'
+       center-point: <Point> (X:96, Y:96)
+       region-size: <Size> (W:32, H:32)
+    spawning-blueprint:
+      spawning-strategy: 'Initial'

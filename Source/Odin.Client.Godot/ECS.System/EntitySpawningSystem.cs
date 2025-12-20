@@ -21,8 +21,11 @@ public class EntitySpawningSystem : BaseSystem
 
     private readonly Random _random;
 
-    public EntitySpawningSystem(IEntityFactory entityFactory, IEntityManager entityManager)
-        : base(entityManager)
+    public EntitySpawningSystem(
+        ScenarioBlueprint scenarioBlueprint,
+        IEntityFactory entityFactory,
+        IEntityManager entityManager)
+        : base(scenarioBlueprint, entityManager)
     {
         this._entityFactory = entityFactory;
         this._random = new Random();

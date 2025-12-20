@@ -50,20 +50,20 @@ public partial class SpriteSheetFactory : Node
         spriteFrames = new SpriteFrames();
         this._spriteFramesBySpriteSheetIdLookup.Add(spriteSheetBlueprint.Id, spriteFrames);
 
-        foreach (var animationBlueprint in spriteSheetBlueprint.AnimationBlueprints)
+        foreach (var animation in spriteSheetBlueprint.AnimationBlueprints)
         {
-            spriteFrames.AddAnimation(animationBlueprint.Id);
-            spriteFrames.SetAnimationSpeed(animationBlueprint.Id, 8.0);
-            spriteFrames.SetAnimationLoop(animationBlueprint.Id, true);
+            spriteFrames.AddAnimation(animation.Name);
+            spriteFrames.SetAnimationSpeed(animation.Name, 8.0);
+            spriteFrames.SetAnimationLoop(animation.Name, true);
 
             SpriteSheetFactory
-                .CreateFrameRegions(animationBlueprint, spriteSheetBlueprint.SpriteSize)
+                .CreateFrameRegions(animation, spriteSheetBlueprint.SpriteSize)
                 .Select(frameRegion => new AtlasTexture
                 {
                     Atlas = texture,
                     Region = frameRegion
                 })
-                .ForEach(atlasTexture => spriteFrames.AddFrame(animationBlueprint.Id, atlasTexture));
+                .ForEach(atlasTexture => spriteFrames.AddFrame(animation.Name, atlasTexture));
         }
 
         return spriteFrames;

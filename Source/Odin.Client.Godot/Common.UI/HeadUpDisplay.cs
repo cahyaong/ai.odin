@@ -13,5 +13,8 @@ using nGratis.AI.Odin.Engine;
 
 public partial class HeadUpDisplay : Control
 {
+    [Export]
+    public AppBootstrapper AppBootstrapper { get; private set; }
+
     public IStatisticsOverlay StatisticsOverlay => this.GetNode<StatisticsOverlay>(nameof(this.StatisticsOverlay));
 }
