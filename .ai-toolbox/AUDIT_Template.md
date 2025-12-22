@@ -1,8 +1,10 @@
 # Project Audit Template
 
+**Last Updated:** December 21, 2025
+
 This template provides a standardized format for conducting comprehensive project audits across different aspects and projects.
 
-## Universal Audit Prompt
+## 1. Universal Audit Prompt
 
 Use this adaptable prompt to request auditing on any aspect of your project:
 
@@ -15,16 +17,16 @@ Create an audit report following the standardized template with:
 - Executive summary with overall grade (A-F)
 - Detailed analysis with specific file paths and line numbers where applicable
 - Examples showing problems and solutions
-- Severity ratings (🚨 Critical/❌ High/⚠️ Medium/ℹ️ Low)
+- Severity ratings (🚨 CRITICAL | ❌ HIGH | ⚠️ MEDIUM | ℹ️ LOW)
 - Prioritized action items with realistic timelines
 - [READINESS_TYPE] assessment with specific recommendations
 
 Be extremely detailed and nitpicky - include specific, actionable recommendations for every issue found.
 ```
 
-## Audit Type Configurations
+## 2. Audit Type Configurations
 
-### **Code Quality Audit**
+### 2.1 Code Quality Audit
 - **ROLE:** `software engineer`
 - **AUDIT_TYPE:** `code quality`
 - **FOCUS_AREA:** `production readiness and maintainability`
@@ -50,7 +52,7 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 - Code duplication and maintainability
 ```
 
-### **Asset Management Audit**
+### 2.2 Asset Management Audit
 - **ROLE:** `technical artist/asset pipeline engineer`
 - **AUDIT_TYPE:** `asset management`
 - **FOCUS_AREA:** `scalable asset workflows and organization`
@@ -76,7 +78,7 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 - Scalability considerations
 ```
 
-### **System Architecture Audit**
+### 2.3 System Architecture Audit
 - **ROLE:** `system architect`
 - **AUDIT_TYPE:** `system architecture`
 - **FOCUS_AREA:** `scalability, reliability, and maintainability`
@@ -102,7 +104,7 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 - Compliance requirements
 ```
 
-### **Security Audit**
+### 2.4 Security Audit
 - **ROLE:** `security engineer`
 - **AUDIT_TYPE:** `security`
 - **FOCUS_AREA:** `vulnerability assessment and threat mitigation`
@@ -128,7 +130,7 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 - Security training and awareness
 ```
 
-### **Performance Audit**
+### 2.5 Performance Audit
 - **ROLE:** `performance engineer`
 - **AUDIT_TYPE:** `performance`
 - **FOCUS_AREA:** `optimization and scalability`
@@ -154,7 +156,7 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 - Performance monitoring and alerting
 ```
 
-### **DevOps/Infrastructure Audit**
+### 2.6 DevOps/Infrastructure Audit
 - **ROLE:** `DevOps engineer`
 - **AUDIT_TYPE:** `DevOps infrastructure`
 - **FOCUS_AREA:** `deployment reliability and operational excellence`
@@ -180,7 +182,7 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 - Backup and disaster recovery
 ```
 
-### **User Experience (UX) Audit**
+### 2.7 User Experience (UX) Audit
 - **ROLE:** `UX designer/researcher`
 - **AUDIT_TYPE:** `user experience`
 - **FOCUS_AREA:** `usability and user satisfaction`
@@ -206,9 +208,9 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 - Continuous improvement processes
 ```
 
-## Report Template Structure
+## 3. Report Template Structure
 
-### Header Section
+### 3.1 Header Section
 ```markdown
 # [Audit Type] Audit Report
 
@@ -218,7 +220,7 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 **Review Scope:** [Scope Description]
 ```
 
-### Executive Summary
+### 3.2 Executive Summary
 ```markdown
 ## Executive Summary
 
@@ -238,7 +240,7 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 - ❌ **HIGH:** [High Priority Issue 2]
 ```
 
-### Detailed Analysis Section Template
+### 3.3 Detailed Analysis Section Template
 ```markdown
 ## Detailed Analysis
 
@@ -264,13 +266,13 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 ```
 ```
 
-### Severity Rating Guidelines
+### 3.4 Severity Rating Guidelines
 - **🚨 CRITICAL:** Production blockers, security vulnerabilities, data corruption risks
 - **❌ HIGH:** Major performance issues, architecture violations, maintainability problems
 - **⚠️ MEDIUM:** Code quality issues, minor performance problems, inconsistencies
 - **ℹ️ LOW:** Style issues, documentation gaps, minor improvements
 
-### Priority Action Template
+### 3.5 Priority Action Template
 ```markdown
 ## Priority Recommendations
 
@@ -287,7 +289,7 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 2. **[Action]** - [brief description]
 ```
 
-### Assessment Template
+### 3.6 Assessment Template
 ```markdown
 ## Production Readiness Assessment
 
@@ -302,9 +304,9 @@ Be extremely detailed and nitpicky - include specific, actionable recommendation
 **Recommended Approach:** [Strategy for addressing issues]
 ```
 
-## Quick Reference Examples
+## 4. Quick Reference Examples
 
-### Example 1: Asset Management Audit
+### 4.1 Asset Management Audit Example
 ```
 As a senior technical artist/asset pipeline engineer, conduct a comprehensive asset management audit of this project focusing on scalable asset workflows and organization. Please analyze:
 
@@ -330,14 +332,14 @@ Create an audit report following the standardized template with:
 - Executive summary with overall grade (A-F)
 - Detailed analysis with specific file paths and line numbers where applicable
 - Examples showing problems and solutions
-- Severity ratings (🚨 Critical/❌ High/⚠️ Medium/ℹ️ Low)
+- Severity ratings (🚨 CRITICAL | ❌ HIGH | ⚠️ MEDIUM | ℹ️ LOW)
 - Prioritized action items with realistic timelines
 - Production asset pipeline readiness assessment with specific recommendations
 
 Be extremely detailed and nitpicky - include specific, actionable recommendations for every issue found.
 ```
 
-### Example 2: Security Audit
+### 4.2 Security Audit Example
 ```
 As a senior security engineer, conduct a comprehensive security audit of this project focusing on vulnerability assessment and threat mitigation. Please analyze:
 
@@ -363,14 +365,14 @@ Create an audit report following the standardized template with:
 - Executive summary with overall grade (A-F)
 - Detailed analysis with specific file paths and line numbers where applicable
 - Examples showing problems and solutions
-- Severity ratings (🚨 Critical/❌ High/⚠️ Medium/ℹ️ Low)
+- Severity ratings (🚨 CRITICAL | ❌ HIGH | ⚠️ MEDIUM | ℹ️ LOW)
 - Prioritized action items with realistic timelines
 - Security compliance readiness assessment with specific recommendations
 
 Be extremely detailed and nitpicky - include specific, actionable recommendations for every issue found.
 ```
 
-## Custom Audit Creation
+## 5. Custom Audit Creation
 
 To create a new audit type, define:
 
@@ -380,7 +382,7 @@ To create a new audit type, define:
 4. **READINESS_TYPE:** The outcome measure (e.g., "Database production readiness")
 5. **ANALYSIS_AREAS:** Specific areas to examine
 
-### Template for New Audit Types:
+### 5.1 Template for New Audit Types
 ```
 ### **[New Audit Type] Audit**
 - **ROLE:** `[expert role]`
@@ -401,9 +403,9 @@ To create a new audit type, define:
 ```
 ```
 
-## Code Example Formatting Standards
+## 6. Code Example Formatting Standards
 
-### Problem Code:
+### 6.1 Problem Code Format
 ```markdown
 ```csharp
 // ❌ PROBLEM: Description of what's wrong
@@ -414,7 +416,7 @@ public void BadMethod()
 ```
 ```
 
-### Solution Code:
+### 6.2 Solution Code Format
 ```markdown
 ```csharp
 // ✅ SOLUTION: Description of improvement
@@ -425,13 +427,13 @@ public void GoodMethod()
 ```
 ```
 
-## File Reference Standards
+## 7. File Reference Standards
 
 Always include exact file paths and line numbers:
-- **File:** `Source/Project.Name/Folder/FileName.cs:45-67`
+- **File:** `src/Restaurant.API/Controllers/OrderController.cs:45-67`
 - **Files:** Multiple files listed with line numbers
 
-## Metrics and Measurements Template
+## 8. Metrics and Measurements Template
 
 ```markdown
 ## Metrics and Measurements
@@ -445,7 +447,7 @@ Always include exact file paths and line numbers:
 - **[Performance Aspect]:** [Current state] ([needs/good])
 ```
 
-## Usage Notes
+## 9. Usage Notes
 
 1. **Be Specific:** Always include file paths, line numbers, and code examples
 2. **Prioritize Issues:** Use severity ratings consistently
@@ -453,7 +455,7 @@ Always include exact file paths and line numbers:
 4. **Consider Context:** Tailor recommendations to the project's specific needs
 5. **Focus on Impact:** Explain why each issue matters for production readiness
 
-## Customization Guidelines
+## 10. Customization Guidelines
 
 Adapt the template based on:
 - **Project Type:** Web app, game, library, etc.

@@ -35,6 +35,9 @@ Apply these rules to ALL Markdown files unless specifically exempted.
 
 - **Requirement**: MUST have `**Last Updated:** Month DD, YYYY` near top after main title
 - **Format**: Use full month name, two-digit day, four-digit year
+- **Update Policy**: 
+  - **Update ONLY when content changes are made** (formatting fixes, content edits, structural changes)
+  - **Do NOT update when**: Only validation performed, no issues found, document already compliant
 - **Examples**: 
   - ✅ CORRECT: `**Last Updated:** December 21, 2025`
   - ❌ WRONG: `**Last Updated:** 12/21/2025`
@@ -171,10 +174,110 @@ Use emojis consistently to provide visual emphasis for specific concepts.
 #### Code Format Requirements
 
 - Use pseudo-code to illustrate concepts, not production-ready code
-- Opening curly bracket `{` MUST be on new line (C# standard)
+- **Opening curly bracket `{` placement**:
+  - **MUST be on new line for**: Class declarations, method definitions, control flow statements (if/else, for, while, foreach, switch), try/catch blocks, multi-line lambda expressions
+  - **MUST stay on same line for**: Property accessors (get/set), expression-bodied members, object/collection initializers, single-line lambda expressions
+  - **Examples**:
+    ```csharp
+    // ✅ CORRECT: Class and method with brace on new line
+    public class OrderService
+    {
+        public void ProcessOrder()
+        {
+            // implementation
+        }
+    }
+    
+    // ✅ CORRECT: Control flow with brace on new line
+    if (isValid)
+    {
+        ProcessOrder();
+    }
+    
+    // ✅ CORRECT: Multi-line lambda with brace on new line
+    orders.ForEach(order =>
+    {
+        ValidateOrder(order);
+        ProcessOrder(order);
+    });
+    
+    // ✅ CORRECT: Property accessors on one line
+    public int Count { get; set; }
+    public string Name { get; private set; }
+    
+    // ✅ CORRECT: Single-line lambda with brace on same line
+    var total = orders.Sum(o => { return o.Amount; });
+    
+    // ❌ WRONG: Method with brace on same line
+    public void ProcessOrder() {
+        // implementation
+    }
+    
+    // ❌ WRONG: Multi-line lambda with brace on same line
+    orders.ForEach(order => {
+        ValidateOrder(order);
+        ProcessOrder(order);
+    });
+    ```
+- **Omit obvious constructors**: Remove constructors (including static constructors) that only assign input parameters to private fields
+  - **Goal**: Concise pseudo-code over compileable code
+  - **Keep constructors with**: Validation logic, initialization logic, complex assignments, or non-obvious behavior
+  - **Examples**:
+    ```csharp
+    // ❌ WRONG: Include obvious parameter-to-field constructor
+    public class OrderService
+    {
+        private readonly IRepository _repository;
+        private readonly ILogger _logger;
+        
+        public OrderService(IRepository repository, ILogger logger)
+        {
+            _repository = repository;
+            _logger = logger;
+        }
+        
+        public void ProcessOrder() { }
+    }
+    
+    // ✅ CORRECT: Omit obvious constructor, show fields and methods only
+    public class OrderService
+    {
+        private readonly IRepository _repository;
+        private readonly ILogger _logger;
+        
+        public void ProcessOrder() { }
+    }
+    
+    // ✅ CORRECT: Keep constructor with validation or initialization logic
+    public class OrderValidator
+    {
+        private readonly int _maxItems;
+        
+        public OrderValidator(int maxItems)
+        {
+            if (maxItems <= 0)
+            {
+                throw new ArgumentException("Max items must be positive");
+            }
+            
+            _maxItems = maxItems;
+        }
+    }
+    
+    // ✅ CORRECT: Keep static constructor with initialization logic
+    public class Configuration
+    {
+        private static readonly Dictionary<string, string> _settings;
+        
+        static Configuration()
+        {
+            _settings = LoadSettingsFromFile();
+        }
+    }
+    ```
 - Use descriptive variable names (avoid abbreviations or single letters)
-- ❌ WRONG: `var i`, `var temp`, `var x`
-- ✅ CORRECT: `var entityIndex`, `var temporaryValue`, `var xCoordinate`
+  - ❌ WRONG: `var i`, `var temp`, `var x`
+  - ✅ CORRECT: `var entityIndex`, `var temporaryValue`, `var xCoordinate`
 
 #### What to EXCLUDE from code
 
@@ -183,6 +286,7 @@ Use emojis consistently to provide visual emphasis for specific concepts.
 - Using/import statements
 - Namespace declarations
 - Implementation comments (`//` or `/* */`) if obvious from variable/method names
+- Obvious constructors (those only assigning parameters to fields)
 - File path annotations
 - Godot scene files (`*.tscn`)
 - Test code and test examples
@@ -241,8 +345,8 @@ keywords: [order, validate, menu, customer, payment, restaurant]
 
 ### 4.1 CRITICAL (Must fix)
 
+- **Broken heading numbering sequence** (H2 not sequential, H3 not relative to parent) - highest priority
 - Missing Last Updated date
-- Broken heading numbering sequence
 - SNIPPET/ROADMAP section misalignment
 - Code identifiers in headings
 - H5+ headings (should be bold list items)
@@ -284,9 +388,10 @@ Use this systematic checklist to verify all formatting rules have been applied:
 
 For SNIPPET files:
 - [ ] **Section numbers** match corresponding ROADMAP file exactly
-- [ ] **Code formatting** follows standards (opening brace on new line)
+- [ ] **Brace placement** correct (new line for methods/control flow/multi-line lambdas, same line for properties/single-line lambdas)
+- [ ] **Omits obvious constructors** (parameter-to-field only)
 - [ ] **Variable names** are descriptive (not `i`, `temp`, `x`)
-- [ ] **Excludes** boilerplate (no copyright, using statements, namespaces, comments)
+- [ ] **Excludes** boilerplate (no copyright, using statements, namespaces, comments, obvious constructors)
 
 For ROADMAP files:
 - [ ] **Check pairing**: Corresponding SNIPPET file exists (informational)
