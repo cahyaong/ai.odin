@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Last Updated:** December 21, 2025
+**Last Updated:** December 26, 2025
 
 ---
 
@@ -198,6 +198,13 @@ The `.ai-toolbox/` folder contains reusable skills and rules for AI agents.
 - Includes self-verification protocol to ensure accuracy
 - Usage: Invoke when modifying any Markdown file to ensure compliance
 
+**SKILL_AuditCodebase.md** - Comprehensive codebase audit execution
+- Conducts role-based audits using 12 persona types (7 general + 5 game-specific)
+- Generates AUDIT_*.md reports in `.ai-context/` folder
+- Includes severity ratings (🚨 CRITICAL, ❌ HIGH, ⚠️ MEDIUM, ℹ️ LOW)
+- Provides prioritized recommendations and historical tracking
+- Usage: Invoke for quality assessments, production readiness evaluations, or targeted code reviews
+
 #### Available Rules
 
 **RULE_Markdown.md** - Complete Markdown formatting standards
@@ -207,11 +214,20 @@ The `.ai-toolbox/` folder contains reusable skills and rules for AI agents.
 - Priority levels for issues (CRITICAL, HIGH, MEDIUM)
 - Validation checklist for systematic verification
 
+**RULE_Persona.md** - Expert persona reference guide
+- Defines 12 reusable expert personas (7 general + 5 game-specific)
+- Includes expertise areas, focus areas, and readiness criteria for each persona
+- Provides persona interaction patterns and usage guidelines
+- Supports audits, code reviews, architecture evaluations, and technical documentation
+- Usage: Reference when conducting audits, adopting expert perspectives, or performing technical analysis
+
 #### Usage Pattern
 
 1. Read RULE_Markdown.md to understand formatting standards
-2. Use SKILL_FormatMarkdown.md to validate/format files
-3. Follow the self-verification protocol after making changes
+2. Read RULE_Persona.md to understand expert perspectives
+3. Use SKILL_FormatMarkdown.md to validate/format files
+4. Use SKILL_AuditCodebase.md to conduct comprehensive audits
+5. Follow self-verification protocols after making changes
 
 ## 7. Common Patterns
 
