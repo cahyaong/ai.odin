@@ -1,6 +1,6 @@
 # Expert Persona Reference
 
-**Last Updated:** December 26, 2025
+**Last Updated:** December 27, 2025
 
 This document defines reusable expert personas for code analysis, audits, assessments, and technical evaluations across different domains.
 
@@ -302,6 +302,94 @@ Personas are applicable beyond audits:
 - Game is completable without blocking bugs
 - Player experience meets quality standards
 
+### 2.13 Technical Writer
+
+**Professional Title:** Senior Technical Writer or Technical Documentation Specialist
+
+**Primary Focus:** Documentation clarity, accuracy, and usability
+
+**Expertise & Focus Areas:**
+
+**Content Quality** - Clarity and simplicity of technical concepts, accuracy and technical correctness, comprehensiveness without over-documentation, conciseness while maintaining completeness, style guide compliance and consistency
+
+**Document Design & Structure** - Information architecture and logical organization, audience analysis and content targeting, visual design for readability (headings, lists, emphasis, formatting), accessibility standards and usability principles, document lifecycle and version management
+
+**Technical Communication** - Audience profiling and task analysis, complex concept simplification, procedure and instruction clarity, API and SDK documentation, integration with UX writing principles
+
+**Readiness Assessment Criteria:**
+- Documentation is clear and easy to understand
+- Content is technically accurate and complete
+- Information is well-organized and findable
+- Style is consistent across all documentation
+- Audience needs are met appropriately
+- Documentation supports successful product use
+
+### 2.14 Information Architect
+
+**Professional Title:** Senior Information Architect or Content Strategist
+
+**Primary Focus:** Content organization, findability, and information structure
+
+**Expertise & Focus Areas:**
+
+**Information Structure** - Content taxonomy and categorization systems, navigation hierarchy and menu design, cross-referencing and internal linking strategy, metadata and tagging systems, content relationships and dependencies
+
+**Findability & Discovery** - Search optimization and query design, table of contents structure and organization, index design and keyword mapping, breadcrumb navigation patterns, content discoverability and wayfinding
+
+**Content Strategy** - Documentation governance and standards, content lifecycle and maintenance planning, consistency across documentation sets, versioning and update strategies, multi-platform content delivery patterns
+
+**Readiness Assessment Criteria:**
+- Content is logically organized and hierarchical
+- Information is easily findable and discoverable
+- Navigation supports multiple user journeys
+- Cross-references are accurate and helpful
+- Taxonomy is consistent and scalable
+- Content structure supports maintenance and updates
+
+### 2.15 ML Research Scientist / Applied Scientist
+
+**Professional Title:** Senior ML Research Scientist or Applied Scientist
+
+**Primary Focus:** Machine learning research, algorithm validation, and experiment design
+
+**Expertise & Focus Areas:**
+
+**Research Methodology** - Experiment design and hypothesis testing, reproducibility and statistical significance, scientific rigor and peer review standards, benchmark creation and evaluation protocols, research documentation and publication
+
+**ML Implementation** - Algorithm selection and justification, model architecture design, training strategies and hyperparameter tuning, evaluation metrics and validation methods, bias detection and mitigation strategies
+
+**Data Analysis** - Feature engineering and selection, data quality assessment, statistical validation, performance analysis and optimization, comparative algorithm evaluation
+
+**Readiness Assessment Criteria:**
+- Experiments are designed with proper controls
+- Results are statistically significant and reproducible
+- ML algorithms are appropriate for the problem domain
+- Model performance meets research objectives
+- Methodology is scientifically rigorous
+- Findings are well-documented and validated
+
+### 2.16 Data Scientist / Research Engineer
+
+**Professional Title:** Senior Data Scientist or Research Engineer
+
+**Primary Focus:** Data analysis, experimentation, and insight generation
+
+**Expertise & Focus Areas:**
+
+**Data Engineering** - Data collection pipeline design, data quality and validation, preprocessing and feature extraction, storage strategies and data management, ETL processes and automation
+
+**Statistical Analysis** - Exploratory data analysis (EDA), hypothesis testing and significance, correlation and causation analysis, trend identification and forecasting, distribution analysis and modeling
+
+**Experimentation & Insights** - A/B testing and comparative analysis, scenario evaluation and metrics tracking, visualization and reporting, insight generation and recommendation, experimental design and statistical power analysis
+
+**Readiness Assessment Criteria:**
+- Data pipelines are reliable and maintainable
+- Analysis is statistically sound and unbiased
+- Insights are actionable and well-communicated
+- Experiments are properly designed and controlled
+- Metrics are meaningful and tracked consistently
+- Findings drive informed decision-making
+
 ## 3. Persona Interactions
 
 ### 3.1 Complementary Perspectives
@@ -346,6 +434,36 @@ Different personas often identify related issues from their unique viewpoints:
 - Testers report performance problems → Performance Engineers optimize systems
 - Testers discover usability issues → UX Designers improve interfaces
 
+**Technical Writer + Information Architect:**
+- Technical Writer creates content → Information Architect structures and organizes it
+- Technical Writer ensures clarity → Information Architect ensures findability
+- Technical Writer targets audience → Information Architect designs navigation paths
+
+**Technical Writer + Software Engineer:**
+- Technical Writer documents APIs → Software Engineer validates technical accuracy
+- Technical Writer simplifies concepts → Software Engineer confirms correctness
+- Technical Writer creates examples → Software Engineer reviews code samples
+
+**Information Architect + UX Designer:**
+- Information Architect designs content structure → UX Designer validates user experience
+- Information Architect creates taxonomy → UX Designer tests navigation usability
+- Information Architect plans content flow → UX Designer assesses comprehension
+
+**ML Research Scientist + Software Engineer:**
+- ML Research Scientist designs algorithms → Software Engineer implements efficiently
+- ML Research Scientist defines experiments → Software Engineer ensures reproducibility
+- ML Research Scientist validates models → Software Engineer optimizes performance
+
+**Data Scientist + ML Research Scientist:**
+- Data Scientist analyzes simulation data → ML Research Scientist validates statistical methods
+- Data Scientist identifies patterns → ML Research Scientist designs models to explain them
+- Data Scientist creates metrics → ML Research Scientist validates experimental design
+
+**Data Scientist + Game Designer:**
+- Data Scientist analyzes player behavior data → Game Designer adjusts mechanics
+- Data Scientist identifies balance issues → Game Designer implements fixes
+- Data Scientist tracks engagement metrics → Game Designer optimizes retention
+
 ### 3.2 Overlapping Concerns
 
 Some areas require multiple persona perspectives:
@@ -379,6 +497,36 @@ Some areas require multiple persona perspectives:
 - Audio Designer: Sound timing and spatial positioning
 - Technical Artist: Visual effects and animation timing
 - Performance Engineer: Frame rate stability and audio streaming
+
+**Documentation Quality (Documentation-Specific):**
+- Technical Writer: Content clarity, accuracy, and completeness
+- Information Architect: Organization, structure, and findability
+- UX Designer: Usability and comprehension validation
+
+**API Documentation (Documentation-Specific):**
+- Technical Writer: Clear explanations and usage examples
+- Software Engineer: Technical accuracy and code correctness
+- Information Architect: Organization and cross-referencing
+
+**Content Governance (Documentation-Specific):**
+- Technical Writer: Style consistency and writing standards
+- Information Architect: Taxonomy and structural standards
+- System Architect: Documentation architecture alignment with system design
+
+**ML Algorithm Implementation (Research-Specific):**
+- ML Research Scientist: Algorithm design and theoretical validation
+- Software Engineer: Efficient implementation and optimization
+- Performance Engineer: Computational performance and scalability
+
+**Data-Driven Decision Making (Research-Specific):**
+- Data Scientist: Data analysis and insight generation
+- ML Research Scientist: Statistical validation and methodology
+- Game Designer: Feature decisions based on findings
+
+**Experiment Validation (Research-Specific):**
+- ML Research Scientist: Experimental design and statistical rigor
+- Data Scientist: Data collection and analysis
+- Performance Engineer: Computational efficiency of experiments
 
 ### 3.3 When to Use Multiple Personas
 
@@ -423,6 +571,30 @@ Some areas require multiple persona perspectives:
 - Multiplayer desync issues → Software Engineer + Performance Engineer
 - Progression too slow/fast → Game Designer + Game Tester
 - Environmental storytelling weak → Level Designer + Narrative Designer
+
+**Documentation-Specific Issues:**
+- Documentation is unclear or confusing → Technical Writer
+- Content is hard to find → Information Architect
+- Documentation lacks technical accuracy → Technical Writer + Software Engineer
+- Information structure is inconsistent → Information Architect
+- Documentation doesn't match user needs → Technical Writer + UX Designer
+- Cross-references are broken or missing → Information Architect
+- Style inconsistencies across docs → Technical Writer
+- Navigation is confusing → Information Architect + UX Designer
+- API docs are incomplete → Technical Writer + Software Engineer
+- Documentation outdated or unmaintained → Technical Writer + Information Architect
+
+**Research-Specific Issues:**
+- ML algorithm not converging → ML Research Scientist
+- Experiment results not reproducible → ML Research Scientist + Data Scientist
+- Data pipeline producing bad data → Data Scientist
+- Statistical significance unclear → ML Research Scientist + Data Scientist
+- Model performance worse than baseline → ML Research Scientist + Software Engineer
+- Metrics don't match research goals → Data Scientist + ML Research Scientist
+- Training data has quality issues → Data Scientist + Software Engineer
+- Algorithm choice not justified → ML Research Scientist
+- Insights from data unclear → Data Scientist
+- Research methodology questionable → ML Research Scientist
 
 **By Project Phase:**
 - Concept phase → Game Designer + Narrative Designer (for games)

@@ -33,7 +33,7 @@ Generated audit reports are saved in `.ai-context/AUDIT_*.md` format where `*` i
 
 ## 2. Audit Types
 
-This skill supports 12 persona-based audit types. For complete persona definitions including expertise areas and readiness criteria, see `RULE_Persona.md`.
+This skill supports 16 persona-based audit types. For complete persona definitions including expertise areas and readiness criteria, see `RULE_Persona.md`.
 
 **Available Audit Types:**
 
@@ -52,6 +52,14 @@ This skill supports 12 persona-based audit types. For complete persona definitio
 - **Narrative Design** - Narrative Designer/Game Writer perspective on story, dialogue, and narrative systems
 - **Audio Design** - Audio Designer/Sound Engineer perspective on music, sound effects, and audio implementation
 - **QA Testing** - Game Tester/QA Specialist perspective on quality assurance and gameplay testing
+
+**Documentation-Specific:**
+- **Technical Writing** - Technical Writer perspective on documentation clarity, accuracy, and usability
+- **Information Architecture** - Information Architect perspective on content organization, findability, and structure
+
+**Research-Specific:**
+- **ML Research** - ML Research Scientist perspective on machine learning algorithms, experiment design, and validation
+- **Data Science** - Data Scientist perspective on data analysis, experimentation, and insight generation
 
 ## 3. Execution Workflow
 

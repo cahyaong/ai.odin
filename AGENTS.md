@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Last Updated:** December 26, 2025
+**Last Updated:** December 27, 2025
 
 ---
 
@@ -199,7 +199,7 @@ The `.ai-toolbox/` folder contains reusable skills and rules for AI agents.
 - Usage: Invoke when modifying any Markdown file to ensure compliance
 
 **SKILL_AuditCodebase.md** - Comprehensive codebase audit execution
-- Conducts role-based audits using 12 persona types (7 general + 5 game-specific)
+- Conducts role-based audits using 16 persona types (7 general + 5 game + 2 documentation + 2 research)
 - Generates AUDIT_*.md reports in `.ai-context/` folder
 - Includes severity ratings (🚨 CRITICAL, ❌ HIGH, ⚠️ MEDIUM, ℹ️ LOW)
 - Provides prioritized recommendations and historical tracking
@@ -215,10 +215,10 @@ The `.ai-toolbox/` folder contains reusable skills and rules for AI agents.
 - Validation checklist for systematic verification
 
 **RULE_Persona.md** - Expert persona reference guide
-- Defines 12 reusable expert personas (7 general + 5 game-specific)
+- Defines 16 reusable expert personas (7 general + 5 game + 2 documentation + 2 research)
 - Includes expertise areas, focus areas, and readiness criteria for each persona
 - Provides persona interaction patterns and usage guidelines
-- Supports audits, code reviews, architecture evaluations, and technical documentation
+- Supports audits, code reviews, architecture evaluations, technical documentation, and research validation
 - Usage: Reference when conducting audits, adopting expert perspectives, or performing technical analysis
 
 #### Usage Pattern
