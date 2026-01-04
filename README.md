@@ -2,7 +2,7 @@
 
 ## About
 
-`Project: Artificial Life Simulator` — An innovative platform where artificial agents evolve and thrive,
+`Project: Artificial Life Simulator` â€” An innovative platform where artificial agents evolve and thrive,
 enabling experimentation and refinement of AI and ML techniques!
 
 ## How to Build

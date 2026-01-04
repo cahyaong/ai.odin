@@ -1,176 +1,140 @@
 ---
 name: format-markdown
-description: Formats and validates Markdown files against project documentation standards including Last Updated dates, heading numbering, folder paths, emoji usage, and file-specific rules for SNIPPET/ROADMAP pairing
+description: Validates and formats Markdown files against RULE_Markdown.md and RULE_Document.md standards
 display-name: Format Markdown
-keywords: [markdown, format, validate, documentation, heading, emoji, path, snippet, roadmap, kiro, audit]
+keywords: [markdown, format, validate, documentation, heading]
+example-prompt:
+  - Format IDEA_MenuService.md
+  - Can you validate the Markdown in SNIPPET_OrderProcessing.md?
+  - Check if RULE_RestaurantCoding.md follows our documentation standards
 ---
 
-# Format Markdown
+# SKILL: Format Markdown
 
-**Last Updated:** December 21, 2025
+**Last Updated:** January 3, 2026
 
-Validates and formats Markdown files according to formatting rules defined in `RULE_Markdown.md`.
+---
 
-## 1. Instructions
+## Table of Contents
 
-When invoked to format or validate a Markdown file:
+- [SKILL: Format Markdown](#skill-format-markdown)
+  - [Table of Contents](#table-of-contents)
+  - [1. Execution Steps](#1-execution-steps)
+  - [2. Large File Processing](#2-large-file-processing)
+  - [3. Table Validation](#3-table-validation)
+    - [3.1 Detection Algorithm](#31-detection-algorithm)
+    - [3.2 Alignment Verification](#32-alignment-verification)
+  - [4. Self-Verification](#4-self-verification)
+  - [5. Output Format](#5-output-format)
 
-### 1.1 Load Formatting Rules
+---
 
-Read `RULE_Markdown.md` to understand:
-- File type detection (IDEA, ROADMAP, SNIPPET, SUMMARY, AUDIT, SKILL, RULE, Kiro, Standard)
-- General validation rules (Last Updated Date, Heading Numbering, Folder Paths, Content Formatting, Emoji Usage)
-- File-specific rules (SNIPPET/ROADMAP pairing, code format requirements)
-- Priority levels (CRITICAL, HIGH, MEDIUM)
-- Validation checklist (Section 5)
+Validates Markdown files against `RULE_Markdown.md` (formatting) and `RULE_Document.md` (content).
 
-### 1.2 Execution Steps
+## 1. Execution Steps
 
-#### Standard Processing (< 1,000 lines)
+1. **Load rules** from `RULE_Markdown.md` and `RULE_Document.md`
+2. **Read and analyze** target file
+3. **Detect file type** by prefix (SNIPPET, IDEA, SKILL, etc.)
+4. **Validate in priority order:**
+   - 🚨 CRITICAL: Heading numbering, TOC, Last Updated date
+   - ❌ HIGH: Path notation, code snippets, table column alignment
+   - ⚠️ MEDIUM: Emoji usage, date format
+5. **Check file-specific rules:**
+   - SNIPPET: Section alignment with IDEA
+   - IDEA: No language/framework specifics
+   - SKILL: YAML metadata present
+   - RULE/SKILL: Restaurant app examples
+6. **Apply fixes** if requested (update Last Updated only if content changes)
+7. **Self-verify** before presenting results
 
-For files under 1,000 lines, process the entire file at once:
+## 2. Large File Processing
 
-1. **Read and analyze** the target file
-2. **Detect file type** (see RULE_Markdown.md Section 1)
-3. **Validate in priority order**:
-   - CRITICAL issues first, starting with heading numbering (RULE_Markdown.md Section 4.1)
-   - HIGH and MEDIUM issues next (RULE_Markdown.md Sections 4.2-4.3)
-4. **Generate validation report** with findings organized by priority
-5. **Apply fixes** if user requests (update Last Updated date ONLY if content changes - see RULE_Markdown.md Section 2.1)
+For files ≥1,000 lines, use batch processing:
 
-#### Large File Batch Processing (>= 1,000 lines)
+**Setup:**
+- Count lines, identify H2 boundaries
+- Plan 3-5 H2 sections per batch
 
-For files with 1,000+ lines, use adaptive batch processing to minimize context window pressure:
+**Per Batch:**
+1. Report progress: "Batch X of Y (Sections M-N)"
+2. Load and validate batch sections
+3. Apply fixes
+4. On failure: Reduce to 1-2 sections, retry
 
-**Initial Assessment:**
+**Completion:**
+- Final full-file verification
+- Update Last Updated if content changed
+- Generate consolidated report
 
-1. **Count total lines** and identify all H2 section boundaries
-2. **Calculate initial batch size**: 3-5 H2 sections per batch
-   - Adjust based on section complexity (length, code blocks, nested structure)
-   - Simpler sections: Use larger batches (4-5 sections)
-   - Complex sections: Use smaller batches (3 sections)
-3. **Create batch plan**: Map which H2 sections belong to each batch
+## 3. Table Validation
 
-**Batch Processing Loop:**
+### 3.1 Detection Algorithm
 
-For each batch, execute the following workflow:
+**Table Identification:**
+1. Scan for lines starting and ending with `|`
+2. Group consecutive matching lines as table blocks
+3. Parse each table:
+   - Row 1: Header row
+   - Row 2: Separator row (contains `-` and `|`)
+   - Rows 3+: Data rows
 
-1. **Report Progress**: "Processing batch X of Y (Sections M.0 through N.0)"
-2. **Load Batch Context**: Read the H2 sections in current batch
-3. **Detect file type**: Identify SNIPPET, ROADMAP, SKILL, etc.
-4. **Apply all validation rules**:
-   - General rules from RULE_Markdown.md Section 2
-   - File-specific rules from RULE_Markdown.md Section 3
-5. **Apply fixes** to issues found in current batch
-6. **Self-verify batch changes**: Use validation checklist from RULE_Markdown.md Section 5
-7. **Handle failures**: If batch validation fails:
-   - Reduce batch size to 1-2 sections
-   - Retry with smaller batch
-   - Report adjusted strategy: "Batch too complex, processing 1 section at a time"
+**Column Parsing:**
+1. Split each row by `|` delimiter
+2. Trim leading/trailing empty elements
+3. Count columns (must be consistent across all rows)
 
-**Post-Processing:**
+### 3.2 Alignment Verification
 
-1. **Final full-file verification**: After all batches complete
-   - Verify H2 numbering sequence across entire file
-   - Check cross-batch consistency
-2. **Update Last Updated date**: ONLY if any content changes were made (see RULE_Markdown.md Section 2.1)
-3. **Generate consolidated report**: Combine findings from all batches
-4. **Report completion**: Summary of all batches processed
+**For each table, verify:**
 
-**Batch Processing Guidelines:**
+| Check                    | Rule                                            | Severity |
+|--------------------------|-------------------------------------------------|----------|
+| Column count consistency | All rows must have same column count            | HIGH     |
+| Cell padding             | Each cell padded to match column max width      | HIGH     |
+| Separator dash length    | Dashes must match column width                  | HIGH     |
+| Minimum padding          | At least one space on each side of cell content | HIGH     |
 
-- **Adaptive Sizing**: Adjust batch size based on:
-  - Section line count (longer sections = smaller batches)
-  - Code block density (more code = smaller batches)
-  - Table complexity (complex tables = smaller batches)
-  - Nested list depth (deeper nesting = smaller batches)
+**Verification Steps:**
+1. Calculate `max_width[col]` from longest cell in each column
+2. Check each cell: `content_width + 2` must equal `max_width[col]`
+3. Check separator: dash count must equal `max_width[col] - 2`
 
-- **Progress Reporting**: After each batch, report:
-  - Batch number and total (e.g., "Batch 2 of 5")
-  - Section range processed (e.g., "Sections 3.0-5.0")
-  - Issues found and fixed count
-  - Next batch preview
+**Report Format:** `Line N: Table column X - width mismatch (found Y, expected Z)`
 
-- **Error Recovery**: On batch failure:
-  - Split failing batch into smaller chunks (1-2 sections)
-  - Process problematic sections individually
-  - Document strategy adjustment
-  - Continue with remaining batches
+## 4. Self-Verification
 
-- **Cross-Batch Consistency**:
-  - Track H2 numbering across all batches
-  - Maintain running issue list
-  - Last Updated date modified only in final pass
-  - Final verification ensures file-wide coherence
+**🚨 CRITICAL:** Before presenting results, verify using this checklist:
 
-### 1.3 Self-Verification Protocol
+- [ ] Re-read modified file
+- [ ] Verify changes applied correctly
+- [ ] Last Updated: Updated only if content changed
+- [ ] TOC: Present, all H2/H3 with anchor links
+- [ ] Tables: All columns have consistent padding widths
+- [ ] Restaurant examples: Used in RULE_*/SKILL_* files
+- [ ] Use validation checklists from both RULE files
 
-**CRITICAL**: After making ANY changes to a file, perform self-verification BEFORE presenting results:
-
-1. **Use RULE_Markdown.md Section 5** - Go through the complete validation checklist systematically
-2. **Re-read the modified file** - Confirm changes were applied correctly
-3. **Verify Last Updated date**: If content changed, date updated; if no changes, date unchanged (see RULE_Markdown.md Section 2.1)
-4. **Use regex verification** - Run automated checks from RULE_Markdown.md Section 5.3
-5. **Manual spot-checks** - Verify examples, emoji usage, and heading numbering
-6. **Only report completion** after confirming 100% compliance
-
-This ensures quality and prevents unnecessary back-and-forth with the user.
-
-### 1.4 Validation Output Format
-
-Present findings in this structure:
+## 5. Output Format
 
 ```markdown
 ## Validation Report for [filename]
 
-**File Type**: [SNIPPET/ROADMAP/IDEA/SUMMARY/AUDIT/Kiro/Standard]
+**File Type**: [SNIPPET/IDEA/SKILL/etc.]
 
 ### Critical Issues
-[List violations from RULE_Markdown.md Section 4.1]
+[List from RULE_Markdown.md Section 6.1]
+
+### Table Issues
+[List table alignment violations with line numbers and column details]
 
 ### Style Issues
-[List violations from RULE_Markdown.md Section 4.2-4.3]
-
-### Suggestions
-[List recommended improvements]
+[List from RULE_Markdown.md Sections 6.2-6.3]
 
 ### File-Specific Notes
-[Any special considerations for this file type]
+[Special considerations for this file type]
 ```
 
-For each issue, provide:
-- **Line number** (if applicable)
-- **Current state** (what exists now)
-- **Required state** (what it should be per RULE_Markdown.md)
-- **Suggested fix** (exact text to use)
-
-## 2. Usage Examples
-
-**Example 1: Validate a SNIPPET file**
-```
-Use the "Format Markdown" skill to validate .ai-context/SNIPPET_ScenarioLoader.md
-```
-
-**Example 2: Check and fix a Kiro spec**
-```
-Use the "Format Markdown" skill to check .kiro/specs/feature-x.md and fix any issues
-```
-
-**Example 3: Validate heading structure**
-```
-Use the "Format Markdown" skill to validate heading structure in README.md
-```
-
-**Example 4: Process large file with batch mode**
-```
-Use the "Format Markdown" skill to validate SUMMARY_LargeCodebase.md
-```
-(File with 1,500 lines automatically processed in adaptive batches with progress reporting)
-
-## 3. Notes
-
-- All formatting rules defined in `RULE_Markdown.md` (single source of truth)
-- **Heading numbering errors are highest priority** - check these first
-- **Last Updated date modified only when content changes** (see RULE_Markdown.md Section 2.1)
-- Files with 1,000+ lines use adaptive batch processing automatically
-- SNIPPET files have special numbering rules (gaps allowed for ROADMAP alignment)
+For each issue:
+- Line number
+- Current state → Required state
+- Suggested fix
