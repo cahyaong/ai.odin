@@ -22,7 +22,7 @@
     - [4.1 Complementary Perspectives](#41-complementary-perspectives)
     - [4.2 Overlapping Concerns](#42-overlapping-concerns)
     - [4.3 When to Use Multiple Personas](#43-when-to-use-multiple-personas)
-  - [5. Validation Checklist](#5-validation-checklist)
+  - [5. Self-Assessment Protocol](#5-self-assessment-protocol)
 
 ---
 
@@ -102,14 +102,14 @@ Reusable expert personas for code analysis, audits, and technical evaluations. F
 
 ### 3.2 By Project Phase
 
-| Phase          | Recommended Personas                              |
-|----------------|---------------------------------------------------|
-| Concept        | Game Designer, Narrative Designer                 |
-| Pre-production | System Architect, Game Designer, Level Designer   |
-| Alpha testing  | Game Tester, Game Designer, Level Designer        |
-| Beta testing   | Game Tester, Performance Engineer, Audio Designer |
-| Pre-launch     | All relevant personas                             |
-| Post-launch    | DevOps Engineer, Game Tester, Performance Engineer|
+| Phase          | Recommended Personas                               |
+|----------------|----------------------------------------------------| 
+| Concept        | Game Designer, Narrative Designer                  |
+| Pre-production | System Architect, Game Designer, Level Designer    |
+| Alpha testing  | Game Tester, Game Designer, Level Designer         |
+| Beta testing   | Game Tester, Performance Engineer, Audio Designer  |
+| Pre-launch     | All relevant personas                              |
+| Post-launch    | DevOps Engineer, Game Tester, Performance Engineer |
 
 ### 3.3 Communication Pattern
 
@@ -147,9 +147,9 @@ When adopting a persona:
 - **Targeted evaluations:** Select specific personas based on immediate concerns
 - **Progressive analysis:** Start with primary concern, add complementary personas as needed
 
-## 5. Validation Checklist
+## 5. Self-Assessment Protocol
 
-**Before completing persona-based analysis, verify:**
+**🚨 CRITICAL:** Before presenting results, verify using this checklist:
 
 **Persona Application:**
 - [ ] Role stated explicitly ("As a senior software engineer...")

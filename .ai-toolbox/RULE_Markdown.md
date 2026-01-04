@@ -25,7 +25,7 @@
     - [5.3 Status Indicators](#53-status-indicators)
   - [6. Severity Levels](#6-severity-levels)
     - [6.1 Markdown-Specific Priorities](#61-markdown-specific-priorities)
-  - [7. Validation Checklist](#7-validation-checklist)
+  - [7. Self-Assessment Protocol](#7-self-assessment-protocol)
 
 ---
 
@@ -66,9 +66,9 @@ This document defines Markdown formatting standards. For content rules (IDEA, SN
 **Anchor format:** Lowercase, spaces→hyphens, keep numbers/periods, remove special chars.
 
 | Heading                   | Anchor                |
-|---------------------------|------------------------|
-| `## 1. Order Management`  | `#1-order-management`  |
-| `### 2.1 Menu Repository` | `#21-menu-repository`  |
+|---------------------------|-----------------------|
+| `## 1. Order Management`  | `#1-order-management` |
+| `### 2.1 Menu Repository` | `#21-menu-repository` |
 
 ## 2. Heading Structure
 
@@ -202,11 +202,16 @@ See [Section 6](#6-severity-levels) for definitions.
 - Inconsistent date format
 - Emoji not followed by UPPERCASE
 
-## 7. Validation Checklist
+## 7. Self-Assessment Protocol
 
+**🚨 CRITICAL:** Before presenting results, verify using this checklist:
+
+**Core Requirements:**
 - [ ] Last Updated date present (`Month DD, YYYY`)
 - [ ] Table of Contents after Last Updated, between `---`
 - [ ] TOC includes all H2/H3 with anchor links
+
+**Structure and Content:**
 - [ ] H2 numbered sequentially (1, 2, 3...)
 - [ ] H3 numbered relative to parent (1.1, 1.2...)
 - [ ] H4 unnumbered; no H5+
@@ -215,6 +220,8 @@ See [Section 6](#6-severity-levels) for definitions.
 - [ ] Code complete or explained in prose
 - [ ] Headings use natural language
 - [ ] 3+ items use lists
+
+**Tables:**
 - [ ] Table columns aligned (width = longest content + 2 spaces padding)
 - [ ] Table separator dashes match column width
 - [ ] Tables contain no emojis (headers or cells)

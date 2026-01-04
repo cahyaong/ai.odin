@@ -29,8 +29,8 @@ example-prompt:
     - [3.3 Section Consolidation](#33-section-consolidation)
     - [3.4 Example Reduction](#34-example-reduction)
   - [4. Execution Workflow](#4-execution-workflow)
-  - [5. Self-Verification Protocol](#5-self-verification-protocol)
-  - [6. Output Report](#6-output-report)
+  - [5. Self-Assessment Protocol](#5-self-assessment-protocol)
+  - [6. Output Report Template](#6-output-report-template)
 
 ---
 
@@ -85,24 +85,24 @@ All Markdown reviews adopt the Technical Writer perspective, focusing on:
 
 **Tier Classification:**
 
-| Location             | Audience         | Tier         | Target Reduction |
-|----------------------|------------------|--------------|------------------|
-| `.ai-toolbox/`       | Agents           | Aggressive   | 50-70%           |
-| `.ai-context/`       | Humans + Agents  | Balanced     | 30-50%           |
-| `AGENTS.md` (root)   | Agents           | Aggressive   | 50-70%           |
-| Other root `*.md`    | Humans           | Conservative | 20-40%           |
+| Location           | Audience        | Tier         | Target Reduction |
+|--------------------|-----------------|--------------|------------------|
+| `.ai-toolbox/`     | Agents          | Aggressive   | 50-70%           |
+| `.ai-context/`     | Humans + Agents | Balanced     | 30-50%           |
+| `AGENTS.md` (root) | Agents          | Aggressive   | 50-70%           |
+| Other root `*.md`  | Humans          | Conservative | 20-40%           |
 
 **Tier Comparison:**
 
-| Aspect                  | Aggressive              | Balanced                       | Conservative                |
-|-------------------------|-------------------------|--------------------------------|-----------------------------|
-| **Language**            | Terse, minimal          | Concise, clear                 | Cohesive, flowing           |
-| **Tables**              | Prefer over all prose   | Use for structured data        | Use when aids readability   |
-| **Examples**            | Single pair max         | Reduce but keep essential      | Keep if aids understanding  |
-| **Abbreviations**       | Acceptable              | Common ones acceptable         | Spell out first use         |
-| **Cross-references**    | Replace aggressively    | Replace with brief context     | Preserve context            |
-| **Sentence Fragments**  | Acceptable              | Acceptable in lists/tables     | Avoid                       |
-| **Explanation Depth**   | Minimal                 | Sufficient for context         | Full explanation            |
+| Aspect                 | Aggressive            | Balanced                   | Conservative               |
+|------------------------|-----------------------|----------------------------|----------------------------|
+| **Language**           | Terse, minimal        | Concise, clear             | Cohesive, flowing          |
+| **Tables**             | Prefer over all prose | Use for structured data    | Use when aids readability  |
+| **Examples**           | Single pair max       | Reduce but keep essential  | Keep if aids understanding |
+| **Abbreviations**      | Acceptable            | Common ones acceptable     | Spell out first use        |
+| **Cross-references**   | Replace aggressively  | Replace with brief context | Preserve context           |
+| **Sentence Fragments** | Acceptable            | Acceptable in lists/tables | Avoid                      |
+| **Explanation Depth**  | Minimal               | Sufficient for context     | Full explanation           |
 
 **Tier Selection Workflow:**
 1. Identify file location
@@ -120,13 +120,13 @@ All Markdown reviews adopt the Technical Writer perspective, focusing on:
 
 **Redundancy Types:**
 
-| Type                            | Indicator                          | Solution                        |
-|---------------------------------|------------------------------------|---------------------------------|
-| **Duplication across sections** | Same concept in 2+ places          | Consolidate into single section |
-| **Verbose descriptions**        | Lists that could be tables         | Convert to table format         |
-| **Repeated examples**           | Multiple examples of same concept  | Single correct/wrong pair       |
-| **External file duplication**   | Content in referenced files        | Replace with cross-reference    |
-| **Scattered related content**   | Related topics non-adjacent        | Merge into logical groups       |
+| Type                            | Indicator                         | Solution                        |
+|---------------------------------|-----------------------------------|---------------------------------|
+| **Duplication across sections** | Same concept in 2+ places         | Consolidate into single section |
+| **Verbose descriptions**        | Lists that could be tables        | Convert to table format         |
+| **Repeated examples**           | Multiple examples of same concept | Single correct/wrong pair       |
+| **External file duplication**   | Content in referenced files       | Replace with cross-reference    |
+| **Scattered related content**   | Related topics non-adjacent       | Merge into logical groups       |
 
 **Essential Content (Must Preserve):**
 - All critical rules (🚨 CRITICAL, ❌ HIGH severity)
@@ -242,7 +242,7 @@ After (single pair): One `// ❌ WRONG` + One `// ✅ CORRECT`
 - [ ] Corresponding IDEA sections cross-referenced
 - [ ] Removal recommendations documented with evidence
 
-## 5. Self-Verification Protocol
+## 5. Self-Assessment Protocol
 
 **🚨 CRITICAL:** Before presenting results, verify using this checklist:
 
@@ -257,14 +257,11 @@ After (single pair): One `// ❌ WRONG` + One `// ✅ CORRECT`
 - [ ] Cross-references accurate and files exist
 - [ ] Key workflows and processes intact
 
-**Structural Quality (Tier-Aware):**
-
-| Check                                     | Aggressive    | Balanced       | Conservative   |
-|-------------------------------------------|---------------|----------------|----------------|
-| Tables used for structured data           | Required      | Preferred      | When helpful   |
-| Cross-references replace duplication      | All cases     | Most cases     | With context   |
-| Related sections consolidated             | Aggressively  | Where overlap  | Near-identical |
-| Examples reduced                          | Single pair   | 1-2 pairs      | As needed      |
+**Structural Quality:**
+- [ ] Tables used appropriately for optimization tier
+- [ ] Cross-references replace duplicated content per tier
+- [ ] Related sections consolidated per tier guidance
+- [ ] Examples reduced per tier requirements
 
 **Formatting Compliance:**
 - [ ] **SKILL_FormatMarkdown** validation passed
@@ -279,7 +276,7 @@ After (single pair): One `// ❌ WRONG` + One `// ✅ CORRECT`
 - [ ] Reduction within tier target (Aggressive: 50-70%, Balanced: 30-50%, Conservative: 20-40%)
 - [ ] Section and TOC counts compared
 
-## 6. Output Report
+## 6. Output Report Template
 
 **Present results in this format:**
 
@@ -295,9 +292,3 @@ After (single pair): One `// ❌ WRONG` + One `// ✅ CORRECT`
 - [Consolidated sections]
 - [Converted to tables]
 - [Replaced with cross-references]
-
-**Verification:**
-- ✅ All critical rules preserved
-- ✅ Self-verification checklists maintained
-- ✅ SKILL_FormatMarkdown validation passed
-- ✅ Reduction within tier target range

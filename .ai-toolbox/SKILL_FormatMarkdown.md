@@ -24,8 +24,8 @@ example-prompt:
   - [3. Table Validation](#3-table-validation)
     - [3.1 Detection Algorithm](#31-detection-algorithm)
     - [3.2 Alignment Verification](#32-alignment-verification)
-  - [4. Self-Verification](#4-self-verification)
-  - [5. Output Format](#5-output-format)
+  - [4. Self-Assessment Protocol](#4-self-assessment-protocol)
+  - [5. Output Response Template](#5-output-response-template)
 
 ---
 
@@ -102,19 +102,24 @@ For files ≥1,000 lines, use batch processing:
 
 **Report Format:** `Line N: Table column X - width mismatch (found Y, expected Z)`
 
-## 4. Self-Verification
+## 4. Self-Assessment Protocol
 
 **🚨 CRITICAL:** Before presenting results, verify using this checklist:
 
+**File Verification:**
 - [ ] Re-read modified file
 - [ ] Verify changes applied correctly
 - [ ] Last Updated: Updated only if content changed
+
+**Structural Compliance:**
 - [ ] TOC: Present, all H2/H3 with anchor links
 - [ ] Tables: All columns have consistent padding widths
 - [ ] Restaurant examples: Used in RULE_*/SKILL_* files
+
+**Final Validation:**
 - [ ] Use validation checklists from both RULE files
 
-## 5. Output Format
+## 5. Output Response Template
 
 ```markdown
 ## Validation Report for [filename]

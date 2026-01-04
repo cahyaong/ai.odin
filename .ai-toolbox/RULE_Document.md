@@ -8,165 +8,133 @@
 
 - [RULE: Document Content](#rule-document-content)
   - [Table of Contents](#table-of-contents)
-  - [1. File Type Detection](#1-file-type-detection)
-    - [1.1 Global Content Restrictions](#11-global-content-restrictions)
+  - [1. File Types](#1-file-types)
+    - [1.1 H1 Heading Format](#11-h1-heading-format)
+    - [1.2 Global Content Restrictions](#12-global-content-restrictions)
   - [2. Example Conventions](#2-example-conventions)
   - [3. SNIPPET Files](#3-snippet-files)
-    - [3.1 Section Mapping Rule](#31-section-mapping-rule)
+    - [3.1 Section Mapping](#31-section-mapping)
     - [3.2 Code Format](#32-code-format)
-    - [3.3 Content Restrictions](#33-content-restrictions)
-    - [3.4 SNIPPET Lifecycle](#34-snippet-lifecycle)
+    - [3.3 Allowed Content](#33-allowed-content)
+    - [3.4 Lifecycle](#34-lifecycle)
   - [4. IDEA Files](#4-idea-files)
-    - [4.1 Purpose](#41-purpose)
-    - [4.2 Allowed vs Prohibited](#42-allowed-vs-prohibited)
-    - [4.3 Structure](#43-structure)
+    - [4.1 Allowed vs Prohibited](#41-allowed-vs-prohibited)
+    - [4.2 Structure](#42-structure)
   - [5. SKILL Files](#5-skill-files)
-    - [5.1 Metadata Requirements](#51-metadata-requirements)
-  - [6. Validation Checklist](#6-validation-checklist)
-    - [6.1 SNIPPET Files](#61-snippet-files)
-    - [6.2 IDEA Files](#62-idea-files)
-    - [6.3 SKILL Files](#63-skill-files)
-    - [6.4 RULE/SKILL Examples](#64-ruleskill-examples)
+  - [6. Other File Types](#6-other-file-types)
+  - [7. Verification Template](#7-verification-template)
+  - [8. Self-Assessment Protocol](#8-self-assessment-protocol)
 
 ---
 
-Content rules for document types. For Markdown formatting, see `RULE_Markdown.md`. For severity levels, see `RULE_Markdown.md` Section 6.
+Content rules for document types. For Markdown formatting and severity levels, see `RULE_Markdown.md`.
 
-## 1. File Type Detection
+## 1. File Types
 
-| Prefix      | Location       | Purpose                                   |
-|-------------|----------------|-------------------------------------------|
-| `IDEA_*`    | `.ai-context/` | Game feature discussions and ideas        |
-| `ROADMAP_*` | `.ai-context/` | Prioritized development features (future) |
-| `SNIPPET_*` | `.ai-context/` | Code implementation references            |
-| `SUMMARY_*` | `.ai-context/` | Quick reference guides                    |
-| `AUDIT_*`   | `.ai-context/` | Assessment reports                        |
-| `SKILL_*`   | `.ai-toolbox/` | Executable AI agent skills                |
-| `RULE_*`    | `.ai-toolbox/` | Formatting and validation rules           |
-| `*.md`      | `.kiro/`       | Kiro specs and steering docs              |
+| Prefix      | Location       | Purpose                         |
+|-------------|----------------|---------------------------------|
+| `IDEA_*`    | `.ai-context/` | Feature discussions (WHAT/WHY)  |
+| `SNIPPET_*` | `.ai-context/` | Code implementation references  |
+| `AUDIT_*`   | `.ai-context/` | Assessment reports              |
+| `SUMMARY_*` | `.ai-context/` | Quick reference guides          |
+| `ROADMAP_*` | `.ai-context/` | Prioritized development plans   |
+| `SKILL_*`   | `.ai-toolbox/` | Executable AI agent skills      |
+| `RULE_*`    | `.ai-toolbox/` | Formatting and validation rules |
+| `*.md`      | `.kiro/`       | Kiro specs and steering docs    |
 
-### 1.1 Global Content Restrictions
+### 1.1 H1 Heading Format
 
-**Applies to:** All file types EXCEPT `ROADMAP_*`
+**Rule:** H1 MUST follow format `[TYPE]: [Topic]` (e.g., `# IDEA: Pathfinding`)
 
-| Prohibited Content                               | Rationale                           |
-|--------------------------------------------------|-------------------------------------|
-| Priority markers (P0, P1, Phase 1, Priority 1)   | Belongs in ROADMAP files only       |
-| Effort estimation (story points, hours)          | Belongs in project management tools |
-| Implementation timelines or roadmaps             | Belongs in ROADMAP files only       |
-| Implementation status (Not Started, In Progress) | Belongs in project management tools |
-| Status emojis (for progress)                     | Belongs in project management tools |
+**TOC Self-Reference:** First TOC entry must match H1 anchor exactly.
 
-**Exception:** `ROADMAP_*` files MAY contain priorities, timelines, and status tracking.
+### 1.2 Global Content Restrictions
 
-**Rationale:** Planning, prioritization, and status tracking belong in dedicated ROADMAP files or project management tools. All other documentation focuses on technical content only.
+**Applies to:** IDEA, SNIPPET, AUDIT, SUMMARY, SKILL, RULE files  
+**Does NOT apply to:** ROADMAP files (exempt)
+
+| Prohibited                                 | Rationale                  |
+|--------------------------------------------|----------------------------|
+| Priority markers (P0, P1, Phase 1)         | ROADMAP files only         |
+| Effort estimation (story points, hours)    | Project management tools   |
+| Implementation timelines                   | ROADMAP files only         |
+| Status tracking (Not Started, In Progress) | Project management tools   |
 
 ## 2. Example Conventions
 
 **🚨 CRITICAL:** RULE_* and SKILL_* files MUST use Restaurant application examples.
 
-**Applies to:** `.ai-toolbox/` files only  
-**Does NOT apply to:** Project-specific docs (IDEA, SNIPPET, AUDIT, etc.)
+**Applies to:** `.ai-toolbox/` files only
 
-| Category | Examples                                                        |
-|----------|-----------------------------------------------------------------|
-| Paths    | `src/Restaurant.API/`, `src/Restaurant.Domain/`                 |
-| Files    | `OrderController.cs`, `MenuService.cs`, `CustomerRepository.cs` |
-| Concepts | Order, Menu, Customer, Table, Reservation, Payment, Kitchen     |
+| Category | Examples                                           |
+|----------|----------------------------------------------------|
+| Paths    | `src/Restaurant.API/`, `src/Restaurant.Domain/`    |
+| Files    | `OrderController.cs`, `MenuService.cs`             |
+| Concepts | Order, Menu, Customer, Table, Reservation, Kitchen |
 
 ## 3. SNIPPET Files
 
-### 3.1 Section Mapping Rule
+### 3.1 Section Mapping
 
 **🚨 CRITICAL:** SNIPPET sections MUST align 1:1 with corresponding IDEA file.
 
-- Section numbers must match exactly (IDEA 2.1 = SNIPPET 2.1)
-- Gaps allowed if IDEA section has no code (2.1, 2.2, 2.4 is valid)
+- Section numbers match exactly (IDEA 2.1 = SNIPPET 2.1)
+- Gaps allowed if IDEA section has no code
 - Do NOT renumber to close gaps
 
 ### 3.2 Code Format
 
-For complete C# code rules, see `RULE_CSharp.md` Section 3.
-
-**Quick Reference:**
+See `RULE_CSharp.md` Section 6 for complete documentation code rules.
 
 | Include                     | Exclude                                 |
 |-----------------------------|-----------------------------------------|
 | Class/method signatures     | Copyright, using statements, namespaces |
 | Essential properties/fields | XML documentation comments              |
 | Core logic/algorithms       | Obvious constructors (param→field only) |
-| Descriptive variable names  | Implementation comments if obvious      |
 
-### 3.3 Content Restrictions
+### 3.3 Allowed Content
 
-**🚨 CRITICAL:** SNIPPET files contain ONLY code examples. No project management content.
-
-See **Section 1.1 Global Content Restrictions** for prohibited content.
-
-**Allowed Content:**
-
-| Allowed                           | Notes                      |
+| Content Type                      | Notes                      |
 |-----------------------------------|----------------------------|
-| Code snippets with context        | Primary content type       |
+| Code snippets with context        | Primary content            |
 | Cross-references to IDEA sections | For traceability           |
 | Integration notes (technical)     | How systems interact       |
 | Performance characteristics       | Complexity, memory, timing |
-| Data flow descriptions            | Input/output relationships |
 
-### 3.4 SNIPPET Lifecycle
+### 3.4 Lifecycle
 
-**Deletion Criteria:**
-- SNIPPET file may be **deleted entirely** when ALL features from corresponding IDEA file are implemented
-- Individual sections may be **removed** when their corresponding IDEA sections are implemented
-- Implementation verification requires: codebase analysis AND recent git commit review
+| State           | Description                                    |
+|-----------------|------------------------------------------------|
+| Full SNIPPET    | IDEA has no implemented features               |
+| Partial SNIPPET | Some IDEA sections implemented, others pending |
+| No SNIPPET      | All IDEA features fully implemented            |
 
-**Valid States:**
-
-| State           | Description                                     |
-|-----------------|-------------------------------------------------|
-| Full SNIPPET    | IDEA has no implemented features                |
-| Partial SNIPPET | Some IDEA sections implemented, others pending  |
-| No SNIPPET      | All IDEA features fully implemented in codebase |
-
-**Note:** Missing SNIPPET file is valid if corresponding IDEA features are fully implemented.
+**Deletion:** Remove sections/files when corresponding IDEA features are implemented (verify against codebase).
 
 ## 4. IDEA Files
 
-### 4.1 Purpose
+Feature discussions describing WHAT and WHY, not HOW. Audience: Engineers with CS fundamentals.
 
-Feature discussion documents describing WHAT and WHY, not HOW (implementation).
+### 4.1 Allowed vs Prohibited
 
-**Audience:** Engineers from any language background with CS fundamentals.
+| Allowed (Language-Agnostic)         | Prohibited (Language-Specific)        |
+|-------------------------------------|---------------------------------------|
+| A*, Dijkstra, genetic algorithms    | C# keywords (class, interface, var)   |
+| Array, hash table, quadtree         | .NET libraries (LINQ, YamlDotNet)     |
+| O(n), O(log n), complexity analysis | ECS terms (Component, System as code) |
+| Processor, module, subsystem        | async/await, Task, IEnumerable        |
 
-### 4.2 Allowed vs Prohibited
+### 4.2 Structure
 
-See **Section 1.1 Global Content Restrictions** for prohibited project management content.
-
-| Allowed                                     | Prohibited (Language-Specific)                |
-|---------------------------------------------|-----------------------------------------------|
-| A*, Dijkstra, genetic algorithms            | C# keywords (class, interface, var)           |
-| Array, hash table, quadtree, priority queue | .NET libraries (LINQ, YamlDotNet)             |
-| O(n), O(log n), complexity analysis         | ECS terms (Component, System, Entity as code) |
-| Processor, module, subsystem (architecture) | Factory pattern, Repository pattern (as code) |
-| Caching, memoization, lazy evaluation       | async/await, Task, IEnumerable                |
-
-**Rationale:** IDEA files contain raw, uncommitted ideas from discussions. No implementation commitments exist until ideas are pulled to ROADMAP files.
-
-### 4.3 Structure
-
-1. **Purpose & Goals** - Problem statement, objectives, success criteria
-2. **Functional Requirements** - Core capabilities, user scenarios
-3. **Non-Functional Requirements** - Performance targets, quality attributes
-4. **Architecture & Design** - Algorithms, data structures, module structure
-5. **Dependencies & Constraints** - Prerequisites, limitations, risks
-
-**Example:** ❌ "Implement RejuvenationSystem inheriting BaseFixedSystem" → ✅ "Rejuvenation processor updates vitality using cached decay rates with O(1) lookup"
+1. **Purpose & Goals** - Problem statement, objectives
+2. **Functional Requirements** - Core capabilities
+3. **Non-Functional Requirements** - Performance targets
+4. **Architecture & Design** - Algorithms, data structures
+5. **Dependencies & Constraints** - Prerequisites, limitations
 
 ## 5. SKILL Files
 
-### 5.1 Metadata Requirements
-
-**YAML frontmatter required** at file start:
+**YAML frontmatter required:**
 
 ```yaml
 ---
@@ -177,49 +145,99 @@ keywords: [order, validate, menu, customer]
 example-prompt:
   - Validate the order data in OrderController.cs
   - Can you check if this order request is valid?
-  - Run validation on the customer's reservation order
 ---
 ```
 
-| Attribute      | Format               | Example                                           |
-|----------------|----------------------|---------------------------------------------------|
-| name           | kebab-case           | `validate-order`                                  |
-| description    | Full sentence        | Validates restaurant order data...                |
-| display-name   | Title Case           | `Validate Order`                                  |
-| keywords       | Lowercase array      | `[order, validate, menu]`                         |
-| example-prompt | Array of 2-3 strings | Imperative + question styles, Restaurant examples |
+| Attribute      | Format          |
+|----------------|-----------------|
+| name           | kebab-case      |
+| description    | Full sentence   |
+| display-name   | Title Case      |
+| keywords       | Lowercase array |
+| example-prompt | 2-3 strings     |
 
-## 6. Validation Checklist
+## 6. Other File Types
 
-### 6.1 SNIPPET Files
+| Type    | Audience              | Structure                                                         |
+|---------|-----------------------|-------------------------------------------------------------------|
+| AUDIT   | Team leads, engineers | Executive Summary → Findings → Recommendations → Readiness        |
+| RULE    | AI agents, writers    | Scope → Rules → Examples → Checklist                              |
+| SUMMARY | Engineers             | Tables preferred, max 2 pages, links to detailed docs             |
+| ROADMAP | Project managers      | Overview → Features by Priority (P0-P3) → Timeline → Dependencies |
 
+**AUDIT Findings Format:** Location, Severity (per `RULE_Markdown.md` Section 6), Problem, Impact, Fix
+
+**ROADMAP Exception:** May contain priorities, timelines, status tracking (see `RULE_Markdown.md` Section 5.3).
+
+## 7. Verification Template
+
+**Required for:** All SKILL_* and RULE_* files in `.ai-toolbox/`
+
+**Structure:**
+- **Heading:** `## N. Self-Assessment Protocol`
+- **Introduction:** `**🚨 CRITICAL:** Before presenting results, verify using this checklist:`
+- **Subsections:** Bold headers (e.g., `**Order Validation:**`) with checkbox items
+
+**Example:**
+```markdown
+## N. Self-Assessment Protocol
+
+**🚨 CRITICAL:** Before presenting results, verify using this checklist:
+
+**Order Validation:**
+- [ ] Order items verified against menu
+- [ ] Customer payment method confirmed
+
+**Kitchen Integration:**
+- [ ] Order sent to kitchen queue
+- [ ] Preparation time estimated
+```
+
+## 8. Self-Assessment Protocol
+
+**🚨 CRITICAL:** Before presenting results, verify using this checklist:
+
+**Common:**
+- [ ] H1 follows `[TYPE]: [Topic]` format
+- [ ] TOC first entry matches H1 anchor
+- [ ] No prohibited content per Section 1.2 (except ROADMAP)
+
+**SNIPPET Files:**
 - [ ] Section numbers match IDEA exactly
-- [ ] Gaps in numbering preserved (not renumbered)
 - [ ] No boilerplate (copyright, using, namespace)
-- [ ] Obvious constructors omitted
-- [ ] Variable names descriptive
-- [ ] No prohibited content per Section 1.1
 - [ ] Implemented sections removed (verify against codebase)
 
-### 6.2 IDEA Files
-
+**IDEA Files:**
 - [ ] No language specifics (C#, .NET)
-- [ ] No ECS implementation terms
 - [ ] CS concepts and architecture terms only
-- [ ] No prohibited content per Section 1.1
 - [ ] Requirements document structure followed
-- [ ] Corresponding SNIPPET exists OR all features implemented (verify codebase)
 
-### 6.3 SKILL Files
-
+**SKILL Files:**
 - [ ] YAML frontmatter present with `---` dividers
 - [ ] All required attributes (name, description, display-name, keywords, example-prompt)
-- [ ] Keywords lowercase in array format
-- [ ] Name in kebab-case
-- [ ] Example-prompt has 2-3 distinct examples (imperative + question styles)
+- [ ] `name` in kebab-case
+- [ ] `keywords` lowercase array
+- [ ] `example-prompt` has 2-3 distinct examples
+- [ ] Self-Assessment Protocol section present
 
-### 6.4 RULE/SKILL Examples
+**AUDIT Files:**
+- [ ] Executive Summary with overall grade
+- [ ] Findings include location, severity, problem, impact, fix
+- [ ] Recommendations prioritized (Immediate → Long-term)
 
-- [ ] All examples use Restaurant application
-- [ ] Paths follow `Restaurant.*` naming
-- [ ] Domain concepts use Restaurant terminology
+**SUMMARY Files:**
+- [ ] Tables used for primary content presentation
+- [ ] Maximum 2 pages length
+- [ ] Links to detailed documentation included
+
+**ROADMAP Files:**
+- [ ] Overview section present
+- [ ] Features organized by priority (P0-P3)
+- [ ] Timeline included
+- [ ] Dependencies documented
+
+**RULE Files:**
+- [ ] All examples use Restaurant application (Section 2)
+- [ ] Rules are specific and testable
+- [ ] Cross-references to related RULE files included
+- [ ] Self-Assessment Protocol section present

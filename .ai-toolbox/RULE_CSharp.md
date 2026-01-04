@@ -28,10 +28,8 @@
     - [6.1 Purpose](#61-purpose)
     - [6.2 Exclusions](#62-exclusions)
     - [6.3 Constructor Rule](#63-constructor-rule)
-  - [7. Validation Checklist](#7-validation-checklist)
-    - [7.1 Both Contexts](#71-both-contexts)
-    - [7.2 Production Code Only](#72-production-code-only)
-    - [7.3 Documentation Code Only](#73-documentation-code-only)
+    - [6.4 Initialization Formatting](#64-initialization-formatting)
+  - [7. Self-Assessment Protocol](#7-self-assessment-protocol)
 
 ---
 
@@ -318,10 +316,33 @@ public class OrderService
 
 **Keep** constructors with validation or complex logic.
 
-## 7. Validation Checklist
+### 6.4 Initialization Formatting
 
-### 7.1 Both Contexts
+**Simple type initialization MUST be on a single line** in SNIPPET and AUDIT files. Applies to primitives (`int`, `float`, `bool`, `string`), single-value objects, and empty collections.
 
+**Complex initializations MAY span multiple lines** when they include collections with multiple entries (dictionaries, arrays, lists), object initializers with multiple properties, or nested structures.
+
+```csharp
+// ✅ CORRECT - simple types on one line
+private readonly int _maxTableCapacity = 50;
+private readonly string _defaultChefName = "Unknown";
+private readonly List<Order> _pendingOrders = new List<Order>();
+private readonly Random _random = new Random();
+
+// ✅ CORRECT - complex types may span lines
+private readonly Dictionary<string, decimal> _menuPrices = new()
+{
+    ["Appetizer"] = 8.50m,
+    ["MainCourse"] = 24.99m,
+    ["Dessert"] = 7.50m
+};
+```
+
+## 7. Self-Assessment Protocol
+
+**🚨 CRITICAL:** Before presenting results, verify using this checklist:
+
+**Both Contexts:**
 - [ ] Private instance fields use `_camelCase`
 - [ ] Static fields use PascalCase (no underscore)
 - [ ] Access modifiers explicit
@@ -333,21 +354,18 @@ public class OrderService
 - [ ] LINQ chains with 2+ methods split to multiple lines
 - [ ] Complex boolean conditions extracted to named variables
 
-### 7.2 Production Code Only
-
+**Production Code Only:**
 - [ ] Copyright header present
 - [ ] Using statements and namespace
 - [ ] Complete implementations (no TODOs)
 - [ ] Error handling implemented
 - [ ] File name matches class name
 
-### 7.3 Documentation Code Only
-
-Applies to SNIPPET and AUDIT files.
-
+**Documentation Code Only (SNIPPET/AUDIT):**
 - [ ] No copyright, using, namespace
 - [ ] Obvious constructors omitted
 - [ ] Variable names descriptive (no `i`, `temp`)
+- [ ] Field/property initialization on single line
 - [ ] Focused on architecture/patterns
 - [ ] No logging declarations (`ILogger`, `_logger`)
 - [ ] No logging calls (`LogInformation`, `LogWarning`, `LogError`)
