@@ -1,33 +1,59 @@
-# AI.Odin Scenario Loading System Implementation Snippets
+# SNIPPET: Scenario Loading System
 
-## Overview
-
-This document contains comprehensive code implementation snippets for the scenario loading system within our Entity Component System (ECS) framework. Each section provides complete C# implementations that integrate seamlessly with our existing blueprint infrastructure and YAML serialization system.
-
-The scenario loader extends our current blueprint pattern to support sophisticated world initialization, entity placement strategies, and dynamic simulation configuration while maintaining compatibility with existing systems.
-
-## Implementation Priority Matrix
-
-**Note:** All code examples follow the existing ECS architecture patterns and integrate with current blueprint and serialization infrastructure.
+**Last Updated:** January 6, 2026
 
 ---
 
-## Phase 1: Core Scenario Blueprint System
+## Table of Contents
 
-### Data Model Implementation
+- [SNIPPET: Scenario Loading System](#snippet-scenario-loading-system)
+  - [Table of Contents](#table-of-contents)
+  - [1. Overview](#1-overview)
+  - [2. Phase 1: Core Scenario Blueprint System](#2-phase-1-core-scenario-blueprint-system)
+    - [2.1 Data Model Implementation](#21-data-model-implementation)
+      - [ScenarioBlueprint - Core Scenario Definition](#scenarioblueprint---core-scenario-definition)
+      - [EntitySpawning - Entity Population Definition](#entityspawning---entity-population-definition)
+      - [ResourceDistribution - World Resource Configuration](#resourcedistribution---world-resource-configuration)
+    - [2.2 Core Scenario Loading Implementation](#22-core-scenario-loading-implementation)
+      - [IScenarioLoader - Interface Definition](#iscenarioloader---interface-definition)
+      - [ScenarioLoader - Core Loading Implementation](#scenarioloader---core-loading-implementation)
+  - [3. Phase 2: Placement Strategy Implementation](#3-phase-2-placement-strategy-implementation)
+    - [3.1 Placement Strategy Interface and Factory](#31-placement-strategy-interface-and-factory)
+      - [IPlacementStrategy - Strategy Interface](#iplacementstrategy---strategy-interface)
+      - [RandomPlacementStrategy - Random Placement Implementation](#randomplacementstrategy---random-placement-implementation)
+      - [GridPlacementStrategy - Grid Formation Implementation](#gridplacementstrategy---grid-formation-implementation)
+      - [ClusterPlacementStrategy - Cluster Formation Implementation](#clusterplacementstrategy---cluster-formation-implementation)
+  - [4. Phase 3: System Integration \& Scenario Management](#4-phase-3-system-integration--scenario-management)
+    - [4.1 Scenario Initialization System](#41-scenario-initialization-system)
+      - [ScenarioInitializationSystem - Main Scenario Execution System](#scenarioinitializationsystem---main-scenario-execution-system)
+    - [4.2 Enhanced Game State Extensions](#42-enhanced-game-state-extensions)
+      - [GameState Extensions for Scenario Support](#gamestate-extensions-for-scenario-support)
+    - [4.3 YAML Serialization Extensions](#43-yaml-serialization-extensions)
+      - [ScenarioYamlConverter - YAML Type Converter](#scenarioyamlconverter---yaml-type-converter)
+      - [Updated YamlSerializationExtensions](#updated-yamlserializationextensions)
+    - [4.4 EmbeddedDataStore Extensions](#44-embeddeddatastore-extensions)
+      - [Updated EmbeddedDataStore](#updated-embeddeddatastore)
+      - [Updated OdinMime](#updated-odinmime)
+  - [5. Example Scenario Blueprint Files](#5-example-scenario-blueprint-files)
+    - [5.1 Basic Survival Scenario](#51-basic-survival-scenario)
+    - [5.2 Large Population Research Scenario](#52-large-population-research-scenario)
+    - [5.3 Tutorial Progression Scenario](#53-tutorial-progression-scenario)
 
-#### ScenarioBlueprint.cs - Core Scenario Definition
-**File:** `Source/Odin.Engine/ECS.Blueprint/ScenarioBlueprint.cs`
+---
+
+## 1. Overview
+
+This document contains code implementations for the scenario loading system.
+
+---
+
+## 2. Phase 1: Core Scenario Blueprint System
+
+### 2.1 Data Model Implementation
+
+#### ScenarioBlueprint - Core Scenario Definition
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ScenarioBlueprint.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
 public record ScenarioBlueprint
 {
     public required string Id { get; init; }
@@ -110,18 +136,9 @@ public record MLTrainingSettings
 }
 ```
 
-#### EntitySpawning.cs - Entity Population Definition
-**File:** `Source/Odin.Engine/ECS.Blueprint/EntitySpawning.cs`
+#### EntitySpawning - Entity Population Definition
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EntitySpawning.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
 public record EntitySpawning
 {
     public required string EntityBlueprintId { get; init; }
@@ -236,18 +253,9 @@ public enum DistributionType
 }
 ```
 
-#### ResourceDistribution.cs - World Resource Configuration
-**File:** `Source/Odin.Engine/ECS.Blueprint/ResourceDistribution.cs`
+#### ResourceDistribution - World Resource Configuration
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ResourceDistribution.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
 public record ResourceDistribution
 {
     public required string ResourceBlueprintId { get; init; }
@@ -290,20 +298,11 @@ public record QualityDistribution
 }
 ```
 
-### Core Scenario Loading Implementation
+### 2.2 Core Scenario Loading Implementation
 
-#### IScenarioLoader.cs - Interface Definition
-**File:** `Source/Odin.Engine/ECS.Coordinator/IScenarioLoader.cs`
+#### IScenarioLoader - Interface Definition
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IScenarioLoader.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
 public interface IScenarioLoader
 {
     bool HasActiveScenario { get; }
@@ -341,21 +340,9 @@ public record ScenarioLoadingProgress
 }
 ```
 
-#### ScenarioLoader.cs - Core Loading Implementation
-**File:** `Source/Odin.Engine/ECS.Coordinator/ScenarioLoader.cs`
+#### ScenarioLoader - Core Loading Implementation
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ScenarioLoader.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
-using System.Collections.Immutable;
-using nGratis.Cop.Olympus.Contract;
-
 public class ScenarioLoader : IScenarioLoader
 {
     private readonly IDataStore _dataStore;
@@ -396,20 +383,15 @@ public class ScenarioLoader : IScenarioLoader
         Guard.Require(scenario, nameof(scenario)).Is.Not.Null();
 
         this._currentScenario = scenario;
-
-        // Initialize universe with scenario configuration
         var universe = this.CreateUniverseFromScenario(scenario);
 
-        // Apply reproducible seed if specified
         if (scenario.Metadata?.ReproducibleSeed.HasValue == true)
         {
             this._random = new Random((int)scenario.Metadata.ReproducibleSeed.Value);
         }
 
-        // Spawn all initial entities
         this.SpawnEntitiesFromScenario(scenario, universe);
 
-        // Notify callbacks
         foreach (var callback in this._scenarioLoadedCallbacks)
         {
             callback(scenario);
@@ -434,7 +416,6 @@ public class ScenarioLoader : IScenarioLoader
 
         this._currentScenario = scenario;
 
-        // Report initialization phase
         progress?.Report(new ScenarioLoadingProgress 
         { 
             OverallProgress = 0.1f, 
@@ -444,13 +425,11 @@ public class ScenarioLoader : IScenarioLoader
 
         var universe = this.CreateUniverseFromScenario(scenario);
 
-        // Apply reproducible seed if specified
         if (scenario.Metadata?.ReproducibleSeed.HasValue == true)
         {
             this._random = new Random((int)scenario.Metadata.ReproducibleSeed.Value);
         }
 
-        // Calculate total entities for progress tracking
         var totalEntities = scenario.EntitySpawnings.Sum(spawning => spawning.Quantity);
 
         progress?.Report(new ScenarioLoadingProgress 
@@ -461,7 +440,6 @@ public class ScenarioLoader : IScenarioLoader
             StatusMessage = $"Creating {totalEntities} entities..."
         });
 
-        // Spawn entities with progress reporting
         await this.SpawnEntitiesFromScenarioAsync(scenario, universe, progress);
 
         progress?.Report(new ScenarioLoadingProgress 
@@ -473,7 +451,6 @@ public class ScenarioLoader : IScenarioLoader
             StatusMessage = "Scenario loaded successfully"
         });
 
-        // Notify callbacks
         foreach (var callback in this._scenarioLoadedCallbacks)
         {
             callback(scenario);
@@ -486,7 +463,6 @@ public class ScenarioLoader : IScenarioLoader
     {
         if (this._currentScenario != null)
         {
-            // Clear all entities
             this._entityManager.Clear();
             this._currentScenario = null;
         }
@@ -502,7 +478,7 @@ public class ScenarioLoader : IScenarioLoader
     public ScenarioBlueprint GetScenarioBlueprint(string scenarioId)
     {
         var scenarios = this._dataStore.LoadScenarioBlueprints();
-        var scenario = scenarios.FirstOrDefault(s => s.Id == scenarioId);
+        var scenario = scenarios.FirstOrDefault(scenarioBlueprint => scenarioBlueprint.Id == scenarioId);
         
         if (scenario == null)
         {
@@ -529,7 +505,10 @@ public class ScenarioLoader : IScenarioLoader
 
     private void SpawnEntitiesFromScenario(ScenarioBlueprint scenario, IUniverse universe)
     {
-        foreach (var entitySpawning in scenario.EntitySpawnings.Where(s => s.SpawnTiming == SpawnTiming.Initial))
+        var initialSpawnings = scenario.EntitySpawnings
+            .Where(spawning => spawning.SpawnTiming == SpawnTiming.Initial);
+
+        foreach (var entitySpawning in initialSpawnings)
         {
             this.SpawnEntityGroup(entitySpawning, universe);
         }
@@ -543,7 +522,10 @@ public class ScenarioLoader : IScenarioLoader
         var totalEntities = scenario.EntitySpawnings.Sum(spawning => spawning.Quantity);
         uint entitiesCreated = 0;
 
-        foreach (var entitySpawning in scenario.EntitySpawnings.Where(s => s.SpawnTiming == SpawnTiming.Initial))
+        var initialSpawnings = scenario.EntitySpawnings
+            .Where(spawning => spawning.SpawnTiming == SpawnTiming.Initial);
+
+        foreach (var entitySpawning in initialSpawnings)
         {
             await this.SpawnEntityGroupAsync(entitySpawning, universe, progress, entitiesCreated, totalEntities);
             entitiesCreated += entitySpawning.Quantity;
@@ -555,24 +537,21 @@ public class ScenarioLoader : IScenarioLoader
         var placementStrategy = this.GetPlacementStrategy(spawning.PlacementStrategy);
         var positions = placementStrategy.GeneratePositions(spawning.Quantity, universe);
 
-        for (var i = 0; i < spawning.Quantity; i++)
+        for (var entityIndex = 0; entityIndex < spawning.Quantity; entityIndex++)
         {
             var entity = this._entityFactory.CreateEntity(spawning.EntityBlueprintId);
-            
-            // Apply position from placement strategy
             var physicsComponent = entity.FindComponent<PhysicsComponent>();
-            if (physicsComponent != null && i < positions.Count())
+
+            if (physicsComponent != null && entityIndex < positions.Count())
             {
-                physicsComponent.Position = positions.ElementAt(i);
+                physicsComponent.Position = positions.ElementAt(entityIndex);
             }
 
-            // Apply component overrides if specified
             if (spawning.ComponentOverrides != null)
             {
                 this.ApplyComponentOverrides(entity, spawning.ComponentOverrides);
             }
 
-            // Apply trait variations if specified
             if (spawning.TraitVariations != null)
             {
                 this.ApplyTraitVariations(entity, spawning.TraitVariations);
@@ -593,24 +572,21 @@ public class ScenarioLoader : IScenarioLoader
         var placementStrategy = this.GetPlacementStrategy(spawning.PlacementStrategy);
         var positions = placementStrategy.GeneratePositions(spawning.Quantity, universe);
 
-        for (uint i = 0; i < spawning.Quantity; i += batchSize)
+        for (uint batchStart = 0; batchStart < spawning.Quantity; batchStart += batchSize)
         {
-            var batchCount = Math.Min(batchSize, spawning.Quantity - i);
+            var batchCount = Math.Min(batchSize, spawning.Quantity - batchStart);
             
-            // Create batch of entities
-            for (var j = 0; j < batchCount; j++)
+            for (var batchOffset = 0; batchOffset < batchCount; batchOffset++)
             {
-                var entityIndex = i + j;
+                var entityIndex = batchStart + batchOffset;
                 var entity = this._entityFactory.CreateEntity(spawning.EntityBlueprintId);
-                
-                // Apply position from placement strategy
                 var physicsComponent = entity.FindComponent<PhysicsComponent>();
+
                 if (physicsComponent != null && entityIndex < positions.Count())
                 {
                     physicsComponent.Position = positions.ElementAt((int)entityIndex);
                 }
 
-                // Apply component overrides and variations
                 if (spawning.ComponentOverrides != null)
                 {
                     this.ApplyComponentOverrides(entity, spawning.ComponentOverrides);
@@ -624,8 +600,8 @@ public class ScenarioLoader : IScenarioLoader
                 this._entityManager.AddEntity(entity);
             }
 
-            // Report progress
-            var currentEntitiesCreated = baseEntitiesCreated + i + batchCount;
+            var currentEntitiesCreated = baseEntitiesCreated + batchStart + batchCount;
+
             progress?.Report(new ScenarioLoadingProgress 
             { 
                 OverallProgress = 0.2f + (0.7f * currentEntitiesCreated / totalEntities),
@@ -635,7 +611,6 @@ public class ScenarioLoader : IScenarioLoader
                 StatusMessage = $"Created {currentEntitiesCreated}/{totalEntities} entities"
             });
 
-            // Yield control to prevent blocking
             await Task.Yield();
         }
     }
@@ -650,12 +625,11 @@ public class ScenarioLoader : IScenarioLoader
     {
         foreach (var (componentId, parameter) in overrides)
         {
-            var component = entity.Components.FirstOrDefault(c => 
-                c.GetType().Name.StartsWith(componentId, StringComparison.OrdinalIgnoreCase));
+            var component = entity.Components
+                .FirstOrDefault(comp => comp.GetType().Name.StartsWith(componentId, StringComparison.OrdinalIgnoreCase));
             
             if (component != null)
             {
-                // Apply parameter to component using reflection
                 this.ApplyParameterToComponent(component, parameter);
             }
         }
@@ -663,16 +637,18 @@ public class ScenarioLoader : IScenarioLoader
 
     private void ApplyTraitVariations(IEntity entity, StatisticalDistribution distribution)
     {
-        var component = entity.Components.FirstOrDefault(c => 
-            c.GetType().Name.StartsWith(distribution.ComponentId, StringComparison.OrdinalIgnoreCase));
+        var component = entity.Components
+            .FirstOrDefault(comp => comp.GetType().Name.StartsWith(distribution.ComponentId, StringComparison.OrdinalIgnoreCase));
 
         if (component != null)
         {
             var property = component.GetType().GetProperty(distribution.PropertyName);
-            if (property != null && property.CanWrite)
+            var canWriteProperty = property != null && property.CanWrite;
+            
+            if (canWriteProperty)
             {
                 var randomValue = this.GenerateRandomValue(distribution);
-                property.SetValue(component, Convert.ChangeType(randomValue, property.PropertyType));
+                property!.SetValue(component, Convert.ChangeType(randomValue, property.PropertyType));
             }
         }
     }
@@ -716,22 +692,13 @@ public class ScenarioLoader : IScenarioLoader
 
 ---
 
-## Phase 2: Placement Strategy Implementation
+## 3. Phase 2: Placement Strategy Implementation
 
-### Placement Strategy Interface and Factory
+### 3.1 Placement Strategy Interface and Factory
 
-#### IPlacementStrategy.cs - Strategy Interface
-**File:** `Source/Odin.Engine/ECS.Coordinator/IPlacementStrategy.cs`
+#### IPlacementStrategy - Strategy Interface
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IPlacementStrategy.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
 public interface IPlacementStrategy
 {
     bool CanHandle(PlacementType placementType);
@@ -742,20 +709,9 @@ public interface IPlacementStrategy
 }
 ```
 
-#### RandomPlacementStrategy.cs - Random Placement Implementation
-**File:** `Source/Odin.Engine/ECS.Coordinator/RandomPlacementStrategy.cs`
+#### RandomPlacementStrategy - Random Placement Implementation
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RandomPlacementStrategy.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
-using nGratis.Cop.Olympus.Contract;
-
 public class RandomPlacementStrategy : IPlacementStrategy
 {
     private readonly Random _random;
@@ -796,7 +752,7 @@ public class RandomPlacementStrategy : IPlacementStrategy
             MaxY = universe.Size.Height 
         };
 
-        var maxAttempts = (int)quantity * 10; // Prevent infinite loops
+        var maxAttempts = (int)quantity * 10;
         var attempts = 0;
 
         while (positions.Count < quantity && attempts < maxAttempts)
@@ -818,7 +774,6 @@ public class RandomPlacementStrategy : IPlacementStrategy
     {
         if (boundary.Center.HasValue && boundary.Radius.HasValue)
         {
-            // Generate within circular boundary
             var angle = this._random.NextDouble() * 2 * Math.PI;
             var distance = Math.Sqrt(this._random.NextDouble()) * boundary.Radius.Value;
             
@@ -830,7 +785,6 @@ public class RandomPlacementStrategy : IPlacementStrategy
         }
         else
         {
-            // Generate within rectangular boundary
             return new Point
             {
                 X = (float)(this._random.NextDouble() * (boundary.MaxX - boundary.MinX) + boundary.MinX),
@@ -847,20 +801,9 @@ public class RandomPlacementStrategy : IPlacementStrategy
 }
 ```
 
-#### GridPlacementStrategy.cs - Grid Formation Implementation
-**File:** `Source/Odin.Engine/ECS.Coordinator/GridPlacementStrategy.cs`
+#### GridPlacementStrategy - Grid Formation Implementation
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GridPlacementStrategy.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
-using nGratis.Cop.Olympus.Contract;
-
 public class GridPlacementStrategy : IPlacementStrategy
 {
     private readonly Random _random;
@@ -902,11 +845,9 @@ public class GridPlacementStrategy : IPlacementStrategy
             MaxY = universe.Size.Height 
         };
 
-        // Calculate grid dimensions
         var columns = formation.Columns ?? (uint)Math.Ceiling(Math.Sqrt(quantity));
         var rows = formation.Rows ?? (uint)Math.Ceiling((double)quantity / columns);
 
-        // Calculate starting position to center the grid
         var gridWidth = (columns - 1) * formation.Spacing;
         var gridHeight = (rows - 1) * formation.Spacing;
         var startX = boundary.MinX + (boundary.MaxX - boundary.MinX - gridWidth) / 2;
@@ -920,7 +861,6 @@ public class GridPlacementStrategy : IPlacementStrategy
                 var baseX = startX + col * formation.Spacing;
                 var baseY = startY + row * formation.Spacing;
 
-                // Apply jitter if specified
                 if (formation.Jitter > 0)
                 {
                     baseX += (float)(this._random.NextDouble() - 0.5) * 2 * formation.Jitter;
@@ -937,20 +877,9 @@ public class GridPlacementStrategy : IPlacementStrategy
 }
 ```
 
-#### ClusterPlacementStrategy.cs - Cluster Formation Implementation
-**File:** `Source/Odin.Engine/ECS.Coordinator/ClusterPlacementStrategy.cs`
+#### ClusterPlacementStrategy - Cluster Formation Implementation
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ClusterPlacementStrategy.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
-using nGratis.Cop.Olympus.Contract;
-
 public class ClusterPlacementStrategy : IPlacementStrategy
 {
     private readonly Random _random;
@@ -992,10 +921,7 @@ public class ClusterPlacementStrategy : IPlacementStrategy
             MaxY = universe.Size.Height 
         };
 
-        // Generate cluster centers
         var clusterCenters = this.GenerateClusterCenters(cluster.ClusterCount, boundary);
-        
-        // Distribute entities among clusters
         var entitiesPerCluster = this.DistributeEntitiesAcrossClusters(quantity, cluster.ClusterCount, cluster.DensityVariation);
 
         for (var clusterIndex = 0; clusterIndex < clusterCenters.Count; clusterIndex++)
@@ -1015,7 +941,7 @@ public class ClusterPlacementStrategy : IPlacementStrategy
         var centers = new List<Point>();
         var minDistance = Math.Min(boundary.MaxX - boundary.MinX, boundary.MaxY - boundary.MinY) / (clusterCount * 2);
 
-        for (var i = 0; i < clusterCount; i++)
+        for (var clusterIndex = 0; clusterIndex < clusterCount; clusterIndex++)
         {
             Point center;
             var attempts = 0;
@@ -1044,22 +970,20 @@ public class ClusterPlacementStrategy : IPlacementStrategy
         var baseCount = totalEntities / clusterCount;
         var remainder = totalEntities % clusterCount;
 
-        for (var i = 0; i < clusterCount; i++)
+        for (var clusterIndex = 0; clusterIndex < clusterCount; clusterIndex++)
         {
-            distribution[i] = baseCount;
+            distribution[clusterIndex] = baseCount;
             
-            // Add remainder to first clusters
-            if (i < remainder)
+            if (clusterIndex < remainder)
             {
-                distribution[i]++;
+                distribution[clusterIndex]++;
             }
 
-            // Apply density variation
             if (densityVariation > 0)
             {
                 var variation = (float)(this._random.NextDouble() - 0.5) * 2 * densityVariation;
-                var adjustment = (int)(distribution[i] * variation);
-                distribution[i] = (uint)Math.Max(1, (int)distribution[i] + adjustment);
+                var adjustment = (int)(distribution[clusterIndex] * variation);
+                distribution[clusterIndex] = (uint)Math.Max(1, (int)distribution[clusterIndex] + adjustment);
             }
         }
 
@@ -1070,7 +994,7 @@ public class ClusterPlacementStrategy : IPlacementStrategy
     {
         var positions = new List<Point>();
 
-        for (var i = 0; i < quantity; i++)
+        for (var positionIndex = 0; positionIndex < quantity; positionIndex++)
         {
             var angle = this._random.NextDouble() * 2 * Math.PI;
             var distance = Math.Sqrt(this._random.NextDouble()) * radius;
@@ -1091,25 +1015,14 @@ public class ClusterPlacementStrategy : IPlacementStrategy
 
 ---
 
-## Phase 3: System Integration & Scenario Management
+## 4. Phase 3: System Integration & Scenario Management
 
-### Scenario Initialization System
+### 4.1 Scenario Initialization System
 
-#### ScenarioInitializationSystem.cs - Main Scenario Execution System
-**File:** `Source/Odin.Engine/ECS.System.Logic/ScenarioInitializationSystem.cs`
+#### ScenarioInitializationSystem - Main Scenario Execution System
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ScenarioInitializationSystem.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
-using System.Reflection;
-
-[SystemMetadata(OrderingIndex = -100)] // Run before all other systems
+[SystemMetadata(OrderingIndex = -100)]
 public class ScenarioInitializationSystem : BaseVariableSystem
 {
     private readonly IScenarioLoader _scenarioLoader;
@@ -1130,8 +1043,6 @@ public class ScenarioInitializationSystem : BaseVariableSystem
         }
 
         var scenario = this._scenarioLoader.CurrentScenario!;
-        
-        // Initialize scenario-specific components and systems
         this.InitializeScenarioEnvironment(scenario, gameState);
         this.InitializeScenarioResources(scenario, gameState);
         this.InitializeScenarioEvents(scenario);
@@ -1147,11 +1058,6 @@ public class ScenarioInitializationSystem : BaseVariableSystem
         }
 
         var environment = scenario.Universe.Environment;
-        
-        // Apply environmental settings to game state
-        // This would integrate with environmental systems when they exist
-        
-        // For now, we can store environment data for future systems to use
         gameState.SetScenarioEnvironment(environment);
     }
 
@@ -1162,11 +1068,8 @@ public class ScenarioInitializationSystem : BaseVariableSystem
             return;
         }
 
-        // Resource distribution would be handled here
-        // This integrates with resource systems when implemented
         foreach (var resourceDistribution in scenario.Resources)
         {
-            // Create resource entities based on distribution configuration
             this.SpawnResourceEntities(resourceDistribution, gameState.Universe);
         }
     }
@@ -1178,44 +1081,27 @@ public class ScenarioInitializationSystem : BaseVariableSystem
             return;
         }
 
-        // Schedule environmental events
-        // This would integrate with event scheduling systems
         foreach (var environmentalEvent in scenario.Events)
         {
-            // Register event for later execution
             this.ScheduleEnvironmentalEvent(environmentalEvent);
         }
     }
 
     private void SpawnResourceEntities(ResourceDistribution distribution, IUniverse universe)
     {
-        // Resource spawning implementation
-        // This would use similar placement strategies as entity spawning
     }
 
     private void ScheduleEnvironmentalEvent(EnvironmentalEvent environmentalEvent)
     {
-        // Event scheduling implementation
-        // This would integrate with a future event system
     }
 }
 ```
 
-### Enhanced Game State Extensions
+### 4.2 Enhanced Game State Extensions
 
 #### GameState Extensions for Scenario Support
-**File:** `Source/Odin.Engine/GameState.Scenario.cs`
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GameState.Scenario.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Engine;
-
-// Extension methods for GameState to support scenario functionality
 public static class GameStateScenarioExtensions
 {
     private static readonly Dictionary<IGameState, EnvironmentConfiguration> EnvironmentConfigurations 
@@ -1257,25 +1143,11 @@ public static class GameStateScenarioExtensions
 }
 ```
 
-### YAML Serialization Extensions
+### 4.3 YAML Serialization Extensions
 
-#### ScenarioYamlConverter.cs - YAML Type Converter
-**File:** `Source/Odin.Glue/Serializer/ScenarioYamlConverter.cs`
+#### ScenarioYamlConverter - YAML Type Converter
+
 ```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ScenarioYamlConverter.cs" company="nGratis">
-//  The MIT License — Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Glue;
-
-using nGratis.AI.Odin.Engine;
-using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
-using YamlDotNet.Serialization;
-
 public class ScenarioYamlConverter : IYamlTypeConverter
 {
     public bool Accepts(Type type)
@@ -1324,10 +1196,9 @@ public class ScenarioYamlConverter : IYamlTypeConverter
 }
 ```
 
-#### Updated YamlSerializationExtensions.cs
-**Modifications to:** `Source/Odin.Glue/Serializer/YamlSerializationExtensions.cs`
+#### Updated YamlSerializationExtensions
+
 ```csharp
-// Add to existing deserializer configuration
 private static readonly IDeserializer Deserializer = new DeserializerBuilder()
     .WithNamingConvention(YamlSerializationExtensions.NamingConvention)
     .WithTypeConverter(ParameterYamlConverter.Instance)
@@ -1338,7 +1209,6 @@ private static readonly IDeserializer Deserializer = new DeserializerBuilder()
     .WithTypeConverter(new ScalarOrSequenceYamlConverter<ScenarioBlueprint>()) // Add scenario support
     .Build();
 
-// Add scenario loading method
 public static IEnumerable<ScenarioBlueprint> LoadScenarioBlueprints(this IDataStore dataStore)
 {
     return dataStore
@@ -1347,12 +1217,11 @@ public static IEnumerable<ScenarioBlueprint> LoadScenarioBlueprints(this IDataSt
 }
 ```
 
-### EmbeddedDataStore Extensions
+### 4.4 EmbeddedDataStore Extensions
 
-#### Updated EmbeddedDataStore.cs
-**Add to:** `Source/Odin.Glue/EmbeddedDataStore.cs`
+#### Updated EmbeddedDataStore
+
 ```csharp
-// Add scenario blueprint support
 public IEnumerable<ScenarioBlueprint> LoadScenarioBlueprints()
 {
     return this
@@ -1361,14 +1230,14 @@ public IEnumerable<ScenarioBlueprint> LoadScenarioBlueprints()
 }
 ```
 
-#### Updated OdinMime.cs
-**Add to:** `Source/Odin.Glue/OdinMime.cs`
+#### Updated OdinMime
+
 ```csharp
 public static class OdinMime
 {
     public static readonly MimeType EntityBlueprint = new("application", "x-ngao-entity-blueprint");
     public static readonly MimeType SpriteSheetBlueprint = new("application", "x-ngao-spritesheet-blueprint");
-    public static readonly MimeType ScenarioBlueprint = new("application", "x-ngao-scenario-blueprint"); // Add this line
+    public static readonly MimeType ScenarioBlueprint = new("application", "x-ngao-scenario-blueprint");
 
     public static MimeType? GetMimeType(FileInfo fileInfo)
     {
@@ -1376,7 +1245,7 @@ public static class OdinMime
         {
             ".ngaoblueprint" => EntityBlueprint,
             ".ngasprite" => SpriteSheetBlueprint,
-            ".ngascenario" => ScenarioBlueprint, // Add this line
+            ".ngascenario" => ScenarioBlueprint,
             _ => null
         };
     }
@@ -1385,10 +1254,10 @@ public static class OdinMime
 
 ---
 
-## Example Scenario Blueprint Files
+## 5. Example Scenario Blueprint Files
 
-### Basic Survival Scenario
-**File:** `Source/Odin.Glue/Common.Blueprint/scenario-basic-survival.ngascenario`
+### 5.1 Basic Survival Scenario
+
 ```yaml
 id: 'BasicSurvival'
 name: 'Basic Survival Challenge'
@@ -1458,8 +1327,8 @@ metadata:
   reproducible-seed: 42
 ```
 
-### Large Population Research Scenario
-**File:** `Source/Odin.Glue/Common.Blueprint/scenario-population-dynamics.ngascenario`
+### 5.2 Large Population Research Scenario
+
 ```yaml
 id: 'PopulationDynamics'
 name: 'Large Population Research'
@@ -1564,8 +1433,8 @@ metadata:
   reproducible-seed: 12345
 ```
 
-### Tutorial Progression Scenario
-**File:** `Source/Odin.Glue/Common.Blueprint/scenario-tutorial-basic.ngascenario`
+### 5.3 Tutorial Progression Scenario
+
 ```yaml
 id: 'TutorialBasic'
 name: 'Tutorial: Basic Observation'
@@ -1620,927 +1489,3 @@ metadata:
     enabled: false
   reproducible-seed: 1
 ```
-
----
-
-## Phase 4: Godot UI Integration Implementation
-
-### Enhanced SimulationController
-
-#### SimulationController.cs - UI Logic and State Management
-**File:** `Source/Odin.Client.Godot/Common.UI/SimulationController.cs`
-```csharp
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SimulationController.cs" company="nGratis">
-//  The MIT License -- Copyright (c) Cahya Ong
-//  See the LICENSE file in the project root for more information.
-// </copyright>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace nGratis.AI.Odin.Client.Godot;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using nGratis.AI.Odin.Engine;
-
-public partial class SimulationController : HBoxContainer
-{
-    // UI Node references
-    private OptionButton _scenarioSelector;
-    private Button _runningButton;
-    private ProgressBar _loadingProgressBar;
-    private Label _statusLabel;
-    private Panel _descriptionPanel;
-    private RichTextLabel _descriptionText;
-
-    // Dependencies injected via AppBootstrapper
-    private IScenarioLoader _scenarioLoader;
-    private IGameController _gameController;
-    private IDataStore _dataStore;
-
-    // State management
-    private SimulationState _currentState = SimulationState.Idle;
-    private string _selectedScenarioId = string.Empty;
-    private CancellationTokenSource _loadingCancellation;
-
-    // UI state enum
-    private enum SimulationState
-    {
-        Idle,           // Ready to start
-        Loading,        // Loading scenario
-        Running,        // Simulation active
-        Stopping,       // Graceful shutdown
-        Error           // Error state
-    }
-
-    [Export]
-    public AppBootstrapper AppBootstrapper { get; set; }
-
-    public override void _Ready()
-    {
-        this.InitializeUINodes();
-        this.InitializeDependencies();
-        this.InitializeScenarioSelector();
-        this.ConnectUISignals();
-        this.UpdateUIState();
-    }
-
-    private void InitializeUINodes()
-    {
-        // Get UI node references
-        this._scenarioSelector = this.GetNode<OptionButton>("ScenarioSelector");
-        this._runningButton = this.GetNode<Button>("RunningButton");
-        this._loadingProgressBar = this.GetNode<ProgressBar>("LoadingProgressBar");
-        this._statusLabel = this.GetNode<Label>("StatusLabel");
-        
-        // Description panel (optional - can be null if not present)
-        this._descriptionPanel = this.GetNodeOrNull<Panel>("DescriptionPanel");
-        this._descriptionText = this._descriptionPanel?.GetNodeOrNull<RichTextLabel>("DescriptionText");
-
-        // Initialize UI state
-        this._loadingProgressBar.Visible = false;
-        this._statusLabel.Text = "Ready";
-        
-        if (this._descriptionPanel != null)
-        {
-            this._descriptionPanel.Visible = false;
-        }
-    }
-
-    private void InitializeDependencies()
-    {
-        if (this.AppBootstrapper == null)
-        {
-            GD.PrintErr("AppBootstrapper not set on SimulationController!");
-            return;
-        }
-
-        // Get dependencies from DI container through AppBootstrapper
-        // Note: This assumes AppBootstrapper exposes the container or provides access methods
-        this._dataStore = this.AppBootstrapper.DataStore;
-        
-        // TODO: These would be resolved from the DI container in a real implementation
-        // For now, we'll need to add these to AppBootstrapper or pass them differently
-        // this._scenarioLoader = container.Resolve<IScenarioLoader>();
-        // this._gameController = container.Resolve<IGameController>();
-    }
-
-    private void InitializeScenarioSelector()
-    {
-        try
-        {
-            // Clear existing items
-            this._scenarioSelector.Clear();
-            
-            // Add default option
-            this._scenarioSelector.AddItem("Select Scenario...", -1);
-            this._scenarioSelector.Selected = 0;
-
-            // Load available scenarios from data store
-            var availableScenarios = this.GetAvailableScenarios();
-            var itemIndex = 1;
-            
-            foreach (var scenario in availableScenarios)
-            {
-                this._scenarioSelector.AddItem($"{scenario.Name} ({scenario.Id})", itemIndex);
-                this._scenarioSelector.SetItemMetadata(itemIndex, scenario.Id);
-                itemIndex++;
-            }
-
-            GD.Print($"Loaded {availableScenarios.Count()} scenarios into selector");
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Failed to load scenarios: {ex.Message}");
-            this._scenarioSelector.AddItem("Error loading scenarios", -1);
-            this.SetErrorState($"Failed to load scenarios: {ex.Message}");
-        }
-    }
-
-    private IEnumerable<ScenarioBlueprint> GetAvailableScenarios()
-    {
-        // In a real implementation, this would use the scenario loader
-        // For now, we'll create some mock scenarios or load from data store
-        
-        if (this._dataStore != null)
-        {
-            try
-            {
-                // Assuming DataStore has a method to load scenario blueprints
-                return this._dataStore.LoadScenarioBlueprints();
-            }
-            catch
-            {
-                // Fallback to mock scenarios for development
-                return this.CreateMockScenarios();
-            }
-        }
-
-        return this.CreateMockScenarios();
-    }
-
-    private IEnumerable<ScenarioBlueprint> CreateMockScenarios()
-    {
-        // Mock scenarios for development/testing
-        return new[]
-        {
-            new ScenarioBlueprint
-            {
-                Id = "BasicSurvival",
-                Name = "Basic Survival",
-                Description = "Small population survival scenario with limited resources",
-                Universe = new UniverseSetup 
-                { 
-                    Size = new Size { Width = 128, Height = 64 } 
-                },
-                EntitySpawnings = new List<EntitySpawning>()
-            },
-            new ScenarioBlueprint
-            {
-                Id = "PopulationDynamics", 
-                Name = "Population Dynamics",
-                Description = "Large scale population for ML research and social evolution",
-                Universe = new UniverseSetup 
-                { 
-                    Size = new Size { Width = 256, Height = 256 } 
-                },
-                EntitySpawnings = new List<EntitySpawning>()
-            },
-            new ScenarioBlueprint
-            {
-                Id = "TutorialBasic",
-                Name = "Tutorial - Basic Observation", 
-                Description = "Simple tutorial scenario for new players",
-                Universe = new UniverseSetup 
-                { 
-                    Size = new Size { Width = 64, Height = 32 } 
-                },
-                EntitySpawnings = new List<EntitySpawning>()
-            }
-        };
-    }
-
-    private void ConnectUISignals()
-    {
-        // Connect UI signals
-        this._scenarioSelector.ItemSelected += this.OnScenarioSelected;
-        this._runningButton.Pressed += this.OnRunningButtonPressed;
-    }
-
-    private void OnScenarioSelected(long index)
-    {
-        if (index <= 0)
-        {
-            this._selectedScenarioId = string.Empty;
-            this.HideScenarioDescription();
-            this.UpdateUIState();
-            return;
-        }
-
-        // Get scenario ID from metadata
-        this._selectedScenarioId = this._scenarioSelector.GetItemMetadata((int)index).AsString();
-        
-        GD.Print($"Selected scenario: {this._selectedScenarioId}");
-        
-        // Show scenario description if available
-        this.ShowScenarioDescription(this._selectedScenarioId);
-        this.UpdateUIState();
-    }
-
-    private void ShowScenarioDescription(string scenarioId)
-    {
-        if (this._descriptionPanel == null || this._descriptionText == null)
-            return;
-
-        try
-        {
-            var scenarios = this.GetAvailableScenarios();
-            var scenario = scenarios.FirstOrDefault(s => s.Id == scenarioId);
-            
-            if (scenario != null)
-            {
-                this._descriptionText.Text = $"[b]{scenario.Name}[/b]\n\n{scenario.Description ?? "No description available."}\n\n" +
-                    $"[color=gray]Universe Size: {scenario.Universe.Size.Width}x{scenario.Universe.Size.Height}[/color]";
-                this._descriptionPanel.Visible = true;
-            }
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Failed to show scenario description: {ex.Message}");
-        }
-    }
-
-    private void HideScenarioDescription()
-    {
-        if (this._descriptionPanel != null)
-        {
-            this._descriptionPanel.Visible = false;
-        }
-    }
-
-    private async void OnRunningButtonPressed()
-    {
-        switch (this._currentState)
-        {
-            case SimulationState.Idle:
-                await this.StartSimulation();
-                break;
-                
-            case SimulationState.Running:
-                this.StopSimulation();
-                break;
-                
-            case SimulationState.Loading:
-                this.CancelLoading();
-                break;
-                
-            case SimulationState.Error:
-                this.ResetToIdle();
-                break;
-        }
-    }
-
-    private async Task StartSimulation()
-    {
-        if (string.IsNullOrEmpty(this._selectedScenarioId))
-        {
-            this.SetErrorState("Please select a scenario first");
-            return;
-        }
-
-        try
-        {
-            this.SetLoadingState();
-            
-            // Create cancellation token for loading
-            this._loadingCancellation = new CancellationTokenSource();
-            
-            // Create progress reporter
-            var progress = new Progress<ScenarioLoadingProgress>(this.OnLoadingProgress);
-            
-            GD.Print($"Starting to load scenario: {this._selectedScenarioId}");
-            
-            // Load scenario asynchronously
-            // Note: In real implementation, this would call the scenario loader
-            // await this._gameController.LoadScenarioFromUI(this._selectedScenarioId, progress);
-            
-            // Mock loading for development
-            await this.MockScenarioLoading(progress, this._loadingCancellation.Token);
-            
-            if (!this._loadingCancellation.Token.IsCancellationRequested)
-            {
-                this.SetRunningState();
-                GD.Print($"Successfully loaded and started scenario: {this._selectedScenarioId}");
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            GD.Print("Scenario loading was cancelled");
-            this.ResetToIdle();
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Failed to start simulation: {ex.Message}");
-            this.SetErrorState($"Failed to load scenario: {ex.Message}");
-        }
-        finally
-        {
-            this._loadingCancellation?.Dispose();
-            this._loadingCancellation = null;
-        }
-    }
-
-    private async Task MockScenarioLoading(IProgress<ScenarioLoadingProgress> progress, CancellationToken cancellationToken)
-    {
-        // Mock scenario loading phases for development
-        var phases = new[]
-        {
-            ("Initializing Universe", 0.1f, 500),
-            ("Loading Entity Blueprints", 0.3f, 800),
-            ("Spawning Entities", 0.7f, 1200),
-            ("Finalizing Setup", 0.9f, 300),
-            ("Completed", 1.0f, 100)
-        };
-
-        foreach (var (phase, progressValue, delay) in phases)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            
-            progress?.Report(new ScenarioLoadingProgress
-            {
-                OverallProgress = progressValue,
-                CurrentPhase = phase,
-                StatusMessage = $"{phase}..."
-            });
-            
-            await Task.Delay(delay, cancellationToken);
-        }
-    }
-
-    private void OnLoadingProgress(ScenarioLoadingProgress progress)
-    {
-        // Update UI with loading progress
-        this._loadingProgressBar.Value = progress.OverallProgress * 100;
-        this._statusLabel.Text = progress.StatusMessage ?? progress.CurrentPhase;
-        
-        // Handle error states
-        if (progress.CurrentPhase == "Error")
-        {
-            this.SetErrorState(progress.StatusMessage ?? "Unknown error occurred");
-        }
-    }
-
-    private void StopSimulation()
-    {
-        try
-        {
-            this.SetState(SimulationState.Stopping, "Stopping simulation...", false);
-            
-            // Stop the game controller
-            // this._gameController.Stop();
-            
-            GD.Print("Simulation stopped");
-            this.ResetToIdle();
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Failed to stop simulation: {ex.Message}");
-            this.SetErrorState($"Failed to stop simulation: {ex.Message}");
-        }
-    }
-
-    private void CancelLoading()
-    {
-        try
-        {
-            this._loadingCancellation?.Cancel();
-            GD.Print("Scenario loading cancelled by user");
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"Failed to cancel loading: {ex.Message}");
-        }
-    }
-
-    private void ResetToIdle()
-    {
-        this.SetState(SimulationState.Idle, "Ready", false);
-    }
-
-    private void SetLoadingState()
-    {
-        this.SetState(SimulationState.Loading, "Loading scenario...", true);
-    }
-
-    private void SetRunningState()
-    {
-        this.SetState(SimulationState.Running, "Simulation running", false);
-    }
-
-    private void SetErrorState(string errorMessage)
-    {
-        this.SetState(SimulationState.Error, $"Error: {errorMessage}", false);
-    }
-
-    private void SetState(SimulationState state, string statusText, bool showProgress)
-    {
-        this._currentState = state;
-        this._statusLabel.Text = statusText;
-        this._loadingProgressBar.Visible = showProgress;
-        
-        if (!showProgress)
-        {
-            this._loadingProgressBar.Value = 0;
-        }
-        
-        this.UpdateUIState();
-    }
-
-    private void UpdateUIState()
-    {
-        // Update button text and state based on current simulation state
-        switch (this._currentState)
-        {
-            case SimulationState.Idle:
-                this._runningButton.Text = "Start";
-                this._runningButton.Disabled = string.IsNullOrEmpty(this._selectedScenarioId);
-                this._scenarioSelector.Disabled = false;
-                break;
-                
-            case SimulationState.Loading:
-                this._runningButton.Text = "Cancel";
-                this._runningButton.Disabled = false;
-                this._scenarioSelector.Disabled = true;
-                break;
-                
-            case SimulationState.Running:
-                this._runningButton.Text = "Stop";
-                this._runningButton.Disabled = false;
-                this._scenarioSelector.Disabled = true;
-                break;
-                
-            case SimulationState.Stopping:
-                this._runningButton.Text = "Stopping...";
-                this._runningButton.Disabled = true;
-                this._scenarioSelector.Disabled = true;
-                break;
-                
-            case SimulationState.Error:
-                this._runningButton.Text = "Reset";
-                this._runningButton.Disabled = false;
-                this._scenarioSelector.Disabled = false;
-                break;
-        }
-    }
-
-    public override void _ExitTree()
-    {
-        // Clean up resources
-        this._loadingCancellation?.Dispose();
-    }
-}
-```
-
-### Enhanced HeadUpDisplay.tscn Scene Structure
-**File:** `Source/Odin.Client.Godot/Common.UI/HeadUpDisplay.tscn`
-```gdscript
-[gd_scene load_steps=8 format=3 uid="uid://y2biswnrb7sa"]
-
-[ext_resource type="Script" uid="uid://d2ymbagfgf0h2" path="res://Common.UI/HeadUpDisplay.cs" id="1_c3tkl"]
-[ext_resource type="Script" uid="uid://b7gc34p2b3uth" path="res://Common.UI/StatisticsOverlay.cs" id="2_lliuc"]
-[ext_resource type="Script" uid="uid://b5g0miibp24cw" path="res://Common.UI/SimulationController.cs" id="2_ygwek"]
-[ext_resource type="FontFile" uid="uid://c3qb1yji6f7s8" path="res://Common.Font/FiraCode-Regular.ttf" id="3_tdcyv"]
-[ext_resource type="FontFile" uid="uid://j5u7g1muwlcb" path="res://Common.Font/FiraCode-Bold.ttf" id="4_ygwek"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tdcyv"]
-content_margin_left = 8.0
-content_margin_top = 8.0
-content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0, 0, 0, 0.25098)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_description"]
-content_margin_left = 12.0
-content_margin_top = 12.0
-content_margin_right = 12.0
-content_margin_bottom = 12.0
-bg_color = Color(0, 0, 0, 0.4)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.2, 0.4, 0.8, 0.8)
-
-[node name="HeadUpDisplay" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("1_c3tkl")
-
-[node name="ToolbarOverlay" type="CanvasLayer" parent="."]
-
-[node name="SimulationController" type="VBoxContainer" parent="ToolbarOverlay" node_paths=PackedStringArray("AppBootstrapper")]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 528.0
-offset_bottom = 120.0
-script = ExtResource("2_ygwek")
-AppBootstrapper = NodePath("../../../AppBootstrapper")
-
-[node name="MainControls" type="HBoxContainer" parent="ToolbarOverlay/SimulationController"]
-layout_mode = 2
-
-[node name="ScenarioSelector" type="OptionButton" parent="ToolbarOverlay/SimulationController/MainControls"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("3_tdcyv")
-theme_override_font_sizes/font_size = 12
-item_count = 1
-popup/item_0/text = "Loading scenarios..."
-popup/item_0/id = 0
-
-[node name="RunningButton" type="Button" parent="ToolbarOverlay/SimulationController/MainControls"]
-layout_mode = 2
-size_flags_horizontal = 0
-custom_minimum_size = Vector2(100, 0)
-theme_override_fonts/font = ExtResource("4_ygwek")
-theme_override_font_sizes/font_size = 12
-text = "Start"
-disabled = true
-
-[node name="StatusRow" type="HBoxContainer" parent="ToolbarOverlay/SimulationController"]
-layout_mode = 2
-
-[node name="StatusLabel" type="Label" parent="ToolbarOverlay/SimulationController/StatusRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("3_tdcyv")
-theme_override_font_sizes/font_size = 11
-text = "Initializing..."
-
-[node name="LoadingProgressBar" type="ProgressBar" parent="ToolbarOverlay/SimulationController/StatusRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-custom_minimum_size = Vector2(200, 16)
-max_value = 100.0
-show_percentage = false
-visible = false
-
-[node name="DescriptionPanel" type="Panel" parent="ToolbarOverlay/SimulationController"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 80)
-theme_override_styles/panel = SubResource("StyleBoxFlat_description")
-visible = false
-
-[node name="DescriptionText" type="RichTextLabel" parent="ToolbarOverlay/SimulationController/DescriptionPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/normal_font = ExtResource("3_tdcyv")
-theme_override_fonts/bold_font = ExtResource("4_ygwek")
-theme_override_font_sizes/normal_font_size = 11
-theme_override_font_sizes/bold_font_size = 12
-bbcode_enabled = true
-text = "Select a scenario to see its description here."
-fit_content = true
-
-[node name="StatisticsOverlay" type="CanvasLayer" parent="."]
-script = ExtResource("2_lliuc")
-
-[node name="MetricLabel" type="RichTextLabel" parent="StatisticsOverlay"]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -144.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 48.0
-grow_horizontal = 0
-scale = Vector2(1, 0.997271)
-theme_override_fonts/normal_font = ExtResource("3_tdcyv")
-theme_override_fonts/italics_font = ExtResource("3_tdcyv")
-theme_override_fonts/bold_font = ExtResource("4_ygwek")
-theme_override_font_sizes/italics_font_size = 12
-theme_override_font_sizes/normal_font_size = 12
-theme_override_font_sizes/bold_font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_tdcyv")
-bbcode_enabled = true
-text = "<SO.METRIC>"
-fit_content = true
-autowrap_mode = 0
-```
-
-### Enhanced AppBootstrapper with ScenarioLoader Registration
-**Modifications to:** `Source/Odin.Client.Godot/Common/AppBootstrapper.cs`
-```csharp
-public static class AutofacExtensions
-{
-    public static ContainerBuilder RegisterInfrastructure(this ContainerBuilder containerBuilder, Node rootNode)
-    {
-        // Existing registrations...
-        containerBuilder
-            .Register(_ => rootNode.GetNode<Camera>("MainCamera"))
-            .InstancePerLifetimeScope()
-            .As<ICamera>();
-
-        containerBuilder
-            .Register(_ => rootNode.GetNode<TimeTracker>(nameof(TimeTracker)))
-            .InstancePerLifetimeScope()
-            .As<ITimeTracker>();
-
-        containerBuilder
-            .Register(_ => rootNode
-                .GetNode<HeadUpDisplay>(nameof(HeadUpDisplay))
-                .StatisticsOverlay)
-            .InstancePerLifetimeScope()
-            .As<IStatisticsOverlay>();
-
-        containerBuilder
-            .Register(_ => rootNode.GetNode<DiagnosticsOverlay>(nameof(DiagnosticsOverlay)))
-            .InstancePerLifetimeScope()
-            .As<IDiagnosticOverlay>();
-
-        // Enhanced GameController with ScenarioLoader support
-        containerBuilder
-            .RegisterType<GameController>()
-            .InstancePerLifetimeScope()
-            .As<IGameController>();
-
-        return containerBuilder;
-    }
-
-    // Add new registration method for scenario loading
-    public static ContainerBuilder RegisterScenarioSystem(this ContainerBuilder containerBuilder)
-    {
-        // Register placement strategies
-        containerBuilder
-            .RegisterType<RandomPlacementStrategy>()
-            .InstancePerLifetimeScope()
-            .As<IPlacementStrategy>();
-
-        containerBuilder
-            .RegisterType<GridPlacementStrategy>()
-            .InstancePerLifetimeScope()
-            .As<IPlacementStrategy>();
-
-        containerBuilder
-            .RegisterType<ClusterPlacementStrategy>()
-            .InstancePerLifetimeScope()
-            .As<IPlacementStrategy>();
-
-        // Register scenario loader
-        containerBuilder
-            .RegisterType<ScenarioLoader>()
-            .InstancePerLifetimeScope()
-            .As<IScenarioLoader>();
-
-        return containerBuilder;
-    }
-
-    // ... other existing methods remain the same
-}
-
-public partial class AppBootstrapper : Node
-{
-    public IDataStore DataStore { get; private set; }
-    public IContainer Container { get; private set; } // Expose container for UI access
-
-    public override void _Ready()
-    {
-        var rootNode = this.GetParent();
-
-        this.Container = new ContainerBuilder()
-            .RegisterInfrastructure(rootNode)
-            .RegisterStorage()
-            .RegisterEntityCoordinator(rootNode)
-            .RegisterScenarioSystem() // Add scenario system registration
-            .RegisterSystem()
-            .Build();
-
-        this.DataStore = this.Container.Resolve<IDataStore>();
-
-        // Don't auto-start - let UI control simulation startup
-        // this.Container.Resolve<IGameController>().Start();
-    }
-    
-    // Helper methods for UI to access services
-    public T GetService<T>() where T : class
-    {
-        return this.Container.Resolve<T>();
-    }
-}
-```
-
-### Enhanced GameController for UI Integration
-**Modifications to:** `Source/Odin.Engine/GameController.cs`
-```csharp
-public class GameController : IGameController
-{
-    private readonly IGameState _gameState;
-    private readonly ITimeTracker _timeTracker;
-    private readonly IReadOnlyCollection<ISystem> _systems;
-    private readonly IScenarioLoader _scenarioLoader;
-
-    private bool _isRunning = false;
-
-    public GameController(
-        ITimeTracker timeTracker,
-        IEntityFactory entityFactory,
-        IScenarioLoader scenarioLoader,
-        IReadOnlyCollection<ISystem> systems)
-    {
-        // Initialize with default small universe - scenarios loaded via UI
-        this._gameState = new GameState 
-        { 
-            Universe = entityFactory.CreateUniverse(64, 32) 
-        };
-        
-        this._timeTracker = timeTracker;
-        this._scenarioLoader = scenarioLoader;
-        this._timeTracker.DeltaChanged += this.OnDeltaChanged;
-        this._timeTracker.TickChanged += this.OnTickChanged;
-
-        this._systems = systems
-            .OrderBy(system => system
-                .GetType()
-                .GetTypeInfo()
-                .GetCustomAttribute<SystemMetadataAttribute>()?
-                .OrderingIndex ?? 0)
-            .ToImmutableArray();
-
-        // Register scenario loading callback
-        this._scenarioLoader.RegisterScenarioLoadedCallback(this.OnScenarioLoaded);
-    }
-
-    // UI-friendly scenario loading method
-    public async Task LoadScenarioFromUIAsync(string scenarioId, IProgress<ScenarioLoadingProgress> progress)
-    {
-        try
-        {
-            // Stop current simulation if running
-            if (this._isRunning)
-            {
-                this.Stop();
-            }
-
-            // Clear existing entities
-            var entityManager = this._gameState.FindService<IEntityManager>();
-            entityManager?.Clear();
-
-            // Load new scenario
-            var universe = await this._scenarioLoader.LoadScenarioAsync(scenarioId, progress);
-            this._gameState.Universe = universe;
-
-            GD.Print($"GameController: Successfully loaded scenario '{scenarioId}'");
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"GameController: Failed to load scenario '{scenarioId}': {ex.Message}");
-            
-            // Report error through progress
-            progress?.Report(new ScenarioLoadingProgress 
-            { 
-                OverallProgress = 0.0f,
-                CurrentPhase = "Error",
-                StatusMessage = $"Failed to load scenario: {ex.Message}"
-            });
-            
-            throw; // Re-throw for UI handling
-        }
-    }
-
-    public void Start()
-    {
-        if (!this._isRunning)
-        {
-            this._isRunning = true;
-            this._timeTracker.Start();
-            GD.Print("GameController: Simulation started");
-        }
-    }
-
-    public void Stop()
-    {
-        if (this._isRunning)
-        {
-            this._isRunning = false;
-            this._timeTracker.Stop();
-            GD.Print("GameController: Simulation stopped");
-        }
-    }
-
-    public bool IsRunning => this._isRunning;
-
-    private void OnScenarioLoaded(ScenarioBlueprint scenario)
-    {
-        GD.Print($"GameController: Scenario '{scenario.Name}' loaded and ready");
-        
-        // Scenario is loaded but simulation is not auto-started
-        // UI will call Start() when ready
-    }
-
-    // ... rest of existing GameController implementation remains the same
-}
-```
-
-### Interface Additions for UI Integration
-**File:** `Source/Odin.Engine/Contract/IGameController.cs`
-```csharp
-public interface IGameController
-{
-    void Start();
-    void Stop();
-    bool IsRunning { get; }
-    
-    // New method for UI integration
-    Task LoadScenarioFromUIAsync(string scenarioId, IProgress<ScenarioLoadingProgress> progress);
-}
-```
-
----
-
-## Integration with GameController
-
-### Enhanced GameController.cs Initialization
-**Modifications to:** `Source/Odin.Engine/GameController.cs`
-```csharp
-public class GameController : IGameController
-{
-    private readonly IGameState _gameState;
-    private readonly ITimeTracker _timeTracker;
-    private readonly IReadOnlyCollection<ISystem> _systems;
-    private readonly IScenarioLoader _scenarioLoader; // Add scenario loader
-
-    public GameController(
-        ITimeTracker timeTracker,
-        IEntityFactory entityFactory,
-        IScenarioLoader scenarioLoader, // Add scenario loader parameter
-        IReadOnlyCollection<ISystem> systems)
-    {
-        // Initialize with scenario if available, otherwise use default
-        this._gameState = scenarioLoader.HasActiveScenario 
-            ? new GameState { Universe = scenarioLoader.CurrentScenario!.Universe }
-            : new GameState { Universe = entityFactory.CreateUniverse(64, 32) };
-
-        this._timeTracker = timeTracker;
-        this._scenarioLoader = scenarioLoader;
-        
-        // Rest of initialization remains the same
-        this._timeTracker.DeltaChanged += this.OnDeltaChanged;
-        this._timeTracker.TickChanged += this.OnTickChanged;
-
-        this._systems = systems
-            .OrderBy(system => system
-                .GetType()
-                .GetTypeInfo()
-                .GetCustomAttribute<SystemMetadataAttribute>()?
-                .OrderingIndex ?? 0)
-            .ToImmutableArray();
-    }
-
-    // Add scenario management methods
-    public void LoadScenario(string scenarioId)
-    {
-        var universe = this._scenarioLoader.LoadScenario(scenarioId);
-        this._gameState.Universe = universe;
-    }
-
-    public async Task LoadScenarioAsync(string scenarioId, IProgress<ScenarioLoadingProgress>? progress = null)
-    {
-        var universe = await this._scenarioLoader.LoadScenarioAsync(scenarioId, progress);
-        this._gameState.Universe = universe;
-    }
-}
-```
-
----
-
-## Conclusion
-
-This comprehensive implementation provides a complete scenario loading system that integrates seamlessly with AI.Odin's existing ECS architecture and blueprint infrastructure. The system supports:
-
-- **Flexible Entity Placement**: Multiple placement strategies from simple random to complex formations
-- **Dynamic Configuration**: Component overrides, trait variations, and statistical distributions
-- **Performance Optimization**: Asynchronous loading with progress reporting for large scenarios
-- **Research Integration**: Reproducible seeds, comprehensive metrics collection, and ML training support
-- **User Experience**: Clear YAML configuration format with extensive examples and documentation
-
-The modular design ensures easy extension and maintenance while providing powerful capabilities for both entertainment and research applications. The implementation follows existing code patterns and maintains compatibility with all current systems while adding significant new functionality for world initialization and scenario management.
-
----
-
-*Implementation Status: Ready for Development*
-*Estimated Development Time: 4-6 weeks for all phases*
-*Dependencies: Leverages existing ECS, blueprint, and serialization infrastructure*
-
----
-
-*Last Updated: January 2025*

@@ -1,25 +1,51 @@
-# AI.Odin State Management Implementation Snippets
+# SNIPPET: State Management
 
-## Overview
+**Last Updated:** January 6, 2026
+
+---
+
+## Table of Contents
+
+- [SNIPPET: State Management](#snippet-state-management)
+  - [Table of Contents](#table-of-contents)
+  - [1. Overview](#1-overview)
+  - [2. Implementation Priority Matrix](#2-implementation-priority-matrix)
+    - [2.1 Core State Management - Essential Foundation](#21-core-state-management---essential-foundation)
+      - [Component Categorization \& Storage Strategy](#component-categorization--storage-strategy)
+      - [Double Buffering for High-Frequency Components](#double-buffering-for-high-frequency-components)
+      - [Copy-on-Write for Medium-Frequency Components](#copy-on-write-for-medium-frequency-components)
+      - [Ring Buffer for ML Training Data](#ring-buffer-for-ml-training-data)
+    - [2.2 Advanced State Systems](#22-advanced-state-systems)
+      - [Event Sourcing System](#event-sourcing-system)
+    - [2.3 Integration Systems](#23-integration-systems)
+      - [Hybrid State Coordination](#hybrid-state-coordination)
+      - [Memory Pool Management](#memory-pool-management)
+  - [3. System Integration Notes](#3-system-integration-notes)
+    - [3.1 ECS Integration](#31-ecs-integration)
+    - [3.2 Performance Characteristics](#32-performance-characteristics)
+
+---
+
+## 1. Overview
 
 This document contains comprehensive code implementation snippets for advanced state management systems within our Entity Component System (ECS) framework. Each section provides component definitions and system implementations in C# for creating scalable state management supporting ML training, replay functionality, and high-performance operations.
 
 **Note:** These are complete implementations ready for integration with the existing ECS architecture. The systems extend current component storage with hybrid strategies optimized for different access patterns and use cases.
 
-## Implementation Priority Matrix
+## 2. Implementation Priority Matrix
 
-### Core State Management (1-4) - Essential Foundation
+### 2.1 Core State Management - Essential Foundation
 
-#### 1. Component Categorization & Storage Strategy
+#### Component Categorization & Storage Strategy
 
 **State Category Enum:**
 ```csharp
 public enum StateCategory
 {
-    HighFrequency,    // Updated every frame (Transform, Velocity, Physics)
-    MediumFrequency,  // Updated periodically (Health, Hunger, Intelligence)
-    LowFrequency,     // Rarely changed (Traits, Skills, Configuration)
-    MLTraining        // Historical data for machine learning algorithms
+    HighFrequency,   // Updated every frame (Transform, Velocity, Physics)
+    MediumFrequency, // Updated periodically (Health, Hunger, Intelligence)
+    LowFrequency,    // Rarely changed (Traits, Skills, Configuration)
+    MLTraining       // Historical data for machine learning algorithms
 }
 
 public static class StateCategoryExtensions
@@ -118,7 +144,7 @@ public struct StateStorageMetrics
 }
 ```
 
-#### 2. Double Buffering for High-Frequency Components
+#### Double Buffering for High-Frequency Components
 
 **Double Buffered Storage Implementation:**
 ```csharp
@@ -169,22 +195,22 @@ public class DoubleBufferedComponentStore<T> : IStateStorage<T> where T : struct
     
     public ref T GetComponent(int entityId)
     {
-        if (!_entityToIndex.TryGetValue(entityId, out int index))
+        if (!this._entityToIndex.TryGetValue(entityId, out int index))
         {
             throw new InvalidOperationException($"Entity {entityId} not found in component store");
         }
         
-        return ref Current.Data[index];
+        return ref this.Current.Data[index];
     }
     
     public ref T GetPreviousComponent(int entityId)
     {
-        if (!_entityToIndex.TryGetValue(entityId, out int index))
+        if (!this._entityToIndex.TryGetValue(entityId, out int index))
         {
             throw new InvalidOperationException($"Entity {entityId} not found in component store");
         }
         
-        return ref Previous.Data[index];
+        return ref this.Previous.Data[index];
     }
     
     public void SetComponent(int entityId, T component)
@@ -225,39 +251,39 @@ public class DoubleBufferedComponentStore<T> : IStateStorage<T> where T : struct
     {
         // Defragment storage by removing unused slots
         var activeEntities = new List<int>();
-        var newData = new T[Current.Capacity];
+        var newData = new T[this.Current.Capacity];
         var newIndex = 0;
         
-        foreach (var kvp in _entityToIndex.ToList())
+        foreach (var kvp in this._entityToIndex.ToList())
         {
             activeEntities.Add(kvp.Key);
-            newData[newIndex] = Current.Data[kvp.Value];
-            _entityToIndex[kvp.Key] = newIndex;
+            newData[newIndex] = this.Current.Data[kvp.Value];
+            this._entityToIndex[kvp.Key] = newIndex;
             newIndex++;
         }
         
-        Current.Data = newData;
-        Current.Count = newIndex;
+        this.Current.Data = newData;
+        this.Current.Count = newIndex;
         
         // Update previous buffer as well
-        BeginFrame();
+        this.BeginFrame();
     }
     
     public StateStorageMetrics GetMetrics()
     {
         return new StateStorageMetrics
         {
-            MemoryUsageBytes = (Current.Capacity + Previous.Capacity) * Marshal.SizeOf<T>(),
-            ComponentCount = Current.Count,
+            MemoryUsageBytes = (this.Current.Capacity + this.Previous.Capacity) * Marshal.SizeOf<T>(),
+            ComponentCount = this.Current.Count,
             AverageAccessTime = 0.001f, // Direct array access is very fast
-            CopyOperations = Current.Count, // One copy per frame
-            MemoryEfficiency = (float)Current.Count / Current.Capacity
+            CopyOperations = this.Current.Count, // One copy per frame
+            MemoryEfficiency = (float)this.Current.Count / this.Current.Capacity
         };
     }
 }
 ```
 
-#### 3. Copy-on-Write for Medium-Frequency Components
+#### Copy-on-Write for Medium-Frequency Components
 
 **Copy-on-Write Storage Implementation:**
 ```csharp
@@ -335,36 +361,36 @@ public class CowComponentStore<T> : IStateStorage<T> where T : struct, IComponen
     
     public void SetComponent(int entityId, T component)
     {
-        lock (_lockObject)
+        lock (this._lockObject)
         {
-            var wrapper = _components.GetValueOrDefault(entityId, new CowWrapper(component));
-            
-            if (!wrapper.Data.Equals(component))
+            if (!this._entityToIndex.TryGetValue(entityId, out int index))
             {
-                wrapper.Data = component;
-                wrapper.IsDirty = true;
-                wrapper.Version = _globalVersion++;
-                wrapper.LastModified = Time.RealtimeSinceStartup;
+                // Add new component
+                index = this.Current.Count;
+                this.Current.EnsureCapacity(this.Current.Count + 1);
+                this.Previous.EnsureCapacity(this.Previous.Count + 1);
                 
-                if (!_dirtyComponents.Contains(entityId))
-                {
-                    _dirtyComponents.Enqueue(entityId);
-                }
+                this._entityToIndex[entityId] = index;
+                this.Current.Count++;
+                this.Previous.Count++;
             }
             
-            _components[entityId] = wrapper;
+            this.Current.Data[index] = component;
         }
     }
     
     public void BeginFrame()
     {
-        // No action needed for CoW during frame begin
+        // Copy current to previous before new frame updates
+        var currentSpan = this.Current.Data.AsSpan(0, this.Current.Count);
+        var previousSpan = this.Previous.Data.AsSpan(0, this.Previous.Count);
+        currentSpan.CopyTo(previousSpan);
     }
     
     public void EndFrame()
     {
-        // Commit all dirty components
-        CommitChanges();
+        // Swap buffers for next frame
+        this._currentIndex = 1 - this._currentIndex;
     }
     
     public void CommitChanges()
@@ -406,7 +432,7 @@ public class CowComponentStore<T> : IStateStorage<T> where T : struct, IComponen
     
     public StateStorageMetrics GetMetrics()
     {
-        var dirtyCount = _components.Values.Count(w => w.IsDirty);
+        var dirtyCount = this._components.Values.Count(wrapper => wrapper.IsDirty);
         
         return new StateStorageMetrics
         {
@@ -420,7 +446,7 @@ public class CowComponentStore<T> : IStateStorage<T> where T : struct, IComponen
 }
 ```
 
-#### 4. Ring Buffer for ML Training Data
+#### Ring Buffer for ML Training Data
 
 **ML Training Ring Buffer Implementation:**
 ```csharp
@@ -545,10 +571,11 @@ public class MLStateRingBuffer
         inputs[5] = vitality.IsDead ? 0f : 1f;
         
         // Local entity density (6 directional sectors)
-        var nearbyEntities = GetNearbyEntityIds(entity, entityManager);
-        for (int i = 0; i < 6; i++)
+        var nearbyEntityIds = GetNearbyEntityIds(entity, entityManager);
+        
+        for (int sectorIndex = 0; sectorIndex < 6; sectorIndex++)
         {
-            inputs[6 + i] = CalculateDirectionalDensity(entity, nearbyEntities, i * 60f, entityManager);
+            inputs[6 + sectorIndex] = CalculateDirectionalDensity(entity, nearbyEntityIds, sectorIndex * 60f, entityManager);
         }
         
         return inputs;
@@ -621,7 +648,7 @@ public class MLStateRingBuffer
         
         var resourceEntities = entityManager.FindEntities(typeof(HarvestableComponent));
         var resourcePositions = resourceEntities
-            .Select(e => e.FindComponent<PhysicsComponent>().Position)
+            .Select(entity => entity.FindComponent<PhysicsComponent>().Position)
             .ToArray();
         
         return new EnvironmentalState
@@ -636,15 +663,15 @@ public class MLStateRingBuffer
     
     public List<StateSnapshot> GetRecentSnapshots(int count)
     {
-        lock (_lockObject)
+        lock (this._lockObject)
         {
             var result = new List<StateSnapshot>();
-            var actualCount = Math.Min(count, _count);
+            var actualCount = Math.Min(count, this._count);
             
-            for (int i = 0; i < actualCount; i++)
+            for (int snapshotIndex = 0; snapshotIndex < actualCount; snapshotIndex++)
             {
-                var index = (_head - i - 1 + _capacity) % _capacity;
-                result.Add(_buffer[index]);
+                var bufferIndex = (this._head - snapshotIndex - 1 + this._capacity) % this._capacity;
+                result.Add(this._buffer[bufferIndex]);
             }
             
             return result;
@@ -653,16 +680,16 @@ public class MLStateRingBuffer
     
     public TrainingBatch GetTrainingData(int entityId, int sequenceLength)
     {
-        lock (_lockObject)
+        lock (this._lockObject)
         {
             var sequences = new List<AgentMLState>();
             var environmentalStates = new List<EnvironmentalState>();
-            var actualLength = Math.Min(sequenceLength, _count);
+            var actualLength = Math.Min(sequenceLength, this._count);
             
-            for (int i = 0; i < actualLength; i++)
+            for (int sequenceIndex = 0; sequenceIndex < actualLength; sequenceIndex++)
             {
-                var index = (_head - i - 1 + _capacity) % _capacity;
-                var snapshot = _buffer[index];
+                var bufferIndex = (this._head - sequenceIndex - 1 + this._capacity) % this._capacity;
+                var snapshot = this._buffer[bufferIndex];
                 
                 if (snapshot.AgentStates.TryGetValue(entityId, out var agentState))
                 {
@@ -690,11 +717,11 @@ public class MLStateRingBuffer
         
         return new StateStorageMetrics
         {
-            MemoryUsageBytes = _capacity * avgStateSize,
-            ComponentCount = _count,
+            MemoryUsageBytes = this._capacity * avgStateSize,
+            ComponentCount = this._count,
             AverageAccessTime = 0.1f,
             CopyOperations = 0,
-            MemoryEfficiency = (float)_count / _capacity
+            MemoryEfficiency = (float)this._count / this._capacity
         };
     }
 }
@@ -711,9 +738,9 @@ public struct TrainingBatch
 }
 ```
 
-### Advanced State Systems (5-8) - Sophisticated Features
+### 2.2 Advanced State Systems
 
-#### 5. Event Sourcing System
+#### Event Sourcing System
 
 **Event Store Implementation:**
 ```csharp
@@ -807,21 +834,21 @@ public class EventStore
     
     public void RecordEvent(IGameEvent gameEvent)
     {
-        lock (_lockObject)
+        lock (this._lockObject)
         {
-            _events.Add(gameEvent);
-            var eventIndex = _events.Count - 1;
+            this._events.Add(gameEvent);
+            var eventIndex = this._events.Count - 1;
             
-            _timeIndex[gameEvent.Timestamp] = eventIndex;
+            this._timeIndex[gameEvent.Timestamp] = eventIndex;
             
-            if (!_entityIndex.ContainsKey(gameEvent.EntityId))
+            if (!this._entityIndex.ContainsKey(gameEvent.EntityId))
             {
-                _entityIndex[gameEvent.EntityId] = new List<int>();
+                this._entityIndex[gameEvent.EntityId] = new List<int>();
             }
-            _entityIndex[gameEvent.EntityId].Add(eventIndex);
+            this._entityIndex[gameEvent.EntityId].Add(eventIndex);
             
             // Cleanup old events if needed
-            if (_events.Count > _maxEventHistory)
+            if (this._events.Count > this._maxEventHistory)
             {
                 CleanupOldEvents();
             }
@@ -830,104 +857,106 @@ public class EventStore
     
     private void CleanupOldEvents()
     {
-        var eventsToRemove = _events.Count / 10; // Remove oldest 10%
+        var eventsToRemove = this._events.Count / 10; // Remove oldest 10%
         
-        for (int i = 0; i < eventsToRemove; i++)
+        for (int eventIndex = 0; eventIndex < eventsToRemove; eventIndex++)
         {
-            var evt = _events[i];
-            _timeIndex.Remove(evt.Timestamp);
+            var gameEvent = this._events[eventIndex];
+            this._timeIndex.Remove(gameEvent.Timestamp);
             
-            if (_entityIndex.ContainsKey(evt.EntityId))
+            if (this._entityIndex.ContainsKey(gameEvent.EntityId))
             {
-                _entityIndex[evt.EntityId].Remove(i);
-                if (_entityIndex[evt.EntityId].Count == 0)
+                this._entityIndex[gameEvent.EntityId].Remove(eventIndex);
+                if (this._entityIndex[gameEvent.EntityId].Count == 0)
                 {
-                    _entityIndex.Remove(evt.EntityId);
+                    this._entityIndex.Remove(gameEvent.EntityId);
                 }
             }
         }
         
-        _events.RemoveRange(0, eventsToRemove);
+        this._events.RemoveRange(0, eventsToRemove);
         
         // Update all indices after removal
         var updatedTimeIndex = new Dictionary<float, int>();
         var updatedEntityIndex = new Dictionary<int, List<int>>();
         
-        for (int i = 0; i < _events.Count; i++)
+        for (int eventIndex = 0; eventIndex < this._events.Count; eventIndex++)
         {
-            var evt = _events[i];
-            updatedTimeIndex[evt.Timestamp] = i;
+            var gameEvent = this._events[eventIndex];
+            updatedTimeIndex[gameEvent.Timestamp] = eventIndex;
             
-            if (!updatedEntityIndex.ContainsKey(evt.EntityId))
+            if (!updatedEntityIndex.ContainsKey(gameEvent.EntityId))
             {
-                updatedEntityIndex[evt.EntityId] = new List<int>();
+                updatedEntityIndex[gameEvent.EntityId] = new List<int>();
             }
-            updatedEntityIndex[evt.EntityId].Add(i);
+            updatedEntityIndex[gameEvent.EntityId].Add(eventIndex);
         }
         
-        _timeIndex.Clear();
-        _entityIndex.Clear();
+        this._timeIndex.Clear();
+        this._entityIndex.Clear();
         
-        foreach (var kvp in updatedTimeIndex)
+        foreach (var entry in updatedTimeIndex)
         {
-            _timeIndex[kvp.Key] = kvp.Value;
+            this._timeIndex[entry.Key] = entry.Value;
         }
         
-        foreach (var kvp in updatedEntityIndex)
+        foreach (var entry in updatedEntityIndex)
         {
-            _entityIndex[kvp.Key] = kvp.Value;
+            this._entityIndex[entry.Key] = entry.Value;
         }
     }
     
     public List<IGameEvent> GetEventsInRange(float startTime, float endTime)
     {
-        lock (_lockObject)
+        lock (this._lockObject)
         {
-            return _events
-                .Where(e => e.Timestamp >= startTime && e.Timestamp <= endTime)
-                .OrderBy(e => e.Timestamp)
+            return this._events
+                .Where(gameEvent => gameEvent.Timestamp >= startTime && gameEvent.Timestamp <= endTime)
+                .OrderBy(gameEvent => gameEvent.Timestamp)
                 .ToList();
         }
     }
     
     public List<IGameEvent> GetEventsSince(float timestamp)
     {
-        lock (_lockObject)
+        lock (this._lockObject)
         {
-            return _events
-                .Where(e => e.Timestamp > timestamp)
-                .OrderBy(e => e.Timestamp)
+            return this._events
+                .Where(gameEvent => gameEvent.Timestamp > timestamp)
+                .OrderBy(gameEvent => gameEvent.Timestamp)
                 .ToList();
         }
     }
     
     public List<IGameEvent> GetEventsForEntity(int entityId, float? sinceTimestamp = null)
     {
-        lock (_lockObject)
+        lock (this._lockObject)
         {
-            if (!_entityIndex.TryGetValue(entityId, out var eventIndices))
+            if (!this._entityIndex.TryGetValue(entityId, out var eventIndices))
             {
                 return new List<IGameEvent>();
             }
             
-            var events = eventIndices.Select(i => _events[i]);
+            var events = eventIndices.Select(index => this._events[index]);
             
             if (sinceTimestamp.HasValue)
             {
-                events = events.Where(e => e.Timestamp > sinceTimestamp.Value);
+                events = events.Where(gameEvent => gameEvent.Timestamp > sinceTimestamp.Value);
             }
             
-            return events.OrderBy(e => e.Timestamp).ToList();
+            return events
+                .OrderBy(gameEvent => gameEvent.Timestamp)
+                .ToList();
         }
     }
     
     public byte[] SerializeEvents(float sinceTimestamp = 0f)
     {
-        lock (_lockObject)
+        lock (this._lockObject)
         {
-            var eventsToSerialize = _events
-                .Where(e => e.Timestamp > sinceTimestamp)
-                .OrderBy(e => e.Timestamp)
+            var eventsToSerialize = this._events
+                .Where(gameEvent => gameEvent.Timestamp > sinceTimestamp)
+                .OrderBy(gameEvent => gameEvent.Timestamp)
                 .ToList();
             
             using var stream = new MemoryStream();
@@ -935,10 +964,10 @@ public class EventStore
             
             writer.Write(eventsToSerialize.Count);
             
-            foreach (var evt in eventsToSerialize)
+            foreach (var gameEvent in eventsToSerialize)
             {
-                writer.Write(evt.EventType);
-                var eventData = evt.Serialize();
+                writer.Write(gameEvent.EventType);
+                var eventData = gameEvent.Serialize();
                 writer.Write(eventData.Length);
                 writer.Write(eventData);
             }
@@ -949,9 +978,9 @@ public class EventStore
 }
 ```
 
-### Integration Systems (9-12) - Production-Ready Features
+### 2.3 Integration Systems
 
-#### 9. Hybrid State Coordination
+#### Hybrid State Coordination
 
 **Unified State Manager:**
 ```csharp
@@ -1065,7 +1094,7 @@ public class HybridStateManager
         
         foreach (var componentType in GetRegisteredComponentTypes())
         {
-            var storage = _storageManager.GetStorage(componentType);
+            var storage = this._storageManager.GetStorage(componentType);
             if (storage != null)
             {
                 storageMetrics[componentType.Name] = storage.GetMetrics();
@@ -1075,10 +1104,10 @@ public class HybridStateManager
         return new StateSystemMetrics
         {
             StorageMetrics = storageMetrics,
-            MLBufferMetrics = _mlBuffer.GetMetrics(),
-            EventStoreSize = _eventStore.GetEventsInRange(0f, float.MaxValue).Count,
-            TotalMemoryUsage = storageMetrics.Values.Sum(m => m.MemoryUsageBytes),
-            FrameMetrics = _metrics.GetCurrentFrameMetrics()
+            MLBufferMetrics = this._mlBuffer.GetMetrics(),
+            EventStoreSize = this._eventStore.GetEventsInRange(0f, float.MaxValue).Count,
+            TotalMemoryUsage = storageMetrics.Values.Sum(metrics => metrics.MemoryUsageBytes),
+            FrameMetrics = this._metrics.GetCurrentFrameMetrics()
         };
     }
     
@@ -1151,7 +1180,7 @@ public struct FrameMetrics
 }
 ```
 
-#### 10. Memory Pool Management
+#### Memory Pool Management
 
 **State Memory Manager:**
 ```csharp
@@ -1180,10 +1209,10 @@ public class StateMemoryManager
     private void PrePopulatePools()
     {
         // Pre-create common objects
-        for (int i = 0; i < 100; i++)
+        for (int poolIndex = 0; poolIndex < 100; poolIndex++)
         {
-            _snapshotPool.Enqueue(new StateSnapshot());
-            _batchPool.Enqueue(new TrainingBatch());
+            this._snapshotPool.Enqueue(new StateSnapshot());
+            this._batchPool.Enqueue(new TrainingBatch());
         }
     }
     
@@ -1191,14 +1220,14 @@ public class StateMemoryManager
     {
         if (typeof(T) == typeof(StateSnapshot))
         {
-            if (_snapshotPool.TryDequeue(out var snapshot))
+            if (this._snapshotPool.TryDequeue(out var snapshot))
             {
                 return snapshot as T;
             }
         }
         else if (typeof(T) == typeof(TrainingBatch))
         {
-            if (_batchPool.TryDequeue(out var batch))
+            if (this._batchPool.TryDequeue(out var batch))
             {
                 return batch as T;
             }
@@ -1214,14 +1243,14 @@ public class StateMemoryManager
             // Clear the snapshot data before returning
             snapshot.AgentStates?.Clear();
             snapshot.Environment = default;
-            _snapshotPool.Enqueue(snapshot);
+            this._snapshotPool.Enqueue(snapshot);
         }
         else if (item is TrainingBatch batch)
         {
             // Clear batch data before returning
             Array.Clear(batch.AgentSequence, 0, batch.AgentSequence?.Length ?? 0);
             Array.Clear(batch.EnvironmentalSequence, 0, batch.EnvironmentalSequence?.Length ?? 0);
-            _batchPool.Enqueue(batch);
+            this._batchPool.Enqueue(batch);
         }
     }
     
@@ -1229,15 +1258,15 @@ public class StateMemoryManager
     {
         if (typeof(T) == typeof(byte))
         {
-            return _byteArrayPool.Rent(minLength) as T[];
+            return this._byteArrayPool.Rent(minLength) as T[];
         }
         else if (typeof(T) == typeof(float))
         {
-            return _floatArrayPool.Rent(minLength) as T[];
+            return this._floatArrayPool.Rent(minLength) as T[];
         }
         else if (typeof(T) == typeof(int))
         {
-            return _intArrayPool.Rent(minLength) as T[];
+            return this._intArrayPool.Rent(minLength) as T[];
         }
         
         return new T[minLength];
@@ -1245,33 +1274,36 @@ public class StateMemoryManager
     
     public void ReturnArray<T>(T[] array)
     {
-        if (array == null) return;
+        if (array == null)
+        {
+            return;
+        }
         
         if (typeof(T) == typeof(byte))
         {
-            _byteArrayPool.Return(array as byte[]);
+            this._byteArrayPool.Return(array as byte[]);
         }
         else if (typeof(T) == typeof(float))
         {
-            _floatArrayPool.Return(array as float[]);
+            this._floatArrayPool.Return(array as float[]);
         }
         else if (typeof(T) == typeof(int))
         {
-            _intArrayPool.Return(array as int[]);
+            this._intArrayPool.Return(array as int[]);
         }
     }
     
     public void Cleanup()
     {
         // Clear excess pooled objects periodically
-        while (_snapshotPool.Count > 50)
+        while (this._snapshotPool.Count > 50)
         {
-            _snapshotPool.TryDequeue(out _);
+            this._snapshotPool.TryDequeue(out _);
         }
         
-        while (_batchPool.Count > 50)
+        while (this._batchPool.Count > 50)
         {
-            _batchPool.TryDequeue(out _);
+            this._batchPool.TryDequeue(out _);
         }
     }
     
@@ -1279,8 +1311,8 @@ public class StateMemoryManager
     {
         return new MemoryUsageStats
         {
-            SnapshotPoolSize = _snapshotPool.Count,
-            BatchPoolSize = _batchPool.Count,
+            SnapshotPoolSize = this._snapshotPool.Count,
+            BatchPoolSize = this._batchPool.Count,
             EstimatedTotalMemory = CalculateEstimatedMemory()
         };
     }
@@ -1290,8 +1322,8 @@ public class StateMemoryManager
         var snapshotSize = 1000; // Estimated bytes per snapshot
         var batchSize = 5000;    // Estimated bytes per training batch
         
-        return (_snapshotPool.Count * snapshotSize) + 
-               (_batchPool.Count * batchSize);
+        return (this._snapshotPool.Count * snapshotSize) + 
+               (this._batchPool.Count * batchSize);
     }
 }
 
@@ -1305,9 +1337,9 @@ public struct MemoryUsageStats
 
 ---
 
-## System Integration Notes
+## 3. System Integration Notes
 
-### ECS Integration
+### 3.1 ECS Integration
 All state management systems integrate seamlessly with the existing ECS architecture:
 
 **Enhanced BaseSystem:**
@@ -1341,7 +1373,8 @@ public abstract class BaseSystem : ISystem
 }
 ```
 
-### Performance Characteristics
+### 3.2 Performance Characteristics
+
 The hybrid state management system achieves target performance:
 
 **Memory Usage (1000 entities):**

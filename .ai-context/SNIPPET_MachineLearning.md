@@ -1,50 +1,96 @@
-# AI.Odin Machine Learning Implementation Snippets
+# SNIPPET: Machine Learning
 
-## Overview
+**Last Updated:** January 6, 2026
+
+---
+
+## Table of Contents
+
+- [SNIPPET: Machine Learning](#snippet-machine-learning)
+  - [Table of Contents](#table-of-contents)
+  - [1. Overview](#1-overview)
+  - [2. Architecture](#2-architecture)
+    - [Three-Layer Hybrid Architecture](#three-layer-hybrid-architecture)
+  - [3. Implementation Approach](#3-implementation-approach)
+    - [3.1 Foundation Systems](#31-foundation-systems)
+      - [Enhanced Genetic Algorithm Implementation](#enhanced-genetic-algorithm-implementation)
+      - [Enhanced Experience Collection System](#enhanced-experience-collection-system)
+      - [Advanced State Representation](#advanced-state-representation)
+      - [Multi-Objective Fitness Framework](#multi-objective-fitness-framework)
+    - [3.2 Enhanced NEAT Implementation](#32-enhanced-neat-implementation)
+      - [Advanced NEAT Neural Evolution](#advanced-neat-neural-evolution)
+      - [Optimized Neural Network Execution](#optimized-neural-network-execution)
+      - [Population Evolution Management](#population-evolution-management)
+      - [Performance Optimization Framework](#performance-optimization-framework)
+    - [3.3 Advanced Reinforcement Learning](#33-advanced-reinforcement-learning)
+      - [Deep Q-Network (DQN) Implementation](#deep-q-network-dqn-implementation)
+      - [Proximal Policy Optimization (PPO)](#proximal-policy-optimization-ppo)
+      - [Hierarchical Reinforcement Learning](#hierarchical-reinforcement-learning)
+      - [Imitation Learning Framework](#imitation-learning-framework)
+    - [3.4 Hybrid Integration and Performance](#34-hybrid-integration-and-performance)
+      - [Emergent Social Learning Systems](#emergent-social-learning-systems)
+      - [Multi-Agent Learning Coordination](#multi-agent-learning-coordination)
+      - [Meta-Learning and Adaptation](#meta-learning-and-adaptation)
+      - [Production Hybrid Agent Architecture](#production-hybrid-agent-architecture)
+  - [4. State Representation](#4-state-representation)
+    - [4.1 Agent Sensory Input](#41-agent-sensory-input)
+    - [4.2 Comprehensive Agent State](#42-comprehensive-agent-state)
+    - [4.3 Action Space](#43-action-space)
+  - [5. Evolution Parameters](#5-evolution-parameters)
+    - [5.1 NEAT Configuration](#51-neat-configuration)
+    - [5.2 Genetic Algorithm Configuration](#52-genetic-algorithm-configuration)
+
+---
+
+## 1. Overview
 
 This document contains comprehensive code implementation snippets for the machine learning systems within our Entity Component System (ECS) framework. Each section provides component definitions and system implementations in C# for creating intelligent, evolving agents through genetic algorithms, neuroevolution, and reinforcement learning.
 
 **Note:** Currently, basic genetic traits concepts and experience collection framework exist. All code examples follow the existing ECS architecture patterns and will integrate with current `VitalityComponent` and `TraitComponent` implementations.
 
-## Machine Learning Architecture Overview
+## 2. Architecture
 
 ### Three-Layer Hybrid Architecture
 
 ```csharp
 // Layer 1: Genetic Traits (Generational Evolution)
-public struct GeneticTraitsLayer {
-    public float[] PhysicalTraits;     // speed, size, sight range, metabolism rate
-    public float[] BehavioralTraits;   // aggression, cooperation, exploration, charisma
-    public float[] MetabolicTraits;    // energy efficiency, reproduction threshold
-    public float[] CulturalTraits;     // learning rate, innovation tendency
+public struct GeneticTraitsLayer
+{
+    public float[] PhysicalTraits;          // speed, size, sight range, metabolism rate
+    public float[] BehavioralTraits;        // aggression, cooperation, exploration, charisma
+    public float[] MetabolicTraits;         // energy efficiency, reproduction threshold
+    public float[] CulturalTraits;          // learning rate, innovation tendency
 }
 
 // Layer 2: Neural Network Brain (NEAT Evolution)
-public struct NEATBrainLayer {
-    public NEATGenome Genome;          // Dynamic network topology evolution
-    public float[] ConnectionWeights;  // Optimized through generations
-    public int[] StructuralInnovations; // Historical mutation tracking
-    public int SpeciesId;              // Diversity preservation through speciation
+public struct NEATBrainLayer
+{
+    public NEATGenome Genome;               // Dynamic network topology evolution
+    public float[] ConnectionWeights;       // Optimized through generations
+    public int[] StructuralInnovations;     // Historical mutation tracking
+    public int SpeciesId;                   // Diversity preservation through speciation
 }
 
 // Layer 3: Lifetime Learning (Reinforcement Learning)
-public struct LearningLayer {
-    public ExperienceBuffer Memory;    // Continuous training data storage
-    public PolicyNetwork Policy;      // PPO/DQN policy optimization
-    public float[] StateAdaptation;    // Environmental and social adaptation
-    public HierarchicalActions Actions; // Multi-scale decision making
+public struct LearningLayer
+{
+    public ExperienceBuffer Memory;         // Continuous training data storage
+    public PolicyNetwork Policy;            // PPO/DQN policy optimization
+    public float[] StateAdaptation;         // Environmental and social adaptation
+    public HierarchicalActions Actions;     // Multi-scale decision making
 }
 ```
 
-## Implementation Priority Matrix
+## 3. Implementation Approach
 
-### Core ML Systems (1-4) - Essential Foundation
+### 3.1 Foundation Systems
 
-#### 1. Enhanced Genetic Algorithm Implementation
+#### Enhanced Genetic Algorithm Implementation
 
 **Comprehensive Genetic Traits System:**
 ```csharp
-public struct GeneticTraitsComponent {
+public struct GeneticTraitsComponent
+{
     // Physical traits
     public float Speed;
     public float Size;
@@ -57,25 +103,26 @@ public struct GeneticTraitsComponent {
     public float Aggression;
     public float Cooperation;
     public float Exploration;
-    public float Charisma;        // Affects leadership and social influence
-    public float Empathy;         // Social bond formation ability
-    public float Creativity;      // Innovation and problem-solving
+    public float Charisma;              // Affects leadership and social influence
+    public float Empathy;               // Social bond formation ability
+    public float Creativity;            // Innovation and problem-solving
     
     // Metabolic traits (integrates with current metabolism system)
-    public float MetabolismRate;   // Efficiency of energy consumption
+    public float MetabolismRate;        // Efficiency of energy consumption
     public float ReproductionThreshold;
     public float LifeExpectancy;
-    public float ImmunityStrength;  // Disease resistance
-    public float RecoveryRate;      // Healing speed
+    public float ImmunityStrength;      // Disease resistance
+    public float RecoveryRate;          // Healing speed
     
     // Learning traits
-    public float LearningRate;     // How quickly agent adapts
-    public float InnovationTendency; // Likelihood to try new approaches
-    public float MemoryCapacity;   // Experience buffer size
-    public float FocusAbility;     // Attention and concentration
-    public float SocialLearning;   // Knowledge acquisition from others
+    public float LearningRate;          // How quickly agent adapts
+    public float InnovationTendency;    // Likelihood to try new approaches
+    public float MemoryCapacity;        // Experience buffer size
+    public float FocusAbility;          // Attention and concentration
+    public float SocialLearning;        // Knowledge acquisition from others
     
-    public float[] ToArray() {
+    public float[] ToArray()
+    {
         return new[] { Speed, Size, SightRange, Strength, Endurance, Dexterity,
                       Aggression, Cooperation, Exploration, Charisma, Empathy, Creativity,
                       MetabolismRate, ReproductionThreshold, LifeExpectancy, 
@@ -83,8 +130,10 @@ public struct GeneticTraitsComponent {
                       MemoryCapacity, FocusAbility, SocialLearning };
     }
     
-    public static GeneticTraitsComponent FromArray(float[] genes) {
-        return new GeneticTraitsComponent {
+    public static GeneticTraitsComponent FromArray(float[] genes)
+    {
+        return new GeneticTraitsComponent
+        {
             Speed = genes[0], Size = genes[1], SightRange = genes[2], Strength = genes[3],
             Endurance = genes[4], Dexterity = genes[5], Aggression = genes[6],
             Cooperation = genes[7], Exploration = genes[8], Charisma = genes[9],
@@ -97,64 +146,74 @@ public struct GeneticTraitsComponent {
     }
 }
 
-public class GeneticAlgorithm {
-    private float mutationRate = 0.02f;
-    private float crossoverRate = 0.7f;
+public class GeneticAlgorithm
+{
+    private float _mutationRate = 0.02f;
+    private float _crossoverRate = 0.7f;
     
-    public GeneticTraitsComponent Crossover(GeneticTraitsComponent parent1, 
-                                           GeneticTraitsComponent parent2) {
+    public GeneticTraitsComponent Crossover(GeneticTraitsComponent parent1, GeneticTraitsComponent parent2)
+    {
         var genes1 = parent1.ToArray();
         var genes2 = parent2.ToArray();
         var childGenes = new float[genes1.Length];
-        
-        if (Random.value < crossoverRate) {
+
+        if (Random.value < this._crossoverRate)
+        {
             // Uniform crossover with trait-based bias
-            for (int i = 0; i < genes1.Length; i++) {
+            for (int geneIndex = 0; geneIndex < genes1.Length; geneIndex++)
+            {
                 float blendFactor = Random.Range(0.3f, 0.7f); // Weighted average
-                childGenes[i] = genes1[i] * blendFactor + genes2[i] * (1f - blendFactor);
+                childGenes[geneIndex] = genes1[geneIndex] * blendFactor + genes2[geneIndex] * (1f - blendFactor);
             }
-        } else {
+        }
+        else
+        {
             // Clone fitter parent
             childGenes = Random.value > 0.5f ? genes1 : genes2;
         }
-        
+
         return GeneticTraitsComponent.FromArray(childGenes);
     }
     
-    public void Mutate(ref GeneticTraitsComponent traits, float environmentalPressure = 1.0f) {
+    public void Mutate(ref GeneticTraitsComponent traits, float environmentalPressure = 1.0f)
+    {
         var genes = traits.ToArray();
-        float adaptiveMutationRate = mutationRate * environmentalPressure;
-        
-        for (int i = 0; i < genes.Length; i++) {
-            if (Random.value < adaptiveMutationRate) {
+        float adaptiveMutationRate = this._mutationRate * environmentalPressure;
+
+        for (int geneIndex = 0; geneIndex < genes.Length; geneIndex++)
+        {
+            if (Random.value < adaptiveMutationRate)
+            {
                 // Gaussian mutation with trait-specific bounds
                 float perturbation = Random.Range(-0.1f, 0.1f);
-                genes[i] = Mathf.Clamp(genes[i] + perturbation, 0f, 1f);
+                genes[geneIndex] = Mathf.Clamp(genes[geneIndex] + perturbation, 0f, 1f);
             }
         }
-        
+
         traits = GeneticTraitsComponent.FromArray(genes);
     }
 }
 ```
 
-#### 2. Enhanced Experience Collection System
+#### Enhanced Experience Collection System
 
 **Experience Collection and Storage System:**
 ```csharp
-public struct Experience {
-    public float[] State;          // Agent sensory input (30 features)
-    public int Action;             // Action taken (34 possible actions)
-    public float Reward;           // Immediate reward
-    public float[] NextState;      // Resulting state
-    public bool Done;              // Episode termination
-    public long Timestamp;         // When experience occurred
-    public AgentContext Context;   // Social and environmental context
-    public float Priority;         // For prioritized experience replay
-    public int Age;                // Experience age for decay
+public struct Experience
+{
+    public float[] State;        // Agent sensory input (30 features)
+    public int Action;           // Action taken (34 possible actions)
+    public float Reward;         // Immediate reward
+    public float[] NextState;    // Resulting state
+    public bool Done;            // Episode termination
+    public long Timestamp;       // When experience occurred
+    public AgentContext Context; // Social and environmental context
+    public float Priority;       // For prioritized experience replay
+    public int Age;              // Experience age for decay
 }
 
-public struct AgentContext {
+public struct AgentContext
+{
     public int ColonyId;
     public List<int> NearbyAgents;
     public WeatherCondition Weather;
@@ -165,65 +224,69 @@ public struct AgentContext {
     public ThreatLevel ThreatAssessment;
 }
 
-public class ExperienceBufferComponent {
-    private Experience[] buffer;
-    private int head;
-    private int count;
-    private int capacity;
-    private Dictionary<ExperienceType, float> priorities;
-    private float[] sumTree;  // For prioritized sampling
+public class ExperienceBufferComponent
+{
+    private Experience[] _buffer;
+    private int _head;
+    private int _count;
+    private int _capacity;
+    private Dictionary<ExperienceType, float> _priorities;
+    private float[] _sumTree;
     
-    public ExperienceBufferComponent(int capacity) {
-        this.capacity = capacity;
-        buffer = new Experience[capacity];
-        sumTree = new float[2 * capacity];
-    }
-    
-    public void Add(Experience experience) {
+    public void Add(Experience experience)
+    {
         // Calculate priority based on TD error and novelty
-        experience.Priority = CalculatePriority(experience);
+        experience.Priority = this.CalculatePriority(experience);
         
-        buffer[head] = experience;
-        sumTree[capacity + head] = experience.Priority;
-        UpdateSumTree(capacity + head);
+        this._buffer[this._head] = experience;
+        this._sumTree[this._capacity + this._head] = experience.Priority;
+        this.UpdateSumTree(this._capacity + this._head);
         
-        head = (head + 1) % capacity;
-        count = Math.Min(count + 1, capacity);
+        this._head = (this._head + 1) % this._capacity;
+        this._count = Math.Min(this._count + 1, this._capacity);
     }
     
-    public Experience[] Sample(int batchSize) {
+    public Experience[] Sample(int batchSize)
+    {
         var samples = new Experience[batchSize];
-        for (int i = 0; i < batchSize; i++) {
-            samples[i] = buffer[Random.Range(0, count)];
+
+        for (int sampleIndex = 0; sampleIndex < batchSize; sampleIndex++)
+        {
+            samples[sampleIndex] = this._buffer[Random.Range(0, this._count)];
         }
+
         return samples;
     }
     
-    public Experience[] PrioritizedSample(int batchSize, float alpha = 0.6f) {
+    public Experience[] PrioritizedSample(int batchSize, float alpha = 0.6f)
+    {
         var samples = new Experience[batchSize];
         var indices = new int[batchSize];
-        
-        float totalPriority = sumTree[1];
-        
-        for (int i = 0; i < batchSize; i++) {
-            float r = Random.value * totalPriority;
-            int idx = FindSumTreeIndex(r);
-            samples[i] = buffer[idx];
-            indices[i] = idx;
+        float totalPriority = this._sumTree[1];
+
+        for (int sampleIndex = 0; sampleIndex < batchSize; sampleIndex++)
+        {
+            float randomValue = Random.value * totalPriority;
+            int bufferIndex = this.FindSumTreeIndex(randomValue);
+            samples[sampleIndex] = this._buffer[bufferIndex];
+            indices[sampleIndex] = bufferIndex;
         }
-        
+
         return samples;
     }
     
-    public void UpdatePriorities(int[] indices, float[] tdErrors) {
-        for (int i = 0; i < indices.Length; i++) {
-            float priority = Math.Abs(tdErrors[i]) + 1e-5f;
-            sumTree[capacity + indices[i]] = priority;
-            UpdateSumTree(capacity + indices[i]);
+    public void UpdatePriorities(int[] indices, float[] tdErrors)
+    {
+        for (int priorityIndex = 0; priorityIndex < indices.Length; priorityIndex++)
+        {
+            float priority = Math.Abs(tdErrors[priorityIndex]) + 1e-5f;
+            this._sumTree[this._capacity + indices[priorityIndex]] = priority;
+            this.UpdateSumTree(this._capacity + indices[priorityIndex]);
         }
     }
     
-    private float CalculatePriority(Experience experience) {
+    private float CalculatePriority(Experience experience)
+    {
         // Higher priority for novel states and high rewards
         float novelty = CalculateStateNovelty(experience.State);
         float rewardMagnitude = Math.Abs(experience.Reward);
@@ -231,13 +294,16 @@ public class ExperienceBufferComponent {
     }
 }
 
-public class ExperienceCollectionSystem : BaseSystem {
+public class ExperienceCollectionSystem : BaseSystem
+{
     public override ComponentType[] RequiredComponentTypes => new[] {
         typeof(GeneticTraitsComponent), typeof(ExperienceBufferComponent)
     };
     
-    public override void Update(float deltaTime) {
-        foreach (var entity in GetEntities()) {
+    public override void Update(float deltaTime)
+    {
+        foreach (var entity in GetEntities())
+        {
             var traits = GetComponent<GeneticTraitsComponent>(entity);
             var buffer = GetComponent<ExperienceBufferComponent>(entity);
             
@@ -262,11 +328,12 @@ public class ExperienceCollectionSystem : BaseSystem {
 }
 ```
 
-#### 3. Advanced State Representation
+#### Advanced State Representation
 
 **Multi-Modal Sensory Processing System:**
 ```csharp
-public struct SensoryProcessingComponent {
+public struct SensoryProcessingComponent
+{
     public float[] VisualSensors;     // 8 directional vision rays
     public float[] AuditorySensors;   // 4 directional sound detection
     public float[] TactileSensors;    // Physical contact and temperature
@@ -275,7 +342,8 @@ public struct SensoryProcessingComponent {
     public float SensoryAccuracy;     // Processing fidelity
 }
 
-public struct SocialContextComponent {
+public struct SocialContextComponent
+{
     public Dictionary<int, float> RelationshipStrengths;
     public Dictionary<int, RelationType> RelationshipTypes;
     public float SocialStanding;      // Reputation within colony
@@ -284,7 +352,8 @@ public struct SocialContextComponent {
     public float CulturalAlignment;   // Fit with prevailing culture
 }
 
-public struct EnvironmentalAwarenessComponent {
+public struct EnvironmentalAwarenessComponent
+{
     public float[] ResourceDensity;   // 8 directional resource sensing
     public float[] ThreatLevel;       // 8 directional threat detection
     public WeatherImpact Weather;     // Current weather effects
@@ -293,7 +362,8 @@ public struct EnvironmentalAwarenessComponent {
     public float EnvironmentalStress; // Overall environmental pressure
 }
 
-public struct TemporalContextComponent {
+public struct TemporalContextComponent
+{
     public float CircadianRhythm;     // Internal biological clock
     public float SeasonalCycle;       // Long-term temporal awareness
     public float ActivityPattern;     // Personal activity preferences
@@ -301,35 +371,27 @@ public struct TemporalContextComponent {
 }
 ```
 
-#### 4. Multi-Objective Fitness Framework
+#### Multi-Objective Fitness Framework
 
 **Comprehensive Fitness Evaluation System:**
 ```csharp
-public struct FitnessComponents {
-    public float Survival;       // Health, longevity, disaster survival
-    public float Social;         // Cooperation, leadership, relationships
-    public float Economic;       // Resource management, trade success
-    public float Cultural;       // Knowledge preservation, innovation
-    public float Reproductive;   // Offspring success and genetic contribution
-    public float Environmental;  // Adaptation to environmental challenges
-    public float Overall;        // Weighted combination of all components
+public struct FitnessComponents
+{
+    public float Survival;      // Health, longevity, disaster survival
+    public float Social;        // Cooperation, leadership, relationships
+    public float Economic;      // Resource management, trade success
+    public float Cultural;      // Knowledge preservation, innovation
+    public float Reproductive;  // Offspring success and genetic contribution
+    public float Environmental; // Adaptation to environmental challenges
+    public float Overall;       // Weighted combination of all components
 }
 
-public class MultiFitnessEvaluator {
+public class MultiFitnessEvaluator
+{
     private Dictionary<FitnessType, float> weights;
     
-    public MultiFitnessEvaluator() {
-        weights = new Dictionary<FitnessType, float> {
-            { FitnessType.Survival, 0.25f },
-            { FitnessType.Social, 0.20f },
-            { FitnessType.Economic, 0.20f },
-            { FitnessType.Cultural, 0.15f },
-            { FitnessType.Reproductive, 0.15f },
-            { FitnessType.Environmental, 0.05f }
-        };
-    }
-    
-    public FitnessComponents EvaluateFitness(int entityId, float timeSpan) {
+    public FitnessComponents EvaluateFitness(int entityId, float timeSpan)
+    {
         var fitness = new FitnessComponents();
         
         // Survival Excellence
@@ -393,100 +455,138 @@ public class MultiFitnessEvaluator {
 }
 ```
 
-### Advanced ML Systems (5-8) - Sophisticated Intelligence
+### 3.2 Enhanced NEAT Implementation
 
-#### 5. Advanced NEAT Neural Evolution
+#### Advanced NEAT Neural Evolution
 
 **Dynamic Topology Evolution System:**
 
 ```csharp
-public struct NEATGenomeComponent {
+public struct NEATGenomeComponent
+{
     public List<NodeGene> Nodes;
     public List<ConnectionGene> Connections;
-    public FitnessComponents Fitness;        // Multi-objective fitness
-    public int SpeciesId;                    // For diversity preservation
-    public int Generation;                   // Age tracking
-    public float CompatibilityDistance;     // Distance from species representative
-    public int InnovationNumber;            // Global innovation tracking
+    public FitnessComponents Fitness;                     // Multi-objective fitness
+    public int SpeciesId;                                 // For diversity preservation
+    public int Generation;                                // Age tracking
+    public float CompatibilityDistance;                   // Distance from species representative
+    public int InnovationNumber;                          // Global innovation tracking
     public Dictionary<string, float> BehavioralSignature; // For behavioral speciation
 }
 
-public struct NodeGene {
+public struct NodeGene
+{
     public int Id;
-    public NodeType Type;        // Input, Hidden, Output
+    public NodeType Type;            // Input, Hidden, Output
     public float Bias;
     public ActivationFunction Activation;
-    public float Response;       // Activation response multiplier
+    public float Response;           // Activation response multiplier
 }
 
-public struct ConnectionGene {
+public struct ConnectionGene
+{
     public int InNode;
     public int OutNode;
     public float Weight;
     public bool Enabled;
-    public int Innovation;       // Historical marking
-    public float Age;           // Connection age for pruning
-    public float Strength;      // Usage-based strengthening
+    public int Innovation; // Historical marking
+    public float Age;      // Connection age for pruning
+    public float Strength; // Usage-based strengthening
 }
 
-public class NEATGenome {
+public class NEATGenome
+{
     public static int GlobalInnovationNumber = 0;
     public static Dictionary<(int, int), int> InnovationHistory = new();
     
-    public NEATGenomeComponent Crossover(NEATGenomeComponent parent1, 
-                                        NEATGenomeComponent parent2) {
-        var child = new NEATGenomeComponent {
+    public NEATGenomeComponent Crossover(NEATGenomeComponent parent1, NEATGenomeComponent parent2)
+    {
+        var child = new NEATGenomeComponent
+        {
             Nodes = new List<NodeGene>(),
             Connections = new List<ConnectionGene>(),
             Generation = Math.Max(parent1.Generation, parent2.Generation) + 1
         };
         
         // Align genes by innovation number
-        var innovations1 = parent1.Connections.ToDictionary(c => c.Innovation, c => c);
-        var innovations2 = parent2.Connections.ToDictionary(c => c.Innovation, c => c);
+        var innovations1 = parent1.Connections
+            .ToDictionary(connection => connection.Innovation, connection => connection);
+        var innovations2 = parent2.Connections
+            .ToDictionary(connection => connection.Innovation, connection => connection);
         
         // Determine fitter parent
         bool parent1Fitter = parent1.Fitness.Overall >= parent2.Fitness.Overall;
         
-        foreach (var innovation in innovations1.Keys.Union(innovations2.Keys)) {
+        var allInnovations = innovations1.Keys
+            .Union(innovations2.Keys);
+
+        foreach (var innovation in allInnovations)
+        {
             ConnectionGene? inheritedGene = null;
-            
-            if (innovations1.ContainsKey(innovation) && innovations2.ContainsKey(innovation)) {
+
+            var bothParentsHaveGene =
+                innovations1.ContainsKey(innovation) &&
+                innovations2.ContainsKey(innovation);
+
+            var parent1HasGeneAndIsFitter =
+                parent1Fitter &&
+                innovations1.ContainsKey(innovation);
+
+            var parent2HasGeneAndIsFitter =
+                !parent1Fitter &&
+                innovations2.ContainsKey(innovation);
+
+            if (bothParentsHaveGene)
+            {
                 // Both parents have this gene - choose randomly with bias toward fitter
                 float bias = parent1Fitter ? 0.6f : 0.4f;
                 inheritedGene = Random.value < bias ? 
                     innovations1[innovation] : innovations2[innovation];
             }
-            else if (parent1Fitter && innovations1.ContainsKey(innovation)) {
+            else if (parent1HasGeneAndIsFitter)
+            {
                 inheritedGene = innovations1[innovation];
             }
-            else if (!parent1Fitter && innovations2.ContainsKey(innovation)) {
+            else if (parent2HasGeneAndIsFitter)
+            {
                 inheritedGene = innovations2[innovation];
             }
             
-            if (inheritedGene.HasValue) {
+            if (inheritedGene.HasValue)
+            {
                 child.Connections.Add(inheritedGene.Value);
             }
         }
         
         // Inherit nodes from connections
         var nodeIds = new HashSet<int>();
-        foreach (var conn in child.Connections) {
-            nodeIds.Add(conn.InNode);
-            nodeIds.Add(conn.OutNode);
+        
+        foreach (var connection in child.Connections)
+        {
+            nodeIds.Add(connection.InNode);
+            nodeIds.Add(connection.OutNode);
         }
         
-        foreach (var nodeId in nodeIds) {
-            var node1 = parent1.Nodes.FirstOrDefault(n => n.Id == nodeId);
-            var node2 = parent2.Nodes.FirstOrDefault(n => n.Id == nodeId);
-            
-            if (node1.Id != 0 && node2.Id != 0) {
+        foreach (var nodeId in nodeIds)
+        {
+            var node1 = parent1.Nodes
+                .FirstOrDefault(node => node.Id == nodeId);
+            var node2 = parent2.Nodes
+                .FirstOrDefault(node => node.Id == nodeId);
+
+            var bothParentsHaveNode =
+                node1.Id != 0 &&
+                node2.Id != 0;
+
+            if (bothParentsHaveNode)
+            {
                 // Average the bias if both parents have the node
                 var avgNode = node1;
                 avgNode.Bias = (node1.Bias + node2.Bias) / 2f;
                 child.Nodes.Add(avgNode);
             }
-            else {
+            else
+            {
                 child.Nodes.Add(node1.Id != 0 ? node1 : node2);
             }
         }
@@ -494,28 +594,35 @@ public class NEATGenome {
         return child;
     }
     
-    public void Mutate(ref NEATGenomeComponent genome, MutationRates rates, 
-                      GeneticTraitsComponent traits) {
+    public void Mutate(ref NEATGenomeComponent genome, MutationRates rates, GeneticTraitsComponent traits)
+    {
         // Trait-influenced mutation rates
         float adaptedWeightMutation = rates.WeightMutation * traits.LearningRate;
         float adaptedStructuralMutation = rates.AddNode * traits.InnovationTendency;
         
         // Weight mutations
-        for (int i = 0; i < genome.Connections.Count; i++) {
-            var conn = genome.Connections[i];
-            if (Random.value < adaptedWeightMutation) {
-                if (Random.value < rates.WeightReplace) {
-                    conn.Weight = Random.Range(-2f, 2f);
-                } else {
-                    conn.Weight += Random.Range(-0.5f, 0.5f);
+        for (int connectionIndex = 0; connectionIndex < genome.Connections.Count; connectionIndex++)
+        {
+            var connection = genome.Connections[connectionIndex];
+            
+            if (Random.value < adaptedWeightMutation)
+            {
+                if (Random.value < rates.WeightReplace)
+                {
+                    connection.Weight = Random.Range(-2f, 2f);
                 }
-                conn.Weight = Mathf.Clamp(conn.Weight, -5f, 5f);
-                genome.Connections[i] = conn;
+                else
+                {
+                    connection.Weight += Random.Range(-0.5f, 0.5f);
+                }
+                connection.Weight = Mathf.Clamp(connection.Weight, -5f, 5f);
+                genome.Connections[connectionIndex] = connection;
             }
         }
         
         // Add node mutation
-        if (Random.value < adaptedStructuralMutation && genome.Connections.Count > 0) {
+        if (Random.value < adaptedStructuralMutation && genome.Connections.Count > 0)
+        {
             var connIndex = Random.Range(0, genome.Connections.Count);
             var oldConn = genome.Connections[connIndex];
             
@@ -551,14 +658,20 @@ public class NEATGenome {
         }
         
         // Add connection mutation
-        if (Random.value < rates.AddConnection) {
+        if (Random.value < rates.AddConnection)
+        {
             var attempts = 0;
-            while (attempts < 20) {
+            while (attempts < 20)
+            {
                 var node1 = genome.Nodes[Random.Range(0, genome.Nodes.Count)];
                 var node2 = genome.Nodes[Random.Range(0, genome.Nodes.Count)];
                 
-                if (CanConnect(node1, node2, genome) && 
-                    !ConnectionExists(node1.Id, node2.Id, genome)) {
+                var canCreateConnection =
+                    CanConnect(node1, node2, genome) &&
+                    !ConnectionExists(node1.Id, node2.Id, genome);
+
+                if (canCreateConnection)
+                {
                     genome.Connections.Add(new ConnectionGene {
                         InNode = node1.Id,
                         OutNode = node2.Id,
@@ -573,12 +686,19 @@ public class NEATGenome {
         }
     }
     
-    public float CalculateCompatibility(NEATGenomeComponent genome1, 
-                                       NEATGenomeComponent genome2) {
-        var innovations1 = new HashSet<int>(genome1.Connections.Select(c => c.Innovation));
-        var innovations2 = new HashSet<int>(genome2.Connections.Select(c => c.Innovation));
-        
-        int matching = innovations1.Intersect(innovations2).Count();
+    public float CalculateCompatibility(NEATGenomeComponent genome1, NEATGenomeComponent genome2)
+    {
+        var genome1Innovations = genome1.Connections
+            .Select(connection => connection.Innovation);
+        var genome2Innovations = genome2.Connections
+            .Select(connection => connection.Innovation);
+
+        var innovations1 = new HashSet<int>(genome1Innovations);
+        var innovations2 = new HashSet<int>(genome2Innovations);
+
+        int matching = innovations1
+            .Intersect(innovations2)
+            .Count();
         int excess = Math.Abs(innovations1.Max() - innovations2.Max());
         int disjoint = (innovations1.Count + innovations2.Count) - 2 * matching - excess;
         
@@ -590,9 +710,11 @@ public class NEATGenome {
         return (1.0f * excess / N) + (1.0f * disjoint / N) + (0.4f * avgWeightDiff);
     }
     
-    private static int GetInnovationNumber(int inNode, int outNode) {
+    private static int GetInnovationNumber(int inNode, int outNode)
+    {
         var key = (inNode, outNode);
-        if (InnovationHistory.ContainsKey(key)) {
+        if (InnovationHistory.ContainsKey(key))
+        {
             return InnovationHistory[key];
         }
         
@@ -602,215 +724,244 @@ public class NEATGenome {
 }
 ```
 
-#### 6. Optimized Neural Network Execution
+#### Optimized Neural Network Execution
 
 **High-Performance Neural Network Processing:**
 ```csharp
-public class NeuralNetwork {
-    private float[] nodeValues;
-    private bool[] nodeEvaluated;
-    private Dictionary<int, List<Connection>> incomingConnections;
-    private Dictionary<int, List<Connection>> outgoingConnections;
-    private List<int> topologicalOrder;
-    private int inputCount;
-    private int outputCount;
+public class NeuralNetwork
+{
+    private float[] _nodeValues;
+    private bool[] _nodeEvaluated;
+    private Dictionary<int, List<Connection>> _incomingConnections;
+    private Dictionary<int, List<Connection>> _outgoingConnections;
+    private List<int> _topologicalOrder;
+    private int _inputCount;
+    private int _outputCount;
     
-    public NeuralNetwork(NEATGenomeComponent genome) {
-        BuildFromGenome(genome);
-        CalculateTopologicalOrder();
-    }
-    
-    public float[] Activate(float[] inputs) {
-        Array.Clear(nodeValues, 0, nodeValues.Length);
-        Array.Clear(nodeEvaluated, 0, nodeEvaluated.Length);
+    public float[] Activate(float[] inputs)
+    {
+        Array.Clear(this._nodeValues, 0, this._nodeValues.Length);
+        Array.Clear(this._nodeEvaluated, 0, this._nodeEvaluated.Length);
         
         // Set input values
-        for (int i = 0; i < inputCount; i++) {
-            nodeValues[i] = inputs[i];
-            nodeEvaluated[i] = true;
+        for (int inputIndex = 0; inputIndex < this._inputCount; inputIndex++)
+        {
+            this._nodeValues[inputIndex] = inputs[inputIndex];
+            this._nodeEvaluated[inputIndex] = true;
         }
         
         // Process nodes in topological order
-        foreach (int nodeId in topologicalOrder) {
-            if (nodeEvaluated[nodeId]) continue;
-            
+        foreach (int nodeId in this._topologicalOrder)
+        {
+            if (this._nodeEvaluated[nodeId])
+            {
+                continue;
+            }
+
             float sum = 0f;
-            if (incomingConnections.ContainsKey(nodeId)) {
-                foreach (var conn in incomingConnections[nodeId]) {
-                    if (conn.Enabled && nodeEvaluated[conn.InNode]) {
-                        sum += nodeValues[conn.InNode] * conn.Weight;
+
+            if (this._incomingConnections.ContainsKey(nodeId))
+            {
+                foreach (var connection in this._incomingConnections[nodeId])
+                {
+                    var shouldIncludeConnection =
+                        connection.Enabled &&
+                        this._nodeEvaluated[connection.InNode];
+
+                    if (shouldIncludeConnection)
+                    {
+                        sum += this._nodeValues[connection.InNode] * connection.Weight;
                     }
                 }
             }
-            
+
             // Apply activation function
-            nodeValues[nodeId] = ApplyActivation(sum, GetNodeBias(nodeId));
-            nodeEvaluated[nodeId] = true;
+            this._nodeValues[nodeId] = this.ApplyActivation(sum, this.GetNodeBias(nodeId));
+            this._nodeEvaluated[nodeId] = true;
         }
-        
+
         // Extract outputs
-        var outputs = new float[outputCount];
-        int outputStart = nodeValues.Length - outputCount;
-        Array.Copy(nodeValues, outputStart, outputs, 0, outputCount);
+        var outputs = new float[this._outputCount];
+        int outputStart = this._nodeValues.Length - this._outputCount;
+        Array.Copy(this._nodeValues, outputStart, outputs, 0, this._outputCount);
         
         return outputs;
     }
     
-    public void BatchActivate(float[][] inputs, float[][] outputs) {
-        for (int i = 0; i < inputs.Length; i++) {
-            outputs[i] = Activate(inputs[i]);
+    public void BatchActivate(float[][] inputs, float[][] outputs)
+    {
+        for (int batchIndex = 0; batchIndex < inputs.Length; batchIndex++)
+        {
+            outputs[batchIndex] = Activate(inputs[batchIndex]);
         }
     }
     
-    public NeuralNetwork Clone() {
+    public NeuralNetwork Clone()
+    {
         var clone = new NeuralNetwork();
-        clone.nodeValues = new float[nodeValues.Length];
-        clone.nodeEvaluated = new bool[nodeEvaluated.Length];
-        clone.incomingConnections = new Dictionary<int, List<Connection>>(incomingConnections);
-        clone.outgoingConnections = new Dictionary<int, List<Connection>>(outgoingConnections);
-        clone.topologicalOrder = new List<int>(topologicalOrder);
-        clone.inputCount = inputCount;
-        clone.outputCount = outputCount;
+        clone._nodeValues = new float[this._nodeValues.Length];
+        clone._nodeEvaluated = new bool[this._nodeEvaluated.Length];
+        clone._incomingConnections = new Dictionary<int, List<Connection>>(this._incomingConnections);
+        clone._outgoingConnections = new Dictionary<int, List<Connection>>(this._outgoingConnections);
+        clone._topologicalOrder = new List<int>(this._topologicalOrder);
+        clone._inputCount = this._inputCount;
+        clone._outputCount = this._outputCount;
         return clone;
     }
     
-    private float ApplyActivation(float input, float bias) {
+    private float ApplyActivation(float input, float bias)
+    {
         float x = input + bias;
         // Sigmoid activation with improved numerical stability
         return x > 0 ? 1f / (1f + Mathf.Exp(-x)) : Mathf.Exp(x) / (1f + Mathf.Exp(x));
     }
 }
 
-public class BatchNeuralNetworkSystem : BaseSystem {
+public class BatchNeuralNetworkSystem : BaseSystem
+{
     private Dictionary<int, List<int>> batchGroups;
     private Dictionary<int, NeuralNetwork> sharedNetworks;
     
-    public override void Update(float deltaTime) {
+    public override void Update(float deltaTime)
+    {
         // Group agents by neural network architecture for batch processing
         GroupAgentsByArchetype();
         
-        foreach (var group in batchGroups) {
+        foreach (var group in batchGroups)
+        {
             var agents = group.Value;
             var network = sharedNetworks[group.Key];
             
             // Prepare batch inputs
             var inputs = new float[agents.Count][];
-            for (int i = 0; i < agents.Count; i++) {
-                inputs[i] = GatherSensoryData(agents[i]);
+            
+            for (int agentIndex = 0; agentIndex < agents.Count; agentIndex++)
+            {
+                inputs[agentIndex] = GatherSensoryData(agents[agentIndex]);
             }
             
             // Batch process
             var outputs = new float[agents.Count][];
-            for (int i = 0; i < agents.Count; i++) {
-                outputs[i] = new float[34]; // 34 possible actions
+            
+            for (int agentIndex = 0; agentIndex < agents.Count; agentIndex++)
+            {
+                outputs[agentIndex] = new float[34]; // 34 possible actions
             }
+            
             network.BatchActivate(inputs, outputs);
             
             // Distribute results
-            for (int i = 0; i < agents.Count; i++) {
-                ApplyNeuralNetworkOutput(agents[i], outputs[i]);
+            for (int agentIndex = 0; agentIndex < agents.Count; agentIndex++)
+            {
+                ApplyNeuralNetworkOutput(agents[agentIndex], outputs[agentIndex]);
             }
         }
     }
 }
 ```
 
-#### 7. Population Evolution Management
+#### Population Evolution Management
 
 **Speciation and Diversity Preservation:**
 ```csharp
-public class SpeciationEvolutionSystem : BaseSystem {
-    private List<Species> species;
-    private float compatibilityThreshold = 3.0f;
-    private int targetSpecies = 15;
-    private Dictionary<int, float> speciesFitness;
+public class SpeciationEvolutionSystem : BaseSystem
+{
+    private List<Species> _species;
+    private float _compatibilityThreshold = 3.0f;
+    private int _targetSpecies = 15;
+    private Dictionary<int, float> _speciesFitness;
     
-    public class Species {
+    public class Species
+    {
         public int Id;
         public List<int> Members;
         public NEATGenomeComponent Representative;
         public float BestFitness;
         public float AverageFitness;
         public int GenerationsWithoutImprovement;
-        public Dictionary<string, float> BehavioralNiche; // Behavioral speciation
+        public Dictionary<string, float> BehavioralNiche;
     }
     
-    public override void Update(float deltaTime) {
-        if (ShouldEvolve()) {
-            PerformEvolution();
+    public override void Update(float deltaTime)
+    {
+        if (this.ShouldEvolve())
+        {
+            this.PerformEvolution();
         }
     }
     
-    private void PerformEvolution() {
-        // 1. Assign agents to species
-        AssignToSpecies();
+    private void PerformEvolution()
+    {
+        this.AssignToSpecies();
+        this.CalculateSpeciesFitness();
+        this.RemoveStagnantSpecies();
         
-        // 2. Calculate species fitness
-        CalculateSpeciesFitness();
+        var offspringCounts = this.CalculateOffspringAllocation();
         
-        // 3. Remove stagnant species
-        RemoveStagnantSpecies();
-        
-        // 4. Calculate offspring allocation
-        var offspringCounts = CalculateOffspringAllocation();
-        
-        // 5. Create next generation
-        CreateNextGeneration(offspringCounts);
-        
-        // 6. Adjust compatibility threshold
-        AdjustCompatibilityThreshold();
+        this.CreateNextGeneration(offspringCounts);
+        this.AdjustCompatibilityThreshold();
     }
     
-    private void AssignToSpecies() {
-        var unassigned = GetAllGenomes();
+    private void AssignToSpecies()
+    {
+        var unassigned = this.GetAllGenomes();
         
-        // Clear existing assignments
-        foreach (var species in species) {
-            species.Members.Clear();
+        foreach (var speciesEntry in this._species)
+        {
+            speciesEntry.Members.Clear();
         }
         
-        foreach (var genome in unassigned) {
+        foreach (var genome in unassigned)
+        {
             bool assigned = false;
             
-            foreach (var species in species) {
-                float compatibility = CalculateCompatibility(genome, species.Representative);
-                if (compatibility < compatibilityThreshold) {
-                    species.Members.Add(genome.EntityId);
+            foreach (var speciesEntry in this._species)
+            {
+                float compatibility = this.CalculateCompatibility(genome, speciesEntry.Representative);
+                
+                if (compatibility < this._compatibilityThreshold)
+                {
+                    speciesEntry.Members.Add(genome.EntityId);
                     assigned = true;
                     break;
                 }
             }
             
-            if (!assigned) {
-                // Create new species
-                var newSpecies = new Species {
-                    Id = GetNextSpeciesId(),
+            if (!assigned)
+            {
+                var newSpecies = new Species
+                {
+                    Id = this.GetNextSpeciesId(),
                     Members = new List<int> { genome.EntityId },
                     Representative = genome,
-                    BehavioralNiche = CalculateBehavioralNiche(genome)
+                    BehavioralNiche = this.CalculateBehavioralNiche(genome)
                 };
-                species.Add(newSpecies);
+                
+                this._species.Add(newSpecies);
             }
         }
     }
     
-    private Dictionary<string, float> CalculateBehavioralNiche(NEATGenomeComponent genome) {
+    private Dictionary<string, float> CalculateBehavioralNiche(NEATGenomeComponent genome)
+    {
         // Calculate behavioral signature based on network structure
-        return new Dictionary<string, float> {
-            ["aggression"] = CalculateAggressionTendency(genome),
-            ["cooperation"] = CalculateCooperationTendency(genome),
-            ["exploration"] = CalculateExplorationTendency(genome),
-            ["social"] = CalculateSocialTendency(genome)
+        return new Dictionary<string, float>
+        {
+            ["aggression"] = this.CalculateAggressionTendency(genome),
+            ["cooperation"] = this.CalculateCooperationTendency(genome),
+            ["exploration"] = this.CalculateExplorationTendency(genome),
+            ["social"] = this.CalculateSocialTendency(genome)
         };
     }
 }
 ```
 
-#### 8. Performance Optimization Framework
+#### Performance Optimization Framework
 
 **Multi-Tiered Performance Management:**
 ```csharp
-public class PerformanceOptimizationSystem : BaseSystem {
+public class PerformanceOptimizationSystem : BaseSystem
+{
     private Dictionary<string, NeuralNetworkPool> networkPools;
     private SpatialPartitioningGrid spatialGrid;
     private Dictionary<int, float> agentDistances;
@@ -820,8 +971,10 @@ public class PerformanceOptimizationSystem : BaseSystem {
         private Stack<NeuralNetwork> availableNetworks;
         private NeuralNetwork templateNetwork;
         
-        public NeuralNetwork Rent() {
-            if (availableNetworks.Count > 0) {
+        public NeuralNetwork Rent()
+        {
+            if (availableNetworks.Count > 0)
+            {
                 return availableNetworks.Pop();
             }
             return templateNetwork.Clone();
@@ -833,69 +986,71 @@ public class PerformanceOptimizationSystem : BaseSystem {
         }
     }
     
-    public override void Update(float deltaTime) {
-        // Update spatial partitioning
-        spatialGrid.Update(GetAllAgentPositions());
-        
-        // Calculate distances from player camera
-        UpdateAgentDistances();
-        
-        // Apply level-of-detail optimizations
-        ApplyLevelOfDetail();
-        
-        // Process agents in batches by proximity and archetype
-        ProcessAgentBatches();
+    public override void Update(float deltaTime)
+    {
+        this._spatialGrid.Update(this.GetAllAgentPositions());
+        this.UpdateAgentDistances();
+        this.ApplyLevelOfDetail();
+        this.ProcessAgentBatches();
     }
     
-    private void ApplyLevelOfDetail() {
-        foreach (var entityId in GetEntities()) {
-            float distance = agentDistances[entityId];
+    private void ApplyLevelOfDetail()
+    {
+        foreach (var entityId in this.GetEntities())
+        {
+            float distance = this._agentDistances[entityId];
             
-            if (distance > 100f) {
-                // Very distant agents: Simple rule-based behavior
-                SetAIComplexity(entityId, AIComplexity.Minimal);
-                SetUpdateFrequency(entityId, 0.5f); // Update twice per second
+            if (distance > 100f)
+            {
+                this.SetAIComplexity(entityId, AIComplexity.Minimal);
+                this.SetUpdateFrequency(entityId, 0.5f);
             }
-            else if (distance > 50f) {
-                // Distant agents: Reduced neural network
-                SetAIComplexity(entityId, AIComplexity.Reduced);
-                SetUpdateFrequency(entityId, 2f); // Update every 0.5 seconds
+            else if (distance > 50f)
+            {
+                this.SetAIComplexity(entityId, AIComplexity.Reduced);
+                this.SetUpdateFrequency(entityId, 2f);
             }
-            else if (distance > 20f) {
-                // Medium distance: Standard AI
-                SetAIComplexity(entityId, AIComplexity.Standard);
-                SetUpdateFrequency(entityId, 10f); // Update 10 times per second
+            else if (distance > 20f)
+            {
+                this.SetAIComplexity(entityId, AIComplexity.Standard);
+                this.SetUpdateFrequency(entityId, 10f);
             }
-            else {
-                // Close agents: Full AI processing
-                SetAIComplexity(entityId, AIComplexity.Full);
-                SetUpdateFrequency(entityId, 30f); // Update 30 times per second
+            else
+            {
+                this.SetAIComplexity(entityId, AIComplexity.Full);
+                this.SetUpdateFrequency(entityId, 30f);
             }
         }
     }
     
-    private void ProcessAgentBatches() {
-        var batches = GroupAgentsByArchetypeAndProximity();
+    private void ProcessAgentBatches()
+    {
+        var batches = this.GroupAgentsByArchetypeAndProximity();
         
-        Parallel.ForEach(batches, batch => {
-            var networkPool = networkPools[batch.Archetype];
+        Parallel.ForEach(batches, batch =>
+        {
+            var networkPool = this._networkPools[batch.Archetype];
             var network = networkPool.Rent();
             
-            try {
-                // Batch process all agents in this group
-                var inputs = batch.Agents.Select(GatherSensoryData).ToArray();
+            try
+            {
+                var inputs = batch.Agents
+                    .Select(agent => this.GatherSensoryData(agent))
+                    .ToArray();
                 var outputs = new float[batch.Agents.Count][];
                 
-                for (int i = 0; i < batch.Agents.Count; i++) {
-                    outputs[i] = network.Activate(inputs[i]);
+                for (int agentIndex = 0; agentIndex < batch.Agents.Count; agentIndex++)
+                {
+                    outputs[agentIndex] = network.Activate(inputs[agentIndex]);
                 }
                 
-                // Apply results
-                for (int i = 0; i < batch.Agents.Count; i++) {
-                    ApplyAIDecision(batch.Agents[i], outputs[i]);
+                for (int agentIndex = 0; agentIndex < batch.Agents.Count; agentIndex++)
+                {
+                    this.ApplyAIDecision(batch.Agents[agentIndex], outputs[agentIndex]);
                 }
             }
-            finally {
+            finally
+            {
                 networkPool.Return(network);
             }
         });
@@ -903,123 +1058,157 @@ public class PerformanceOptimizationSystem : BaseSystem {
 }
 ```
 
-### Specialized ML Systems (9-12) - Genre-Specific Intelligence
+### 3.3 Advanced Reinforcement Learning
 
-#### 9. Deep Q-Network (DQN) Implementation
+#### Deep Q-Network (DQN) Implementation
 
 **Value-Based Reinforcement Learning:**
 ```csharp
-public class DQNBrain : IBrain {
-    private NeuralNetwork qNetwork;
-    private NeuralNetwork targetNetwork;
-    private ExperienceBuffer memory;
-    private float epsilon = 0.1f;           // Exploration rate
-    private float epsilonDecay = 0.995f;
-    private float epsilonMin = 0.01f;
-    private float learningRate = 0.001f;
-    private float gamma = 0.99f;            // Discount factor
-    private int targetUpdateFrequency = 1000;
-    private int trainingStep = 0;
+public class DQNBrain : IBrain
+{
+    private NeuralNetwork _qNetwork;
+    private NeuralNetwork _targetNetwork;
+    private ExperienceBuffer _memory;
+    private float _epsilon = 0.1f;           // Exploration rate
+    private float _epsilonDecay = 0.995f;
+    private float _epsilonMin = 0.01f;
+    private float _learningRate = 0.001f;
+    private float _gamma = 0.99f;            // Discount factor
+    private int _targetUpdateFrequency = 1000;
+    private int _trainingStep = 0;
     
-    public DQNBrain(int stateSize, int actionSize, int hiddenSize = 128) {
-        qNetwork = new NeuralNetwork(stateSize, new[] { hiddenSize, hiddenSize }, actionSize);
-        targetNetwork = qNetwork.Clone();
-        memory = new ExperienceBuffer(50000);
+    public DQNBrain(int stateSize, int actionSize, int hiddenSize = 128)
+    {
+        this._qNetwork = new NeuralNetwork(stateSize, new[] { hiddenSize, hiddenSize }, actionSize);
+        this._targetNetwork = this._qNetwork.Clone();
+        this._memory = new ExperienceBuffer(50000);
     }
     
-    public int SelectAction(float[] state) {
-        if (Random.value < epsilon) {
+    public int SelectAction(float[] state)
+    {
+        if (Random.value < this._epsilon)
+        {
             // Exploration: random action
-            return Random.Range(0, GetActionSize());
+            return Random.Range(0, this.GetActionSize());
         }
         
         // Exploitation: best known action
-        var qValues = qNetwork.Activate(state);
+        var qValues = this._qNetwork.Activate(state);
         return ArgMax(qValues);
     }
     
-    public void Remember(Experience experience) {
-        memory.Add(experience);
+    public void Remember(Experience experience)
+    {
+        this._memory.Add(experience);
         
         // Decay exploration rate
-        if (epsilon > epsilonMin) {
-            epsilon *= epsilonDecay;
+        if (this._epsilon > this._epsilonMin)
+        {
+            this._epsilon *= this._epsilonDecay;
         }
     }
     
-    public void Train(int batchSize = 32) {
-        if (memory.Count < batchSize) return;
+    public void Train(int batchSize = 32)
+    {
+        if (this._memory.Count < batchSize)
+        {
+            return;
+        }
         
-        var batch = memory.PrioritizedSample(batchSize);
-        var states = batch.Select(e => e.State).ToArray();
-        var actions = batch.Select(e => e.Action).ToArray();
-        var rewards = batch.Select(e => e.Reward).ToArray();
-        var nextStates = batch.Select(e => e.NextState).ToArray();
-        var dones = batch.Select(e => e.Done).ToArray();
+        var batch = this._memory.PrioritizedSample(batchSize);
+        var states = batch
+            .Select(experience => experience.State)
+            .ToArray();
+        var actions = batch
+            .Select(experience => experience.Action)
+            .ToArray();
+        var rewards = batch
+            .Select(experience => experience.Reward)
+            .ToArray();
+        var nextStates = batch
+            .Select(experience => experience.NextState)
+            .ToArray();
+        var dones = batch
+            .Select(experience => experience.Done)
+            .ToArray();
         
         // Calculate target Q-values using Double DQN
-        var currentQs = BatchForward(qNetwork, states);
-        var nextQsOnline = BatchForward(qNetwork, nextStates);    // Online network for action selection
-        var nextQsTarget = BatchForward(targetNetwork, nextStates); // Target network for value estimation
+        var currentQs = BatchForward(this._qNetwork, states);
+        var nextQsOnline = BatchForward(this._qNetwork, nextStates);      // Online network for action selection
+        var nextQsTarget = BatchForward(this._targetNetwork, nextStates); // Target network for value estimation
         
         var targets = new float[batchSize][];
         var tdErrors = new float[batchSize];
         
-        for (int i = 0; i < batchSize; i++) {
-            targets[i] = currentQs[i].Clone();
+        for (int batchIndex = 0; batchIndex < batchSize; batchIndex++)
+        {
+            targets[batchIndex] = currentQs[batchIndex].Clone();
             
-            float target = rewards[i];
-            if (!dones[i]) {
+            float target = rewards[batchIndex];
+            
+            if (!dones[batchIndex])
+            {
                 // Double DQN: use online network for action selection, target network for value
-                int bestAction = ArgMax(nextQsOnline[i]);
-                target += gamma * nextQsTarget[i][bestAction];
+                int bestAction = ArgMax(nextQsOnline[batchIndex]);
+                target += this._gamma * nextQsTarget[batchIndex][bestAction];
             }
             
-            float oldQValue = targets[i][actions[i]];
-            targets[i][actions[i]] = target;
+            float oldQValue = targets[batchIndex][actions[batchIndex]];
+            targets[batchIndex][actions[batchIndex]] = target;
             
             // Calculate TD error for prioritized replay
-            tdErrors[i] = Math.Abs(target - oldQValue);
+            tdErrors[batchIndex] = Math.Abs(target - oldQValue);
         }
         
         // Train the Q-network
-        TrainNetwork(qNetwork, states, targets);
+        this.TrainNetwork(this._qNetwork, states, targets);
         
         // Update priorities in experience buffer
-        memory.UpdatePriorities(Enumerable.Range(0, batchSize).ToArray(), tdErrors);
+        var batchIndices = Enumerable
+            .Range(0, batchSize)
+            .ToArray();
+        this._memory.UpdatePriorities(batchIndices, tdErrors);
         
         // Update target network periodically
-        trainingStep++;
-        if (trainingStep % targetUpdateFrequency == 0) {
-            SoftUpdateTargetNetwork(0.005f); // Soft update with tau=0.005
+        this._trainingStep++;
+
+        if (this._trainingStep % this._targetUpdateFrequency == 0)
+        {
+            this.SoftUpdateTargetNetwork(0.005f); // Soft update with tau=0.005
         }
     }
     
-    private void SoftUpdateTargetNetwork(float tau) {
+    private void SoftUpdateTargetNetwork(float tau)
+    {
         // Soft update: target = tau * online + (1 - tau) * target
-        var onlineWeights = qNetwork.GetWeights();
-        var targetWeights = targetNetwork.GetWeights();
+        var onlineWeights = this._qNetwork.GetWeights();
+        var targetWeights = this._targetNetwork.GetWeights();
         
-        for (int i = 0; i < onlineWeights.Length; i++) {
-            targetWeights[i] = tau * onlineWeights[i] + (1f - tau) * targetWeights[i];
+        for (int weightIndex = 0; weightIndex < onlineWeights.Length; weightIndex++)
+        {
+            targetWeights[weightIndex] = tau * onlineWeights[weightIndex] + (1f - tau) * targetWeights[weightIndex];
         }
         
-        targetNetwork.SetWeights(targetWeights);
+        this._targetNetwork.SetWeights(targetWeights);
     }
 }
 
-public class DQNLearningSystem : BaseSystem {
+public class DQNLearningSystem : BaseSystem
+{
     public override ComponentType[] RequiredComponentTypes => new[] {
         typeof(NEATGenomeComponent), typeof(ExperienceBufferComponent), typeof(DQNBrainComponent)
     };
     
-    public override void Update(float deltaTime) {
-        foreach (var entity in GetEntities()) {
+    public override void Update(float deltaTime)
+    {
+        foreach (var entity in GetEntities())
+        {
             var brain = GetComponent<DQNBrainComponent>(entity);
             var buffer = GetComponent<ExperienceBufferComponent>(entity);
             
             // Train periodically
-            if (buffer.Count > 1000 && Random.value < 0.1f) {
+            if (buffer.Count > 1000 && Random.value < 0.1f)
+            {
                 brain.Brain.Train(32);
             }
         }
@@ -1027,19 +1216,21 @@ public class DQNLearningSystem : BaseSystem {
 }
 ```
 
-#### 10. Proximal Policy Optimization (PPO)
+#### Proximal Policy Optimization (PPO)
 
 **Policy-Based Reinforcement Learning:**
 ```csharp
-public class PPOAgent {
-    private PolicyNetwork actor;
-    private ValueNetwork critic;
-    private float clipEpsilon = 0.2f;
-    private float learningRate = 3e-4f;
-    private float valueLossCoef = 0.5f;
-    private float entropyCoef = 0.01f;
-    private int numEpochs = 4;
-    private int miniBatchSize = 64;
+public class PPOAgent
+{
+    private PolicyNetwork _actor;
+    private ValueNetwork _critic;
+    private float _clipEpsilon = 0.2f;
+    private float _learningRate = 3e-4f;
+    private float _valueLossCoef = 0.5f;
+    private float _entropyCoef = 0.01f;
+    private int _numEpochs = 4;
+    private int _miniBatchSize = 64;
+    private float _gamma = 0.99f;
     
     public struct PolicyOutput {
         public float[] ActionProbabilities;
@@ -1056,13 +1247,15 @@ public class PPOAgent {
             var output = network.Activate(state);
             
             // Apply softmax to get action probabilities
-            var probabilities = Softmax(output);
+            var probabilities = this.Softmax(output);
             
             // Sample action from probability distribution
             int selectedAction = SampleFromDistribution(probabilities);
             
             // Calculate entropy for regularization
-            float entropy = -probabilities.Select((p, i) => p * Mathf.Log(p + 1e-8f)).Sum();
+            float entropy = -probabilities
+                .Select((probability, probabilityIndex) => probability * Mathf.Log(probability + 1e-8f))
+                .Sum();
             
             return new PolicyOutput {
                 ActionProbabilities = probabilities,
@@ -1072,11 +1265,16 @@ public class PPOAgent {
             };
         }
         
-        private float[] Softmax(float[] values) {
+        private float[] Softmax(float[] values)
+        {
             float max = values.Max();
-            var exp = values.Select(v => Mathf.Exp(v - max)).ToArray();
-            float sum = exp.Sum();
-            return exp.Select(e => e / sum).ToArray();
+            var exponentialValues = values
+                .Select(value => Mathf.Exp(value - max))
+                .ToArray();
+            float sum = exponentialValues.Sum();
+            return exponentialValues
+                .Select(expValue => expValue / sum)
+                .ToArray();
         }
     }
     
@@ -1100,34 +1298,47 @@ public class PPOAgent {
         public int Length => States.Count;
     }
     
-    public PolicyOutput SelectAction(float[] state) {
-        var policyOutput = actor.Forward(state);
-        policyOutput.StateValue = critic.Predict(state);
+    public PolicyOutput SelectAction(float[] state)
+    {
+        var policyOutput = this._actor.Forward(state);
+        policyOutput.StateValue = this._critic.Predict(state);
         return policyOutput;
     }
     
-    public void Train(List<Trajectory> trajectories) {
+    public void Train(List<Trajectory> trajectories)
+    {
         // Calculate advantages and returns
-        var (advantages, returns) = CalculateAdvantagesAndReturns(trajectories);
+        var (advantages, returns) = this.CalculateAdvantagesAndReturns(trajectories);
         
         // Flatten trajectories for training
-        var states = trajectories.SelectMany(t => t.States).ToArray();
-        var actions = trajectories.SelectMany(t => t.Actions).ToArray();
-        var oldProbabilities = trajectories.SelectMany(t => t.ActionProbabilities).ToArray();
+        var states = trajectories
+            .SelectMany(trajectory => trajectory.States)
+            .ToArray();
+        var actions = trajectories
+            .SelectMany(trajectory => trajectory.Actions)
+            .ToArray();
+        var oldProbabilities = trajectories
+            .SelectMany(trajectory => trajectory.ActionProbabilities)
+            .ToArray();
         
         // Normalize advantages
         float advMean = advantages.Average();
-        float advStd = Mathf.Sqrt(advantages.Select(a => (a - advMean) * (a - advMean)).Average());
-        for (int i = 0; i < advantages.Length; i++) {
-            advantages[i] = (advantages[i] - advMean) / (advStd + 1e-8f);
+        float advStd = Mathf.Sqrt(advantages
+            .Select(advantage => (advantage - advMean) * (advantage - advMean))
+            .Average());
+        for (int advantageIndex = 0; advantageIndex < advantages.Length; advantageIndex++)
+        {
+            advantages[advantageIndex] = (advantages[advantageIndex] - advMean) / (advStd + 1e-8f);
         }
         
         // Multiple epochs of minibatch updates
-        for (int epoch = 0; epoch < numEpochs; epoch++) {
-            var miniBatches = CreateMiniBatches(states, actions, oldProbabilities, advantages, returns);
+        for (int epochIndex = 0; epochIndex < this._numEpochs; epochIndex++)
+        {
+            var miniBatches = this.CreateMiniBatches(states, actions, oldProbabilities, advantages, returns);
             
-            foreach (var batch in miniBatches) {
-                TrainOnMiniBatch(batch);
+            foreach (var batch in miniBatches)
+            {
+                this.TrainOnMiniBatch(batch);
             }
         }
     }
@@ -1136,27 +1347,34 @@ public class PPOAgent {
         var advantages = new List<float>();
         var returns = new List<float>();
         
-        foreach (var traj in trajectories) {
+        foreach (var traj in trajectories)
+        {
             // Calculate Generalized Advantage Estimation (GAE)
             var trajAdvantages = new float[traj.Length];
             var trajReturns = new float[traj.Length];
             
             float gaeAdvantage = 0f;
             
-            for (int t = traj.Length - 1; t >= 0; t--) {
+            for (int timeIndex = traj.Length - 1; timeIndex >= 0; timeIndex--)
+            {
                 float delta;
-                if (t == traj.Length - 1) {
+                var isTerminalState = timeIndex == traj.Length - 1;
+
+                if (isTerminalState)
+                {
                     // Terminal state
-                    delta = traj.Rewards[t] - traj.StateValues[t];
-                    trajReturns[t] = traj.Rewards[t];
-                } else {
-                    // Non-terminal state
-                    delta = traj.Rewards[t] + gamma * traj.StateValues[t + 1] - traj.StateValues[t];
-                    trajReturns[t] = traj.Rewards[t] + gamma * trajReturns[t + 1];
+                    delta = traj.Rewards[timeIndex] - traj.StateValues[timeIndex];
+                    trajReturns[timeIndex] = traj.Rewards[timeIndex];
                 }
-                
-                gaeAdvantage = delta + gamma * gaeAdvantage;
-                trajAdvantages[t] = gaeAdvantage;
+                else
+                {
+                    // Non-terminal state
+                    delta = traj.Rewards[timeIndex] + this._gamma * traj.StateValues[timeIndex + 1] - traj.StateValues[timeIndex];
+                    trajReturns[timeIndex] = traj.Rewards[timeIndex] + this._gamma * trajReturns[timeIndex + 1];
+                }
+
+                gaeAdvantage = delta + this._gamma * gaeAdvantage;
+                trajAdvantages[timeIndex] = gaeAdvantage;
             }
             
             advantages.AddRange(trajAdvantages);
@@ -1166,76 +1384,99 @@ public class PPOAgent {
         return (advantages.ToArray(), returns.ToArray());
     }
     
-    private void TrainOnMiniBatch(MiniBatch batch) {
+    private void TrainOnMiniBatch(MiniBatch batch)
+    {
         // Calculate current policy probabilities
-        var currentPolicyOutputs = batch.States.Select(s => actor.Forward(s)).ToArray();
+        var currentPolicyOutputs = batch.States
+            .Select(state => this._actor.Forward(state))
+            .ToArray();
         var currentProbabilities = currentPolicyOutputs
-            .Select((output, i) => output.ActionProbabilities[batch.Actions[i]])
+            .Select((output, actionIndex) => output.ActionProbabilities[batch.Actions[actionIndex]])
             .ToArray();
         
         // Calculate probability ratios
         var ratios = currentProbabilities
-            .Zip(batch.OldProbabilities, (curr, old) => curr / (old + 1e-8f))
+            .Zip(batch.OldProbabilities, (current, old) => current / (old + 1e-8f))
             .ToArray();
-        
+
         // Clipped surrogate objective
-        var surr1 = ratios.Zip(batch.Advantages, (r, a) => r * a).ToArray();
-        var clippedRatios = ratios.Select(r => Mathf.Clamp(r, 1f - clipEpsilon, 1f + clipEpsilon)).ToArray();
-        var surr2 = clippedRatios.Zip(batch.Advantages, (r, a) => r * a).ToArray();
-        var policyLoss = -surr1.Zip(surr2, Mathf.Min).Average();
-        
+        var surr1 = ratios
+            .Zip(batch.Advantages, (ratio, advantage) => ratio * advantage)
+            .ToArray();
+        var clippedRatios = ratios
+            .Select(ratio => Mathf.Clamp(ratio, 1f - this._clipEpsilon, 1f + this._clipEpsilon))
+            .ToArray();
+        var surr2 = clippedRatios
+            .Zip(batch.Advantages, (ratio, advantage) => ratio * advantage)
+            .ToArray();
+        var policyLoss = -surr1
+            .Zip(surr2, Mathf.Min)
+            .Average();
+
         // Value function loss
-        var currentStateValues = batch.States.Select(critic.Predict).ToArray();
-        var valueLoss = currentStateValues.Zip(batch.Returns, (pred, ret) => (pred - ret) * (pred - ret)).Average();
-        
+        var currentStateValues = batch.States
+            .Select(state => this._critic.Predict(state))
+            .ToArray();
+        var valueLoss = currentStateValues
+            .Zip(batch.Returns, (predicted, returned) => (predicted - returned) * (predicted - returned))
+            .Average();
+
         // Entropy bonus for exploration
-        var entropyLoss = -currentPolicyOutputs.Select(o => o.Entropy).Average();
+        var entropyLoss = -currentPolicyOutputs
+            .Select(output => output.Entropy)
+            .Average();
         
         // Combined loss
-        var totalLoss = policyLoss + valueLossCoef * valueLoss + entropyCoef * entropyLoss;
+        var totalLoss = policyLoss + this._valueLossCoef * valueLoss + this._entropyCoef * entropyLoss;
         
         // Update networks
-        UpdateActor(policyLoss + entropyCoef * entropyLoss);
-        UpdateCritic(valueLoss);
+        this.UpdateActor(policyLoss + this._entropyCoef * entropyLoss);
+        this.UpdateCritic(valueLoss);
     }
 }
 
-public class PPOLearningSystem : BaseSystem {
-    private Dictionary<int, List<Trajectory>> agentTrajectories;
-    private int trajectoryLength = 2048;
+public class PPOLearningSystem : BaseSystem
+{
+    private Dictionary<int, List<Trajectory>> _agentTrajectories;
+    private int _trajectoryLength = 2048;
     
-    public override void Update(float deltaTime) {
-        foreach (var entity in GetEntities()) {
-            UpdateTrajectory(entity);
+    public override void Update(float deltaTime)
+    {
+        foreach (var entity in this.GetEntities())
+        {
+            this.UpdateTrajectory(entity);
             
             // Train when trajectory is full
-            if (agentTrajectories[entity].Count >= trajectoryLength) {
-                var ppo = GetComponent<PPOAgentComponent>(entity).Agent;
-                ppo.Train(agentTrajectories[entity]);
-                agentTrajectories[entity].Clear();
+            if (this._agentTrajectories[entity].Count >= this._trajectoryLength)
+            {
+                var ppo = this.GetComponent<PPOAgentComponent>(entity).Agent;
+                ppo.Train(this._agentTrajectories[entity]);
+                this._agentTrajectories[entity].Clear();
             }
         }
     }
 }
 ```
 
-#### 11. Hierarchical Reinforcement Learning
+#### Hierarchical Reinforcement Learning
 
 **Multi-Level Decision Making System:**
 ```csharp
-public interface IPolicy {
+public interface IPolicy
+{
     int SelectAction(float[] state);
     void Train(List<Experience> experiences);
     float GetActionProbability(float[] state, int action);
 }
 
-public class HierarchicalBrain {
-    private Dictionary<string, IPolicy> subPolicies;
-    private IPolicy metaPolicy;
-    private Dictionary<string, float> subPolicyRewards;
+public class HierarchicalBrain
+{
+    private Dictionary<string, IPolicy> _subPolicies;
+    private IPolicy _metaPolicy;
+    private Dictionary<string, float> _subPolicyRewards;
     
     public HierarchicalBrain() {
-        subPolicies = new Dictionary<string, IPolicy> {
+        this._subPolicies = new Dictionary<string, IPolicy> {
             ["survival"] = new SurvivalPolicy(),     // Hunger, health, safety
             ["social"] = new SocialPolicy(),         // Relationships, cooperation
             ["economic"] = new EconomicPolicy(),     // Resource gathering, trade
@@ -1244,24 +1485,26 @@ public class HierarchicalBrain {
             ["cultural"] = new CulturalPolicy()      // Learning, teaching, traditions
         };
         
-        metaPolicy = new MetaPolicy(subPolicies.Keys.ToList());
+        this._metaPolicy = new MetaPolicy(this._subPolicies.Keys.ToList());
     }
     
     public int DecideAction(float[] state) {
         // High-level decision: which behavioral mode to use
-        var metaFeatures = ExtractHighLevelFeatures(state);
-        var subPolicyName = GetSubPolicyName(metaPolicy.SelectAction(metaFeatures));
+        var metaFeatures = this.ExtractHighLevelFeatures(state);
+        var subPolicyName = this.GetSubPolicyName(this._metaPolicy.SelectAction(metaFeatures));
         
         // Low-level decision: specific action within chosen behavioral mode
-        var contextualState = AugmentStateWithContext(state, subPolicyName);
-        return subPolicies[subPolicyName].SelectAction(contextualState);
+        var contextualState = this.AugmentStateWithContext(state, subPolicyName);
+        return this._subPolicies[subPolicyName].SelectAction(contextualState);
     }
     
-    public void Train(List<Experience> experiences) {
+    public void Train(List<Experience> experiences)
+    {
         // Train sub-policies based on their domain-specific rewards
-        foreach (var experience in experiences) {
-            var subPolicy = DetermineResponsibleSubPolicy(experience);
-            var domainSpecificReward = CalculateDomainReward(experience, subPolicy);
+        foreach (var experience in experiences)
+        {
+            var subPolicy = this.DetermineResponsibleSubPolicy(experience);
+            var domainSpecificReward = this.CalculateDomainReward(experience, subPolicy);
             
             var domainExperience = new Experience {
                 State = experience.State,
@@ -1271,11 +1514,11 @@ public class HierarchicalBrain {
                 Done = experience.Done
             };
             
-            subPolicies[subPolicy].Train(new List<Experience> { domainExperience });
+            this._subPolicies[subPolicy].Train(new List<Experience> { domainExperience });
         }
         
         // Train meta-policy based on sub-policy performance
-        TrainMetaPolicy(experiences);
+        this.TrainMetaPolicy(experiences);
     }
     
     private float[] ExtractHighLevelFeatures(float[] state) {
@@ -1292,70 +1535,80 @@ public class HierarchicalBrain {
     }
 }
 
-public class MetaPolicy : IPolicy {
-    private PPOAgent ppoAgent;
-    private List<string> availablePolicies;
+public class MetaPolicy : IPolicy
+{
+    private PPOAgent _ppoAgent;
+    private List<string> _availablePolicies;
     
     public int SelectAction(float[] state) {
-        var output = ppoAgent.SelectAction(state);
-        return output.SelectedAction; // Index into availablePolicies
+        var output = this._ppoAgent.SelectAction(state);
+        return output.SelectedAction; // Index into _availablePolicies
     }
     
     public void Train(List<Experience> experiences) {
         // Convert experiences to trajectories for PPO training
-        var trajectories = ConvertToTrajectories(experiences);
-        ppoAgent.Train(trajectories);
+        var trajectories = this.ConvertToTrajectories(experiences);
+        this._ppoAgent.Train(trajectories);
     }
 }
 ```
 
-#### 12. Imitation Learning Framework
+#### Imitation Learning Framework
 
 **Behavioral Cloning and Cultural Transfer:**
 ```csharp
-public class ImitationLearningSystem : BaseSystem {
-    private Dictionary<string, BehaviorDatabase> expertBehaviors;
-    private Dictionary<int, BehavioralCloningAgent> learners;
+public class ImitationLearningSystem : BaseSystem
+{
+    private Dictionary<string, BehaviorDatabase> _expertBehaviors;
+    private Dictionary<int, BehavioralCloningAgent> _learners;
     
     public class BehaviorDatabase {
-        private List<(float[] state, int action)> demonstrations;
-        private Dictionary<string, float> behaviorSignature;
+        private List<(float[] state, int action)> _demonstrations;
+        private Dictionary<string, float> _behaviorSignature;
         
         public void RecordDemonstration(float[] state, int action, float quality) {
             if (quality > 0.8f) { // Only record high-quality behaviors
-                demonstrations.Add((state.Clone(), action));
-                UpdateBehaviorSignature(state, action);
+                this._demonstrations.Add((state.Clone(), action));
+                this.UpdateBehaviorSignature(state, action);
             }
         }
         
         public (float[] state, int action)[] GetDemonstrations(int maxCount = -1) {
-            var count = maxCount > 0 ? Math.Min(maxCount, demonstrations.Count) : demonstrations.Count;
-            return demonstrations.TakeLast(count).ToArray();
+            var count = maxCount > 0 ? Math.Min(maxCount, this._demonstrations.Count) : this._demonstrations.Count;
+            return this._demonstrations.TakeLast(count).ToArray();
         }
     }
     
     public class BehavioralCloningAgent {
-        private NeuralNetwork policy;
-        private float learningRate = 0.001f;
+        private NeuralNetwork _policy;
+        private float _learningRate = 0.001f;
         
         public void LearnFromDemonstrations((float[] state, int action)[] demonstrations) {
-            var states = demonstrations.Select(d => d.state).ToArray();
-            var actions = demonstrations.Select(d => ConvertActionToOneHot(d.action)).ToArray();
+            var states = demonstrations
+                .Select(demonstration => demonstration.state)
+                .ToArray();
+            var actions = demonstrations
+                .Select(demonstration => ConvertActionToOneHot(demonstration.action))
+                .ToArray();
             
             // Supervised learning from expert demonstrations
-            for (int epoch = 0; epoch < 100; epoch++) {
+            for (int epoch = 0; epoch < 100; epoch++)
+            {
                 var loss = TrainSupervised(states, actions);
-                if (loss < 0.01f) break; // Early stopping
+                if (loss < 0.01f)
+                {
+                    break; // Early stopping
+                }
             }
         }
         
         public int PredictAction(float[] state) {
-            var output = policy.Activate(state);
+            var output = this._policy.Activate(state);
             return ArgMax(output); // Most probable action
         }
         
         public float GetActionProbability(float[] state, int action) {
-            var output = policy.Activate(state);
+            var output = this._policy.Activate(state);
             var probabilities = Softmax(output);
             return probabilities[action];
         }
@@ -1372,30 +1625,39 @@ public class ImitationLearningSystem : BaseSystem {
         FacilitateCulturalTransfer();
     }
     
-    private void RecordExpertBehaviors() {
-        foreach (var entity in GetEntities()) {
-            var fitness = GetComponent<FitnessComponents>(entity);
+    private void RecordExpertBehaviors()
+    {
+        foreach (var entity in this.GetEntities())
+        {
+            var fitness = this.GetComponent<FitnessComponents>(entity);
             
-            if (fitness.Overall > 0.9f) { // Expert threshold
-                var state = GatherSensoryData(entity);
-                var action = GetLastAction(entity);
-                var behaviorType = ClassifyBehaviorType(state, action);
+            if (fitness.Overall > 0.9f)
+            {
+                // Expert threshold
+                var state = this.GatherSensoryData(entity);
+                var action = this.GetLastAction(entity);
+                var behaviorType = this.ClassifyBehaviorType(state, action);
                 
-                expertBehaviors[behaviorType].RecordDemonstration(state, action, fitness.Overall);
+                this._expertBehaviors[behaviorType].RecordDemonstration(state, action, fitness.Overall);
             }
         }
     }
     
-    private void TeachNoviceAgents() {
-        foreach (var entity in GetEntities()) {
-            var fitness = GetComponent<FitnessComponents>(entity);
+    private void TeachNoviceAgents()
+    {
+        foreach (var entity in this.GetEntities())
+        {
+            var fitness = this.GetComponent<FitnessComponents>(entity);
             
-            if (fitness.Overall < 0.3f) { // Novice threshold
-                var learner = GetOrCreateLearner(entity);
-                var needType = DetermineNeedType(entity);
+            if (fitness.Overall < 0.3f)
+            {
+                // Novice threshold
+                var learner = this.GetOrCreateLearner(entity);
+                var needType = this.DetermineNeedType(entity);
                 
-                if (expertBehaviors.ContainsKey(needType)) {
-                    var demonstrations = expertBehaviors[needType].GetDemonstrations(100);
+                if (this._expertBehaviors.ContainsKey(needType))
+                {
+                    var demonstrations = this._expertBehaviors[needType].GetDemonstrations(100);
                     learner.LearnFromDemonstrations(demonstrations);
                 }
             }
@@ -1404,16 +1666,17 @@ public class ImitationLearningSystem : BaseSystem {
 }
 ```
 
-### Emergent ML Systems (13-16) - Meta-Learning Features
+### 3.4 Hybrid Integration and Performance
 
-#### 13. Emergent Social Learning Systems
+#### Emergent Social Learning Systems
 
 **Cultural Evolution and Knowledge Transfer:**
 ```csharp
-public class SocialLearningSystem : BaseSystem {
-    private Dictionary<int, CulturalKnowledge> agentCultures;
-    private Dictionary<string, TraditionEvolution> evolvingTraditions;
-    private SocialNetworkGraph socialNetwork;
+public class SocialLearningSystem : BaseSystem
+{
+    private Dictionary<int, CulturalKnowledge> _agentCultures;
+    private Dictionary<string, TraditionEvolution> _evolvingTraditions;
+    private SocialNetworkGraph _socialNetwork;
     
     public class CulturalKnowledge {
         public Dictionary<string, float> Traditions;      // Tradition name -> strength
@@ -1453,29 +1716,35 @@ public class SocialLearningSystem : BaseSystem {
         UpdateCollectiveDecisions();
     }
     
-    private void ProcessKnowledgeTransfer() {
-        foreach (var entity in GetEntities()) {
-            var socialConnections = socialNetwork.GetConnections(entity);
+    private void ProcessKnowledgeTransfer()
+    {
+        foreach (var entity in this.GetEntities())
+        {
+            var socialConnections = this._socialNetwork.GetConnections(entity);
             
-            foreach (var connection in socialConnections) {
-                if (socialNetwork.GetRelationshipStrength(entity, connection) > 0.6f) {
+            foreach (var connection in socialConnections)
+            {
+                if (this._socialNetwork.GetRelationshipStrength(entity, connection) > 0.6f)
+                {
                     // Strong relationship enables knowledge transfer
-                    TransferKnowledge(connection, entity, deltaTime);
+                    this.TransferKnowledge(connection, entity, deltaTime);
                 }
             }
         }
     }
     
     private void TransferKnowledge(int teacher, int student, float deltaTime) {
-        var teacherCulture = agentCultures[teacher];
-        var studentCulture = agentCultures[student];
-        var teacherFitness = GetComponent<FitnessComponents>(teacher);
-        var studentFitness = GetComponent<FitnessComponents>(student);
+        var teacherCulture = this._agentCultures[teacher];
+        var studentCulture = this._agentCultures[student];
+        var teacherFitness = this.GetComponent<FitnessComponents>(teacher);
+        var studentFitness = this.GetComponent<FitnessComponents>(student);
         
         // Transfer successful traditions
-        foreach (var tradition in teacherCulture.Traditions) {
-            if (teacherFitness.Overall > studentFitness.Overall && tradition.Value > 0.7f) {
-                float transferRate = CalculateTransferRate(teacher, student, tradition.Key);
+        foreach (var tradition in teacherCulture.Traditions)
+        {
+            if (teacherFitness.Overall > studentFitness.Overall && tradition.Value > 0.7f)
+            {
+                float transferRate = this.CalculateTransferRate(teacher, student, tradition.Key);
                 float currentStrength = studentCulture.Traditions.GetValueOrDefault(tradition.Key, 0f);
                 
                 // Gradual knowledge transfer with decay
@@ -1489,19 +1758,25 @@ public class SocialLearningSystem : BaseSystem {
         }
     }
     
-    private void EvolveTraditions() {
-        foreach (var tradition in evolvingTraditions.Values) {
+    private void EvolveTraditions()
+    {
+        foreach (var tradition in this._evolvingTraditions.Values)
+        {
             // Measure success of tradition adopters
             float avgFitness = tradition.AdopterFitness.Values.DefaultIfEmpty(0f).Average();
             
-            if (avgFitness > 0.6f) {
+            if (avgFitness > 0.6f)
+            {
                 // Successful tradition: increase popularity and create variants
                 tradition.PopularityScore += 0.1f;
                 
-                if (Random.value < tradition.EvolutionRate) {
-                    CreateTraditionVariant(tradition);
+                if (Random.value < tradition.EvolutionRate)
+                {
+                    this.CreateTraditionVariant(tradition);
                 }
-            } else {
+            }
+            else
+            {
                 // Unsuccessful tradition: decrease popularity
                 tradition.PopularityScore = Mathf.Max(0f, tradition.PopularityScore - 0.05f);
             }
@@ -1510,14 +1785,15 @@ public class SocialLearningSystem : BaseSystem {
 }
 ```
 
-#### 14. Multi-Agent Learning Coordination
+#### Multi-Agent Learning Coordination
 
 **Cooperative and Competitive Learning Dynamics:**
 ```csharp
-public class MultiAgentCoordinationSystem : BaseSystem {
-    private Dictionary<int, CooperativeLearningGroup> cooperativeGroups;
-    private CompetitiveLearningManager competitiveManager;
-    private CommunicationProtocolEvolution communicationEvolution;
+public class MultiAgentCoordinationSystem : BaseSystem
+{
+    private Dictionary<int, CooperativeLearningGroup> _cooperativeGroups;
+    private CompetitiveLearningManager _competitiveManager;
+    private CommunicationProtocolEvolution _communicationEvolution;
     
     public class CooperativeLearningGroup {
         public List<int> Members;
@@ -1529,8 +1805,8 @@ public class MultiAgentCoordinationSystem : BaseSystem {
     }
     
     public class CompetitiveLearningManager {
-        private Dictionary<int, CompetitiveProfile> agentProfiles;
-        private List<Competition> activeCompetitions;
+        private Dictionary<int, CompetitiveProfile> _agentProfiles;
+        private List<Competition> _activeCompetitions;
         
         public class CompetitiveProfile {
             public Dictionary<int, float> RivalryStrengths;   // Who they compete with
@@ -1540,24 +1816,26 @@ public class MultiAgentCoordinationSystem : BaseSystem {
             public List<CompetitiveStrategy> Strategies;
         }
         
-        public void UpdateCompetitiveDynamics(float deltaTime) {
-            foreach (var competition in activeCompetitions) {
+        public void UpdateCompetitiveDynamics(float deltaTime)
+        {
+            foreach (var competition in this._activeCompetitions)
+            {
                 // Update rivalry relationships based on competition outcomes
-                UpdateRivalryStrengths(competition);
+                this.UpdateRivalryStrengths(competition);
                 
                 // Adapt strategies based on competitor performance
-                AdaptCompetitiveStrategies(competition);
+                this.AdaptCompetitiveStrategies(competition);
                 
                 // Learn from competitor successes
-                FacilitateCompetitiveLearning(competition);
+                this.FacilitateCompetitiveLearning(competition);
             }
         }
     }
     
     public class CommunicationProtocolEvolution {
-        private Dictionary<int, CommunicationProfile> agentProfiles;
-        private Dictionary<string, SignalMeaning> evolvedSignals;
-        private List<CommunicationEvent> recentEvents;
+        private Dictionary<int, CommunicationProfile> _agentProfiles;
+        private Dictionary<string, SignalMeaning> _evolvedSignals;
+        private List<CommunicationEvent> _recentEvents;
         
         public class CommunicationProfile {
             public Dictionary<string, float> SignalUnderstanding;
@@ -1575,67 +1853,75 @@ public class MultiAgentCoordinationSystem : BaseSystem {
             public float SuccessRate;                        // Communication success
         }
         
-        public void EvolveCommunication(float deltaTime) {
+        public void EvolveCommunication(float deltaTime)
+        {
             // Analyze recent communication events
-            foreach (var commEvent in recentEvents) {
-                if (commEvent.WasSuccessful) {
+            foreach (var commEvent in this._recentEvents)
+            {
+                if (commEvent.WasSuccessful)
+                {
                     // Reinforce successful communication patterns
-                    ReinforceCommunicationPattern(commEvent);
-                } else {
+                    this.ReinforceCommunicationPattern(commEvent);
+                }
+                else
+                {
                     // Adapt failed communication attempts
-                    AdaptCommunicationStrategy(commEvent);
+                    this.AdaptCommunicationStrategy(commEvent);
                 }
             }
             
             // Evolve new signals based on communication needs
-            EvolveNewSignals();
+            this.EvolveNewSignals();
             
             // Standardize successful communication protocols
-            StandardizeProtocols();
+            this.StandardizeProtocols();
         }
     }
     
     public override void Update(float deltaTime) {
         // Update cooperative learning groups
-        UpdateCooperativeLearning(deltaTime);
+        this.UpdateCooperativeLearning(deltaTime);
         
         // Manage competitive dynamics
-        competitiveManager.UpdateCompetitiveDynamics(deltaTime);
+        this._competitiveManager.UpdateCompetitiveDynamics(deltaTime);
         
         // Evolve communication protocols
-        communicationEvolution.EvolveCommunication(deltaTime);
+        this._communicationEvolution.EvolveCommunication(deltaTime);
         
         // Form and dissolve coalitions dynamically
-        ManageCoalitionFormation();
+        this.ManageCoalitionFormation();
     }
     
-    private void UpdateCooperativeLearning(float deltaTime) {
-        foreach (var group in cooperativeGroups.Values) {
+    private void UpdateCooperativeLearning(float deltaTime)
+    {
+        foreach (var group in this._cooperativeGroups.Values)
+        {
             // Share experiences within the group
-            ShareGroupExperiences(group);
+            this.ShareGroupExperiences(group);
             
             // Update shared objectives based on group needs
-            UpdateSharedObjectives(group, deltaTime);
+            this.UpdateSharedObjectives(group, deltaTime);
             
             // Make collective decisions for the group
-            MakeCollectiveDecisions(group);
+            this.MakeCollectiveDecisions(group);
             
             // Evaluate and maintain group coherence
-            EvaluateGroupCoherence(group, deltaTime);
+            this.EvaluateGroupCoherence(group, deltaTime);
         }
     }
 }
 ```
 
-#### 15. Meta-Learning and Adaptation
+#### Meta-Learning and Adaptation
 
 **Learning to Learn System:**
 ```csharp
-public class MetaLearningSystem : BaseSystem {
-    private Dictionary<int, MetaLearningProfile> agentProfiles;
-    private HyperparameterOptimizer optimizer;
-    private TransferLearningManager transferManager;
-    private CuriosityDrivenEngine curiosityEngine;
+public class MetaLearningSystem : BaseSystem
+{
+    private Dictionary<int, MetaLearningProfile> _agentProfiles;
+    private HyperparameterOptimizer _optimizer;
+    private TransferLearningManager _transferManager;
+    private CuriosityDrivenEngine _curiosityEngine;
     
     public class MetaLearningProfile {
         public Dictionary<string, LearningStrategy> Strategies;
@@ -1654,12 +1940,16 @@ public class MetaLearningSystem : BaseSystem {
         public float AdaptationSpeed;
         public Dictionary<string, float> PerformanceMetrics;
         
-        public void AdaptToContext(string context, float performance) {
+        public void AdaptToContext(string context, float performance)
+        {
             // Modify strategy based on context and performance
-            if (performance > 0.7f) {
+            if (performance > 0.7f)
+            {
                 // Successful application - reinforce current settings
                 ReinforceSucessfulParameters();
-            } else {
+            }
+            else
+            {
                 // Poor performance - adapt parameters
                 ModifyParameters(context, performance);
             }
@@ -1667,45 +1957,45 @@ public class MetaLearningSystem : BaseSystem {
     }
     
     public class HyperparameterOptimizer {
-        private Dictionary<string, HyperparameterSpace> parameterSpaces;
-        private BayesianOptimization optimizer;
+        private Dictionary<string, HyperparameterSpace> _parameterSpaces;
+        private BayesianOptimization _optimizer;
         
         public Dictionary<string, float> OptimizeHyperparameters(
             string algorithmType, List<float> performanceHistory) {
             
-            var space = parameterSpaces[algorithmType];
-            var optimalParams = optimizer.Optimize(space, performanceHistory);
+            var space = this._parameterSpaces[algorithmType];
+            var optimalParams = this._optimizer.Optimize(space, performanceHistory);
             
             return optimalParams;
         }
     }
     
     public class TransferLearningManager {
-        private Dictionary<string, KnowledgeBase> domainKnowledge;
-        private SimilarityMeasure taskSimilarity;
+        private Dictionary<string, KnowledgeBase> _domainKnowledge;
+        private SimilarityMeasure _taskSimilarity;
         
         public bool CanTransferKnowledge(string fromDomain, string toDomain) {
-            float similarity = taskSimilarity.Calculate(fromDomain, toDomain);
+            float similarity = this._taskSimilarity.Calculate(fromDomain, toDomain);
             return similarity > 0.6f; // Transfer threshold
         }
         
         public void TransferKnowledge(int agentId, string fromDomain, string toDomain) {
-            var sourceKnowledge = domainKnowledge[fromDomain];
-            var targetKnowledge = domainKnowledge[toDomain];
+            var sourceKnowledge = this._domainKnowledge[fromDomain];
+            var targetKnowledge = this._domainKnowledge[toDomain];
             
             // Transfer applicable knowledge components
             var transferableComponents = sourceKnowledge.GetTransferableComponents(toDomain);
             targetKnowledge.IntegrateTransferredKnowledge(transferableComponents);
             
             // Record transfer event for future optimization
-            RecordTransferEvent(agentId, fromDomain, toDomain, transferableComponents);
+            this.RecordTransferEvent(agentId, fromDomain, toDomain, transferableComponents);
         }
     }
     
     public class CuriosityDrivenEngine {
-        private Dictionary<int, CuriosityProfile> agentCuriosity;
-        private PredictionModel worldModel;
-        private NoveltyDetector noveltyDetector;
+        private Dictionary<int, CuriosityProfile> _agentCuriosity;
+        private PredictionModel _worldModel;
+        private NoveltyDetector _noveltyDetector;
         
         public class CuriosityProfile {
             public float IntrinsicMotivation;
@@ -1717,45 +2007,48 @@ public class MetaLearningSystem : BaseSystem {
         
         public float CalculateIntrinsicReward(int agentId, float[] state, int action, float[] nextState) {
             // Prediction error as curiosity signal
-            float predictedReward = worldModel.Predict(state, action);
-            float actualReward = CalculateActualOutcome(state, action, nextState);
+            float predictedReward = this._worldModel.Predict(state, action);
+            float actualReward = this.CalculateActualOutcome(state, action, nextState);
             float predictionError = Math.Abs(predictedReward - actualReward);
             
             // Novelty bonus
-            float noveltyScore = noveltyDetector.GetNoveltyScore(nextState);
+            float noveltyScore = this._noveltyDetector.GetNoveltyScore(nextState);
             
             // Learning progress bonus
-            float progressBonus = CalculateLearningProgress(agentId);
+            float progressBonus = this.CalculateLearningProgress(agentId);
             
             return predictionError * 0.5f + noveltyScore * 0.3f + progressBonus * 0.2f;
         }
     }
     
-    public override void Update(float deltaTime) {
-        foreach (var entity in GetEntities()) {
-            var profile = agentProfiles[entity];
+    public override void Update(float deltaTime)
+    {
+        foreach (var entity in this.GetEntities())
+        {
+            var profile = this._agentProfiles[entity];
             
             // Adapt learning strategies based on recent performance
-            AdaptLearningStrategies(entity, profile, deltaTime);
+            this.AdaptLearningStrategies(entity, profile, deltaTime);
             
             // Optimize hyperparameters based on performance history
-            OptimizeHyperparameters(entity, profile);
+            this.OptimizeHyperparameters(entity, profile);
             
             // Check for transfer learning opportunities
-            CheckTransferOpportunities(entity, profile);
+            this.CheckTransferOpportunities(entity, profile);
             
             // Update curiosity-driven exploration
-            UpdateCuriosityDrivenBehavior(entity, deltaTime);
+            this.UpdateCuriosityDrivenBehavior(entity, deltaTime);
         }
     }
 }
 ```
 
-#### 16. Production Hybrid Agent Architecture
+#### Production Hybrid Agent Architecture
 
 **Complete Integrated Agent System:**
 ```csharp
-public struct HybridAgentComponent {
+public struct HybridAgentComponent
+{
     // Layer 1: Genetic Foundation
     public GeneticTraitsComponent Traits;
     public int Generation;
@@ -1788,11 +2081,12 @@ public struct HybridAgentComponent {
     public bool IsActivelyLearning;
 }
 
-public class HybridAgentSystem : BaseSystem {
-    private Dictionary<int, NeuralNetwork> cachedBrains;
-    private Dictionary<int, ILearningAlgorithm> learners;
-    private PerformanceManager performanceManager;
-    private SocialLearningCoordinator socialCoordinator;
+public class HybridAgentSystem : BaseSystem
+{
+    private Dictionary<int, NeuralNetwork> _cachedBrains;
+    private Dictionary<int, ILearningAlgorithm> _learners;
+    private PerformanceManager _performanceManager;
+    private SocialLearningCoordinator _socialCoordinator;
     
     public override ComponentType[] RequiredComponentTypes => new[] {
         typeof(HybridAgentComponent), typeof(PhysicsComponent), typeof(IntelligenceComponent)
@@ -1800,32 +2094,34 @@ public class HybridAgentSystem : BaseSystem {
     
     public override void Update(float deltaTime) {
         // Update performance management first
-        performanceManager.UpdateLevelOfDetail(deltaTime);
+        this._performanceManager.UpdateLevelOfDetail(deltaTime);
         
         // Process agents in batches based on complexity level
-        var complexAgents = GetAgentsByComplexity(AIComplexity.Full);
-        var standardAgents = GetAgentsByComplexity(AIComplexity.Standard);
-        var reducedAgents = GetAgentsByComplexity(AIComplexity.Reduced);
-        var minimalAgents = GetAgentsByComplexity(AIComplexity.Minimal);
+        var complexAgents = this.GetAgentsByComplexity(AIComplexity.Full);
+        var standardAgents = this.GetAgentsByComplexity(AIComplexity.Standard);
+        var reducedAgents = this.GetAgentsByComplexity(AIComplexity.Reduced);
+        var minimalAgents = this.GetAgentsByComplexity(AIComplexity.Minimal);
         
         // Full AI processing for nearby/important agents
-        ProcessFullAI(complexAgents, deltaTime);
+        this.ProcessFullAI(complexAgents, deltaTime);
         
         // Standard processing for medium distance agents
-        ProcessStandardAI(standardAgents, deltaTime);
+        this.ProcessStandardAI(standardAgents, deltaTime);
         
         // Reduced processing for distant agents
-        ProcessReducedAI(reducedAgents, deltaTime);
+        this.ProcessReducedAI(reducedAgents, deltaTime);
         
         // Minimal rule-based processing for very distant agents
-        ProcessMinimalAI(minimalAgents, deltaTime);
+        this.ProcessMinimalAI(minimalAgents, deltaTime);
         
         // Social learning coordination
-        socialCoordinator.FacilitateSocialLearning(deltaTime);
+        this._socialCoordinator.FacilitateSocialLearning(deltaTime);
     }
     
-    private void ProcessFullAI(List<int> agents, float deltaTime) {
-        foreach (var entityId in agents) {
+    private void ProcessFullAI(List<int> agents, float deltaTime)
+    {
+        foreach (var entityId in agents)
+        {
             var agent = GetComponent<HybridAgentComponent>(entityId);
             
             // 1. Gather comprehensive sensory data
@@ -1861,29 +2157,33 @@ public class HybridAgentSystem : BaseSystem {
             UpdateMetaLearning(entityId, agent, deltaTime);
             
             // 9. Periodic training
-            if (ShouldTrain(entityId)) {
+            if (ShouldTrain(entityId))
+            {
                 learner.Train(agent.Experiences.Sample(32));
             }
         }
     }
     
-    private void ProcessStandardAI(List<int> agents, float deltaTime) {
+    private void ProcessStandardAI(List<int> agents, float deltaTime)
+    {
         // Batch processing with reduced neural network complexity
         var batchSize = Math.Min(agents.Count, 64);
         var inputs = new float[batchSize][];
         var outputs = new float[batchSize][];
         
-        for (int i = 0; i < batchSize; i++) {
-            inputs[i] = GatherStandardSensoryData(agents[i]);
-            outputs[i] = new float[34];
+        for (int batchIndex = 0; batchIndex < batchSize; batchIndex++)
+        {
+            inputs[batchIndex] = GatherStandardSensoryData(agents[batchIndex]);
+            outputs[batchIndex] = new float[34];
         }
         
         // Batch neural network processing
         BatchProcessNeuralNetworks(inputs, outputs);
         
         // Apply results with standard physics
-        for (int i = 0; i < batchSize; i++) {
-            ExecuteStandardAction(agents[i], outputs[i], deltaTime);
+        for (int batchIndex = 0; batchIndex < batchSize; batchIndex++)
+        {
+            ExecuteStandardAction(agents[batchIndex], outputs[batchIndex], deltaTime);
         }
     }
     
@@ -1906,14 +2206,16 @@ public class HybridAgentSystem : BaseSystem {
         CreateOffspring(childTraits, childBrain, childCulture, parent1Id, parent2Id);
     }
     
-    public void FacilitateTeaching(int teacherId, int studentId, string knowledgeType) {
+    public void FacilitateTeaching(int teacherId, int studentId, string knowledgeType)
+    {
         var teacher = GetComponent<HybridAgentComponent>(teacherId);
         var student = GetComponent<HybridAgentComponent>(studentId);
         
         // Knowledge transfer based on teacher's expertise and student's capacity
         float teachingEffectiveness = CalculateTeachingEffectiveness(teacher, student, knowledgeType);
         
-        if (teachingEffectiveness > 0.3f) {
+        if (teachingEffectiveness > 0.3f)
+        {
             TransferKnowledge(teacher, ref student, knowledgeType, teachingEffectiveness);
             
             // Update social relationships
@@ -1925,10 +2227,11 @@ public class HybridAgentSystem : BaseSystem {
     }
 }
 
-public class ReliabilitySystem : BaseSystem {
-    private Dictionary<int, SystemHealth> agentHealth;
-    private List<SystemError> recentErrors;
-    private PerformanceDegradationManager degradationManager;
+public class ReliabilitySystem : BaseSystem
+{
+    private Dictionary<int, SystemHealth> _agentHealth;
+    private List<SystemError> _recentErrors;
+    private PerformanceDegradationManager _degradationManager;
     
     public override void Update(float deltaTime) {
         // Monitor system health
@@ -1944,9 +2247,12 @@ public class ReliabilitySystem : BaseSystem {
         AttemptSystemRecovery();
     }
     
-    private void HandleSystemErrors() {
-        foreach (var error in recentErrors) {
-            switch (error.Severity) {
+    private void HandleSystemErrors()
+    {
+        foreach (var error in this._recentErrors)
+        {
+            switch (error.Severity)
+            {
                 case ErrorSeverity.Critical:
                     // Disable AI for affected agent, use fallback behavior
                     FallbackToRuleBasedBehavior(error.AgentId);
@@ -1969,32 +2275,33 @@ public class ReliabilitySystem : BaseSystem {
 }
 ```
 
-## Performance Optimizations by System Tier
+## 4. State Representation
 
-### Batch Processing Architecture
+### 4.1 Agent Sensory Input
 
 ```csharp
-public class BatchProcessingManager {
-    private Dictionary<AIComplexity, BatchProcessor> processors;
-    private Dictionary<string, AgentArchetypeBatch> archetypeBatches;
+public class BatchProcessingManager
+{
+    private Dictionary<AIComplexity, BatchProcessor> _processors;
+    private Dictionary<string, AgentArchetypeBatch> _archetypeBatches;
     
     public class BatchProcessor {
-        private int maxBatchSize;
-        private Queue<ProcessingJob> jobQueue;
-        private Thread[] workerThreads;
-        private ConcurrentQueue<ProcessingResult> results;
+        private int _maxBatchSize;
+        private Queue<ProcessingJob> _jobQueue;
+        private Thread[] _workerThreads;
+        private ConcurrentQueue<ProcessingResult> _results;
         
         public void ProcessBatch(List<int> agents, AIComplexity complexity) {
             var jobs = CreateProcessingJobs(agents, complexity);
             
             // Distribute jobs across worker threads
             Parallel.ForEach(jobs, job => {
-                var result = ProcessSingleJob(job);
-                results.Enqueue(result);
+                var result = this.ProcessSingleJob(job);
+                this._results.Enqueue(result);
             });
             
             // Collect results
-            CollectAndApplyResults();
+            this.CollectAndApplyResults();
         }
     }
     
@@ -2005,59 +2312,74 @@ public class BatchProcessingManager {
         public Dictionary<string, float> ArchetypeParameters;
         public float LastUpdateTime;
         
-        public void ProcessArchetypeBatch(float deltaTime) {
+        public void ProcessArchetypeBatch(float deltaTime)
+        {
             // Group similar agents for efficient batch processing
             var similarAgents = GroupBySimilarity(Agents);
             
-            foreach (var group in similarAgents) {
+            foreach (var group in similarAgents)
+            {
                 BatchProcessGroup(group, deltaTime);
             }
         }
     }
 }
 
-public class AsyncLearningPipeline {
-    private ConcurrentQueue<Experience> experienceQueue;
-    private Dictionary<int, ConcurrentQueue<TrainingBatch>> agentTrainingQueues;
-    private Task[] backgroundLearningTasks;
-    private CancellationTokenSource cancellationToken;
+public class AsyncLearningPipeline
+{
+    private ConcurrentQueue<Experience> _experienceQueue;
+    private Dictionary<int, ConcurrentQueue<TrainingBatch>> _agentTrainingQueues;
+    private Task[] _backgroundLearningTasks;
+    private CancellationTokenSource _cancellationToken;
     
     public void StartAsyncLearning(int numWorkerThreads = 4) {
-        backgroundLearningTasks = new Task[numWorkerThreads];
+        this._backgroundLearningTasks = new Task[numWorkerThreads];
         
-        for (int i = 0; i < numWorkerThreads; i++) {
-            backgroundLearningTasks[i] = Task.Run(() => {
-                while (!cancellationToken.Token.IsCancellationRequested) {
-                    ProcessLearningQueue();
+        for (int threadIndex = 0; threadIndex < numWorkerThreads; threadIndex++)
+        {
+            this._backgroundLearningTasks[threadIndex] = Task.Run(() =>
+            {
+                while (!this._cancellationToken.Token.IsCancellationRequested)
+                {
+                    this.ProcessLearningQueue();
                     Thread.Sleep(10); // Prevent busy waiting
                 }
             });
         }
     }
     
-    private void ProcessLearningQueue() {
+    private void ProcessLearningQueue()
+    {
         // Process experience replay for multiple agents
-        foreach (var agentQueue in agentTrainingQueues) {
-            if (agentQueue.Value.TryDequeue(out var batch)) {
-                TrainAgentBatch(agentQueue.Key, batch);
+        foreach (var agentQueue in this._agentTrainingQueues)
+        {
+            if (agentQueue.Value.TryDequeue(out var batch))
+            {
+                this.TrainAgentBatch(agentQueue.Key, batch);
             }
         }
     }
     
-    public void QueueExperienceForLearning(int agentId, Experience experience) {
-        experienceQueue.Enqueue(experience);
+    public void QueueExperienceForLearning(int agentId, Experience experience)
+    {
+        this._experienceQueue.Enqueue(experience);
         
         // Batch experiences for efficient training
-        if (!agentTrainingQueues.ContainsKey(agentId)) {
-            agentTrainingQueues[agentId] = new ConcurrentQueue<TrainingBatch>();
+        if (!this._agentTrainingQueues.ContainsKey(agentId))
+        {
+            this._agentTrainingQueues[agentId] = new ConcurrentQueue<TrainingBatch>();
         }
         
         // Create training batch when enough experiences are collected
-        if (experienceQueue.Count >= 32) {
+        if (this._experienceQueue.Count >= 32)
+        {
             var batchExperiences = new Experience[32];
-            for (int i = 0; i < 32; i++) {
-                if (experienceQueue.TryDequeue(out var exp)) {
-                    batchExperiences[i] = exp;
+            
+            for (int experienceIndex = 0; experienceIndex < 32; experienceIndex++)
+            {
+                if (this._experienceQueue.TryDequeue(out var exp))
+                {
+                    batchExperiences[experienceIndex] = exp;
                 }
             }
             
@@ -2067,56 +2389,66 @@ public class AsyncLearningPipeline {
                 BatchId = Guid.NewGuid()
             };
             
-            agentTrainingQueues[agentId].Enqueue(trainingBatch);
+            this._agentTrainingQueues[agentId].Enqueue(trainingBatch);
         }
     }
 }
 
-public class MemoryPoolManager {
-    private Dictionary<Type, Queue<object>> objectPools;
-    private Dictionary<Type, Func<object>> objectFactories;
-    private readonly object lockObject = new object();
+public class MemoryPoolManager
+{
+    private Dictionary<Type, Queue<object>> _objectPools;
+    private Dictionary<Type, Func<object>> _objectFactories;
+    private readonly object _lockObject = new object();
     
-    public T Rent<T>() where T : class, new() {
-        lock (lockObject) {
+    public T Rent<T>() where T : class, new()
+    {
+        lock (this._lockObject)
+        {
             var type = typeof(T);
             
-            if (objectPools.ContainsKey(type) && objectPools[type].Count > 0) {
-                return (T)objectPools[type].Dequeue();
+            if (this._objectPools.ContainsKey(type) && this._objectPools[type].Count > 0)
+            {
+                return (T)this._objectPools[type].Dequeue();
             }
             
             // Create new object if pool is empty
-            return objectFactories.ContainsKey(type) ? 
-                (T)objectFactories[type]() : new T();
+            return this._objectFactories.ContainsKey(type) ? 
+                (T)this._objectFactories[type]() : new T();
         }
     }
     
-    public void Return<T>(T obj) where T : class {
-        if (obj == null) return;
+    public void Return<T>(T obj) where T : class
+    {
+        if (obj == null)
+        {
+            return;
+        }
         
-        lock (lockObject) {
+        lock (this._lockObject)
+        {
             var type = typeof(T);
             
-            if (!objectPools.ContainsKey(type)) {
-                objectPools[type] = new Queue<object>();
+            if (!this._objectPools.ContainsKey(type))
+            {
+                this._objectPools[type] = new Queue<object>();
             }
             
             // Reset object state if it implements IResettable
-            if (obj is IResettable resettable) {
+            if (obj is IResettable resettable)
+            {
                 resettable.Reset();
             }
             
-            objectPools[type].Enqueue(obj);
+            this._objectPools[type].Enqueue(obj);
         }
     }
 }
 ```
 
-### State Representation Architecture
-
-**Comprehensive Agent State Representation:**
+### 4.2 Comprehensive Agent State
 ```csharp
-public struct ComprehensiveAgentState {
+public struct ComprehensiveAgentState
+{
     // Internal state (8 inputs) - Integrates with current metabolism system
     public float Hunger;          // 0-1 normalized (extends current energy system)
     public float Energy;          // 0-1 normalized (current implementation)
@@ -2195,7 +2527,8 @@ public struct ComprehensiveAgentState {
     }
 }
 
-public enum ComprehensiveAgentAction {
+public enum ComprehensiveAgentAction
+{
     // Movement and positioning (8 actions)
     MoveNorth, MoveSouth, MoveEast, MoveWest, MoveUp, MoveDown, Stay, Flee,
     
@@ -2226,10 +2559,11 @@ public enum ComprehensiveAgentAction {
 }
 ```
 
-### Enhanced Action Space Architecture
+### 4.3 Action Space
 
 ```csharp
-public class ActionSpaceManager {
+public class ActionSpaceManager
+{
     private Dictionary<AIComplexity, ActionSpace> complexitySpaces;
     private Dictionary<string, ActionCategory> actionCategories;
     private Dictionary<int, ActionPreferences> agentPreferences;
@@ -2255,9 +2589,14 @@ public class ActionSpaceManager {
                     ComprehensiveAgentAction.Gather, ComprehensiveAgentAction.Consume,
                     ComprehensiveAgentAction.Rest, ComprehensiveAgentAction.Flee
                 },
-                AIComplexity.Reduced => Enum.GetValues<ComprehensiveAgentAction>().Take(20).ToList(),
-                AIComplexity.Standard => Enum.GetValues<ComprehensiveAgentAction>().Take(40).ToList(),
-                AIComplexity.Full => Enum.GetValues<ComprehensiveAgentAction>().ToList(),
+                AIComplexity.Reduced => Enum.GetValues<ComprehensiveAgentAction>()
+                    .Take(20)
+                    .ToList(),
+                AIComplexity.Standard => Enum.GetValues<ComprehensiveAgentAction>()
+                    .Take(40)
+                    .ToList(),
+                AIComplexity.Full => Enum.GetValues<ComprehensiveAgentAction>()
+                    .ToList(),
                 _ => new List<ComprehensiveAgentAction>()
             };
         }
@@ -2297,9 +2636,10 @@ public class ActionSpaceManager {
         // Combine neural network output with learned preferences
         var actionScores = new Dictionary<ComprehensiveAgentAction, float>();
         
-        for (int i = 0; i < actionSpace.AvailableActions.Count && i < neuralOutput.Length; i++) {
-            var action = actionSpace.AvailableActions[i];
-            float neuralScore = neuralOutput[i];
+        for (int actionIndex = 0; actionIndex < actionSpace.AvailableActions.Count && actionIndex < neuralOutput.Length; actionIndex++)
+        {
+            var action = actionSpace.AvailableActions[actionIndex];
+            float neuralScore = neuralOutput[actionIndex];
             float preferenceScore = preferences.PreferenceWeights.GetValueOrDefault(action, 0.5f);
             float successRate = preferences.SuccessRates.GetValueOrDefault(action, 0.5f);
             
@@ -2312,9 +2652,12 @@ public class ActionSpaceManager {
     }
 }
 
-public class ContextualActionSystem : BaseSystem {
-    public override void Update(float deltaTime) {
-        foreach (var entity in GetEntities()) {
+public class ContextualActionSystem : BaseSystem
+{
+    public override void Update(float deltaTime)
+    {
+        foreach (var entity in GetEntities())
+        {
             // Evaluate action effectiveness in current context
             EvaluateActionEffectiveness(entity, deltaTime);
             
@@ -2331,11 +2674,14 @@ public class ContextualActionSystem : BaseSystem {
 }
 ```
 
-### Evolution Parameters Configuration
+---
 
-**NEAT Evolution Configuration:**
+## 5. Evolution Parameters
+
+### 5.1 NEAT Configuration
 ```csharp
-public class NEATConfig {
+public class NEATConfig
+{
     // Population parameters
     public int PopulationSize = 150;
     public int SpeciesTarget = 15;
@@ -2382,10 +2728,11 @@ public class NEATConfig {
 }
 ```
 
-**Genetic Algorithm Configuration:**
+### 5.2 Genetic Algorithm Configuration
 
 ```csharp
-public class GAConfig {
+public class GAConfig
+{
     // Basic parameters
     public float MutationRate = 0.02f;
     public float CrossoverRate = 0.7f;
@@ -2422,17 +2769,21 @@ public class GAConfig {
     public bool EnvironmentalPressureAdaptation = true;
     public float PressureMultiplier = 2.0f;      // Increase mutation under pressure
     
-    public float GetAdaptiveMutationRate(float populationDiversity, float environmentalPressure) {
+    public float GetAdaptiveMutationRate(float populationDiversity, float environmentalPressure)
+    {
         float baseMutation = MutationRate;
         
-        if (UseAdaptiveMutation) {
+        if (UseAdaptiveMutation)
+        {
             // Increase mutation when diversity is low
-            if (populationDiversity < DiversityThreshold) {
+            if (populationDiversity < DiversityThreshold)
+            {
                 baseMutation *= (1f + (DiversityThreshold - populationDiversity));
             }
             
             // Increase mutation under environmental pressure
-            if (EnvironmentalPressureAdaptation) {
+            if (EnvironmentalPressureAdaptation)
+            {
                 baseMutation *= (1f + environmentalPressure * PressureMultiplier);
             }
             
@@ -2443,7 +2794,8 @@ public class GAConfig {
     }
 }
 
-public enum CrossoverType {
+public enum CrossoverType
+{
     SinglePoint,
     TwoPoint,
     Uniform,
@@ -2451,14 +2803,16 @@ public enum CrossoverType {
     Simulated_Binary
 }
 
-public enum SelectionType {
+public enum SelectionType
+{
     Tournament,
     RouletteWheel,
     RankBased,
     Stochastic_Universal_Sampling
 }
 
-public struct MutationRates {
+public struct MutationRates
+{
     public float WeightMutation;
     public float AddNode;
     public float AddConnection;
@@ -2472,7 +2826,3 @@ public struct MutationRates {
 ---
 
 *Note: These comprehensive code snippets represent complete ML implementations for all 16 machine learning systems and should be adapted to fit the existing ECS architecture and performance requirements of the AI.Odin project. The components are designed to work together to create sophisticated learning agents through multi-layered AI system interactions.*
-
----
-
-*Last Updated: August 19, 2025*

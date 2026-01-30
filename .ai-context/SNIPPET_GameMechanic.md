@@ -1,44 +1,79 @@
-# AI.Odin Game Mechanics Implementation Snippets
+# SNIPPET: Game Mechanic
 
-## Overview
+**Last Updated:** January 6, 2026
+
+---
+
+## Table of Contents
+
+- [SNIPPET: Game Mechanic](#snippet-game-mechanic)
+  - [Table of Contents](#table-of-contents)
+  - [1. Overview](#1-overview)
+  - [2. Mechanics Categories](#2-mechanics-categories)
+    - [2.1 Core Mechanics](#21-core-mechanics)
+      - [Survival Mechanics](#survival-mechanics)
+      - [Resource Management](#resource-management)
+      - [Building \& Construction](#building--construction)
+      - [Social \& Colony Dynamics](#social--colony-dynamics)
+      - [Combat \& Defense](#combat--defense)
+      - [Progression \& Technology](#progression--technology)
+    - [2.2 Advanced Systems](#22-advanced-systems)
+      - [Environmental \& World Systems](#environmental--world-systems)
+      - [Ecology \& Life Cycles](#ecology--life-cycles)
+      - [Production Chains](#production-chains)
+      - [God Powers \& Intervention](#god-powers--intervention)
+      - [Gas \& Liquid Dynamics](#gas--liquid-dynamics)
+      - [Advanced Power Systems](#advanced-power-systems)
+      - [Dwarf Fortress-Inspired Complex Systems](#dwarf-fortress-inspired-complex-systems)
+      - [Cooking \& Crafting Systems](#cooking--crafting-systems)
+      - [Weapon Production \& Colony Defense](#weapon-production--colony-defense)
+    - [2.3 Specialized Systems](#23-specialized-systems)
+      - [Sierra City-Builder Mechanics](#sierra-city-builder-mechanics)
+      - [Anno Series Mechanics](#anno-series-mechanics)
+      - [Guild \& Professional Specialization Systems](#guild--professional-specialization-systems)
+      - [Political Systems](#political-systems)
+      - [Moral Choice Systems](#moral-choice-systems)
+      - [Creature Training](#creature-training)
+    - [2.4 Emergent Systems](#24-emergent-systems)
+      - [Emergent Economic Systems](#emergent-economic-systems)
+      - [Multi-Generational Relationship Systems](#multi-generational-relationship-systems)
+      - [Ruins \& Archaeological Systems](#ruins--archaeological-systems)
+      - [Living World Storytelling Systems](#living-world-storytelling-systems)
+      - [Cross-Colony Economic Networks](#cross-colony-economic-networks)
+  - [3. System Implementations](#3-system-implementations)
+    - [3.1 Core Survival Systems](#31-core-survival-systems)
+    - [3.2 Advanced System Implementations](#32-advanced-system-implementations)
+    - [3.3 Specialized System Implementations](#33-specialized-system-implementations)
+  - [4. Performance Considerations](#4-performance-considerations)
+    - [4.1 Scalability Targets](#41-scalability-targets)
+    - [4.2 Optimization Strategies](#42-optimization-strategies)
+
+---
+
+## 1. Overview
 
 This document contains comprehensive code implementation snippets for the 26 game mechanic systems within our Entity Component System (ECS) framework. Each section provides component definitions and system implementations in C# for creating emergent gameplay through sophisticated system interactions.
 
-## Implementation Priority Matrix
+## 2. Mechanics Categories
 
 **Note:** This document shows complete implementations for all 26 planned game mechanic systems. Currently implemented: `VitalityComponent`, `TraitComponent`, `MetabolismSystem`, and `GrowthSystem`. All code examples follow the existing ECS architecture patterns.
 
-### Core Mechanics (1-6) - Essential Foundation
+### 2.1 Core Mechanics
 
-#### 1. Survival Mechanics
+#### Survival Mechanics
 
 **Hunger System Components:**
 ```csharp
 public class HungerComponent : IComponent
 {
-    public HungerComponent()
-    {
-        Current = 100.0f;
-        Max = 100.0f;
-        DecayRate = 1.0f;
-        MetabolicEfficiency = 1.0f;
-    }
-
     public float Current { get; set; }
     public float Max { get; set; }
     public float DecayRate { get; set; }
-    public float MetabolicEfficiency { get; set; } // From genetic traits
+    public float MetabolicEfficiency { get; set; }
 }
 
 public class StarvationComponent : IComponent
 {
-    public StarvationComponent()
-    {
-        Damage = 0.0f;
-        IsStarving = false;
-        TimeWithoutFood = 0.0f;
-    }
-
     public float Damage { get; set; }
     public bool IsStarving { get; set; }
     public float TimeWithoutFood { get; set; }
@@ -46,13 +81,6 @@ public class StarvationComponent : IComponent
 
 public class FoodPreferenceComponent : IComponent
 {
-    public FoodPreferenceComponent()
-    {
-        Preferences = new Dictionary<FoodType, float>();
-        Allergies = new List<FoodType>();
-        NutritionalNeeds = 1.0f;
-    }
-
     public Dictionary<FoodType, float> Preferences { get; set; }
     public List<FoodType> Allergies { get; set; }
     public float NutritionalNeeds { get; set; }
@@ -63,11 +91,6 @@ public class FoodPreferenceComponent : IComponent
 ```csharp
 public class HungerDecaySystem : BaseFixedSystem
 {
-    public HungerDecaySystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(HungerComponent),
@@ -91,11 +114,6 @@ public class HungerDecaySystem : BaseFixedSystem
 
 public class StarvationDamageSystem : BaseFixedSystem
 {
-    public StarvationDamageSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(StarvationComponent),
@@ -126,15 +144,8 @@ public class StarvationDamageSystem : BaseFixedSystem
 ```csharp
 public class StomachComponent : IComponent
 {
-    public StomachComponent()
-    {
-        this.FoodItems = new Queue<FoodItem>();
-        this.Capacity = 3;
-        this.DigestionRate = 1.0f;
-    }
-    
-    public required int Capacity { get; init; }           // Blueprint-configurable
-    public required float DigestionRate { get; init; }    // 1.0 = instant, < 1.0 = gradual
+    public required int Capacity { get; init; }
+    public required float DigestionRate { get; init; }
     public Queue<FoodItem> FoodItems { get; init; }
     
     public bool IsFull => FoodItems.Count >= Capacity;
@@ -144,17 +155,17 @@ public class StomachComponent : IComponent
 
 public class FoodItem
 {
-    public required string Type { get; init; }            // "Berry", "Meat", "Water", etc.
-    public required float EnergyValue { get; init; }      // Total energy provided
-    public float DigestionProgress { get; set; } = 0.0f;  // 0.0 to 1.0
+    public required string Type { get; init; }           // "Berry", "Meat", "Water", etc.
+    public required float EnergyValue { get; init; }     // Total energy provided
+    public float DigestionProgress { get; set; } = 0.0f; // 0.0 to 1.0
     
-    // P2: Variable digestion rates per food type
-    public float DigestionSpeed { get; init; } = 1.0f;    // Overrides stomach rate if specified
+    // Variable digestion rates per food type
+    public float DigestionSpeed { get; init; } = 1.0f;   // Overrides stomach rate if specified
     
-    // P5: Advanced food properties
-    public float Freshness { get; set; } = 1.0f;          // 1.0 = fresh, 0.0 = spoiled
-    public float Quality { get; init; } = 1.0f;           // Affects energy value
-    public FoodEffect Effect { get; init; }               // Special effects
+    // Advanced food properties
+    public float Freshness { get; set; } = 1.0f;         // 1.0 = fresh, 0.0 = spoiled
+    public float Quality { get; init; } = 1.0f;          // Affects energy value
+    public FoodEffect Effect { get; init; }              // Special effects
     public bool RequiresCooking { get; init; } = false;
 }
 
@@ -171,7 +182,7 @@ public enum FoodEffect
 
 **Enhanced Vitality Component (Multiple Energy Types):**
 ```csharp
-// P0: Simple energy only
+// Simple energy only
 public class VitalityComponent : IComponent
 {
     public bool IsDead { get; set; }
@@ -182,7 +193,7 @@ public class VitalityComponent : IComponent
     public float EnergyPercentage => Energy / MaxEnergy;
 }
 
-// P3: Enhanced with dual energy system
+// Enhanced with dual energy system
 public class VitalityComponentEnhanced : IComponent
 {
     // Immediate energy
@@ -206,30 +217,28 @@ public class VitalityComponentEnhanced : IComponent
 ```csharp
 public class MetabolismSystem : BaseFixedSystem
 {
-    public MetabolismSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(TraitComponent),
         typeof(VitalityComponent),
         typeof(PhysicsComponent),
-        typeof(StomachComponent)  // P1: Added for digestion
+        typeof(StomachComponent) // Added for digestion
     ];
 
     protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
     {
         var vitality = entity.FindComponent<VitalityComponent>();
-        if (vitality.IsDead) return;
+        if (vitality.IsDead)
+        {
+            return;
+        }
         
         // 1. EXISTING: Energy consumption based on activity
         var trait = entity.FindComponent<TraitComponent>();
         var physics = entity.FindComponent<PhysicsComponent>();
         vitality.Energy -= trait.FindEnergyConsumptionRate(physics.MotionState);
         
-        // 2. P1: Food digestion from stomach
+        // 2. Food digestion from stomach
         ProcessDigestion(entity, vitality);
         
         // 3. Energy bounds checking
@@ -249,7 +258,10 @@ public class MetabolismSystem : BaseFixedSystem
         var stomach = entity.FindComponent<StomachComponent>();
         
         // Skip if no food or energy already full
-        if (stomach.IsEmpty || vitality.IsEnergyFull) return;
+        if (stomach.IsEmpty || vitality.IsEnergyFull)
+        {
+            return;
+        }
         
         var food = stomach.FoodItems.Peek();
         
@@ -259,7 +271,7 @@ public class MetabolismSystem : BaseFixedSystem
         // Apply digestion progress
         food.DigestionProgress += digestionRate;
         
-        // P0: Instant (rate=1.0) or P1: Gradual (rate<1.0) - both work!
+        // Instant (rate=1.0) or Gradual (rate<1.0) - both work!
         if (food.DigestionProgress >= 1.0f)
         {
             // Fully digested - transfer energy
@@ -271,14 +283,17 @@ public class MetabolismSystem : BaseFixedSystem
 }
 ```
 
-**Enhanced Metabolism System with Dual Energy (P3):**
+**Enhanced Metabolism System with Dual Energy:**
 ```csharp
 public class MetabolismSystemWithCalories : BaseFixedSystem
 {
     protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
     {
         var vitality = entity.FindComponent<VitalityComponentEnhanced>();
-        if (vitality.IsDead) return;
+        if (vitality.IsDead)
+        {
+            return;
+        }
         
         // 1. Energy consumption (uses immediate energy)
         var trait = entity.FindComponent<TraitComponent>();
@@ -315,7 +330,10 @@ public class MetabolismSystemWithCalories : BaseFixedSystem
     private void ProcessDigestionToCalories(IEntity entity, VitalityComponentEnhanced vitality)
     {
         var stomach = entity.FindComponent<StomachComponent>();
-        if (stomach.IsEmpty || vitality.IsCaloriesFull) return;
+        if (stomach.IsEmpty || vitality.IsCaloriesFull)
+        {
+            return;
+        }
         
         var food = stomach.FoodItems.Peek();
         food.DigestionProgress += stomach.DigestionRate;
@@ -333,16 +351,8 @@ public class MetabolismSystemWithCalories : BaseFixedSystem
 ```csharp
 public class InventoryComponent : IComponent
 {
-    public InventoryComponent()
-    {
-        this.Items = new List<InventoryItem>();
-        this.Capacity = 10;
-        this.MaxWeight = 100.0f;
-        this.CurrentWeight = 0.0f;
-    }
-    
-    public required int Capacity { get; init; }         // Max item stacks
-    public required float MaxWeight { get; init; }      // Weight limit
+    public required int Capacity { get; init; }
+    public required float MaxWeight { get; init; }
     public List<InventoryItem> Items { get; init; }
     public float CurrentWeight { get; set; }
     
@@ -353,7 +363,7 @@ public class InventoryComponent : IComponent
 
 public class InventoryItem
 {
-    public required string Type { get; init; }       // "Berry", "Meat", "Tool", etc.
+    public required string Type { get; init; } // "Berry", "Meat", "Tool", etc.
     public int Quantity { get; set; }
     public float Quality { get; set; } = 1.0f;
     public float Weight { get; init; }
@@ -366,16 +376,11 @@ public class InventoryItem
 ```csharp
 public class HarvestingSystem : BaseFixedSystem
 {
-    public HarvestingSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(IntelligenceComponent),
         typeof(PhysicsComponent),
-        typeof(StomachComponent)  // P1: Added for stomach storage
+        typeof(StomachComponent)      // Added for stomach storage
     ];
 
     protected override void ProcessEntity(uint tick, IGameState gameState, IEntity entity)
@@ -383,10 +388,16 @@ public class HarvestingSystem : BaseFixedSystem
         var stomach = entity.FindComponent<StomachComponent>();
         
         // Can't harvest if stomach is full
-        if (stomach.IsFull) return;
+        if (stomach.IsFull)
+        {
+            return;
+        }
         
         var intelligence = entity.FindComponent<IntelligenceComponent>();
-        if (intelligence.TargetEntityId == null) return;
+        if (intelligence.TargetEntityId == null)
+        {
+            return;
+        }
         
         // Find target resource
         if (!this.EntityManager.TryGetEntity(intelligence.TargetEntityId.Value, out var targetEntity))
@@ -407,7 +418,10 @@ public class HarvestingSystem : BaseFixedSystem
         var targetPhysics = targetEntity.FindComponent<PhysicsComponent>();
         var distance = CalculateDistance(entityPhysics.Position, targetPhysics.Position);
         
-        if (distance > harvestable.HarvestRadius) return;
+        if (distance > harvestable.HarvestRadius)
+        {
+            return;
+        }
         
         // SUCCESS: Harvest food into stomach (NO energy manipulation!)
         harvestable.Amount--;
@@ -420,11 +434,11 @@ public class HarvestingSystem : BaseFixedSystem
         intelligence.TargetEntityId = null;
     }
     
-    private float CalculateDistance(Point p1, Point p2)
+    private float CalculateDistance(Point fromPosition, Point toPosition)
     {
-        var dx = p1.X - p2.X;
-        var dy = p1.Y - p2.Y;
-        return MathF.Sqrt(dx * dx + dy * dy);
+        var deltaX = fromPosition.X - toPosition.X;
+        var deltaY = fromPosition.Y - toPosition.Y;
+        return MathF.Sqrt(deltaX * deltaX + deltaY * deltaY);
     }
 }
 ```
@@ -485,7 +499,7 @@ public class DecisionMakingSystem : BaseFixedSystem
     private IEntity FindNearestBerryBush(IEntity entity, IGameState gameState)
     {
         var physics = entity.FindComponent<PhysicsComponent>();
-        var bushes = this.EntityManager.FindEntitiesWithComponent<HarvestableComponent>();
+        var bushes = this.EntityManager.GetEntitiesWithComponent<HarvestableComponent>();
         
         IEntity nearest = null;
         float minDistance = float.MaxValue;
@@ -493,7 +507,10 @@ public class DecisionMakingSystem : BaseFixedSystem
         foreach (var bush in bushes)
         {
             var harvestable = bush.FindComponent<HarvestableComponent>();
-            if (harvestable.Amount <= 0) continue;
+            if (harvestable.Amount <= 0)
+            {
+                continue;
+            }
             
             var bushPhysics = bush.FindComponent<PhysicsComponent>();
             var distance = CalculateDistance(physics.Position, bushPhysics.Position);
@@ -514,14 +531,6 @@ public class DecisionMakingSystem : BaseFixedSystem
 ```csharp
 public class TemperatureToleranceComponent : IComponent
 {
-    public TemperatureToleranceComponent()
-    {
-        MinTemp = -10.0f;
-        MaxTemp = 40.0f;
-        CurrentBodyTemp = 37.0f;
-        BaseInsulation = 1.0f;
-    }
-
     public float MinTemp { get; set; }
     public float MaxTemp { get; set; }
     public float CurrentBodyTemp { get; set; }
@@ -530,13 +539,6 @@ public class TemperatureToleranceComponent : IComponent
 
 public class HypothermiaComponent : IComponent
 {
-    public HypothermiaComponent()
-    {
-        Severity = 0.0f;
-        OnsetTemperature = 35.0f;
-        ProgressionRate = 1.0f;
-    }
-
     public float Severity { get; set; }
     public float OnsetTemperature { get; set; }
     public float ProgressionRate { get; set; }
@@ -544,13 +546,6 @@ public class HypothermiaComponent : IComponent
 
 public class HeatstrokeComponent : IComponent
 {
-    public HeatstrokeComponent()
-    {
-        Severity = 0.0f;
-        OnsetTemperature = 39.0f;
-        ProgressionRate = 1.0f;
-    }
-
     public float Severity { get; set; }
     public float OnsetTemperature { get; set; }
     public float ProgressionRate { get; set; }
@@ -558,14 +553,6 @@ public class HeatstrokeComponent : IComponent
 
 public class ClothingComponent : IComponent
 {
-    public ClothingComponent()
-    {
-        WarmthRating = 0.0f;
-        CoolnessRating = 0.0f;
-        Waterproofing = 0.0f;
-        Durability = 100.0f;
-    }
-
     public float WarmthRating { get; set; }
     public float CoolnessRating { get; set; }
     public float Waterproofing { get; set; }
@@ -577,11 +564,6 @@ public class ClothingComponent : IComponent
 ```csharp
 public class TemperatureRegulationSystem : BaseFixedSystem
 {
-    public TemperatureRegulationSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(TemperatureToleranceComponent),
@@ -637,14 +619,16 @@ public class TemperatureRegulationSystem : BaseFixedSystem
 
 **Disease & Plague System Components:**
 ```csharp
-public struct ImmuneSystemComponent {
+public struct ImmuneSystemComponent
+{
     public float Strength;
     public List<string> Antibodies;
     public float RecoveryRate;
     public float InfectionResistance;
 }
 
-public struct DiseaseComponent {
+public struct DiseaseComponent
+{
     public string Type;
     public float Severity;
     public float Contagiousness;
@@ -652,25 +636,28 @@ public struct DiseaseComponent {
     public float IncubationTime;
 }
 
-public struct InfectionComponent {
+public struct InfectionComponent
+{
     public float Progress;
     public string DiseaseId;
     public float SymptomSeverity;
     public bool IsContagious;
 }
 
-public struct QuarantineComponent {
+public struct QuarantineComponent
+{
     public bool IsIsolated;
     public float IsolationTime;
     public Vector3 QuarantineLocation;
 }
 ```
 
-#### 2. Resource Management
+#### Resource Management
 
 **Resource Gathering Components:**
 ```csharp
-public struct HarvestableComponent {
+public struct HarvestableComponent
+{
     public ResourceType Type;
     public float Amount;
     public float MaxAmount;
@@ -679,7 +666,8 @@ public struct HarvestableComponent {
     public bool RequiresTools;
 }
 
-public struct InventoryComponent {
+public struct InventoryComponent
+{
     public Dictionary<ResourceType, int> Items;
     public Dictionary<ResourceType, float> Quality;
     public int MaxWeight;
@@ -687,7 +675,8 @@ public struct InventoryComponent {
     public List<int> EquippedTools;
 }
 
-public struct ToolComponent {
+public struct ToolComponent
+{
     public ToolType Type;
     public float Efficiency;
     public float Durability;
@@ -699,7 +688,8 @@ public struct ToolComponent {
 
 **Storage & Distribution Components:**
 ```csharp
-public struct StorageComponent {
+public struct StorageComponent
+{
     public List<StorageFilter> AllowedItems;
     public int Capacity;
     public int Priority;
@@ -707,14 +697,16 @@ public struct StorageComponent {
     public float PreservationBonus;
 }
 
-public struct StorageZoneComponent {
+public struct StorageZoneComponent
+{
     public Bounds Area;
     public int Priority;
     public List<ResourceType> AllowedTypes;
     public float AccessibilityRating;
 }
 
-public struct HaulingJobComponent {
+public struct HaulingJobComponent
+{
     public int ResourceEntity;
     public int TargetStorage;
     public float Priority;
@@ -722,7 +714,8 @@ public struct HaulingJobComponent {
     public HaulingStatus Status;
 }
 
-public struct PerishableComponent {
+public struct PerishableComponent
+{
     public float Freshness;
     public float SpoilageRate;
     public float PreservationMethod;
@@ -730,11 +723,12 @@ public struct PerishableComponent {
 }
 ```
 
-#### 3. Building & Construction
+#### Building & Construction
 
 **Structure Building Components:**
 ```csharp
-public struct BlueprintComponent {
+public struct BlueprintComponent
+{
     public BuildingType Type;
     public List<ResourceRequirement> Requirements;
     public float WorkRequired;
@@ -742,7 +736,8 @@ public struct BlueprintComponent {
     public List<SkillRequirement> SkillRequirements;
 }
 
-public struct ConstructionProgressComponent {
+public struct ConstructionProgressComponent
+{
     public float Progress;
     public float TotalWork;
     public List<int> AssignedWorkers;
@@ -751,7 +746,8 @@ public struct ConstructionProgressComponent {
     public ConstructionPhase CurrentPhase;
 }
 
-public struct BuildingComponent {
+public struct BuildingComponent
+{
     public BuildingType Type;
     public float Health;
     public float MaxHealth;
@@ -764,7 +760,8 @@ public struct BuildingComponent {
 
 **Automation System Components:**
 ```csharp
-public struct ConveyorComponent {
+public struct ConveyorComponent
+{
     public float Speed;
     public Direction Direction;
     public float Capacity;
@@ -772,14 +769,16 @@ public struct ConveyorComponent {
     public List<int> CarriedItems;
 }
 
-public struct ItemRouterComponent {
+public struct ItemRouterComponent
+{
     public List<OutputRule> Rules;
     public RouterType Type; // Splitter, Filter, Priority Merger
     public int InputBuffer;
     public Dictionary<Direction, int> OutputBuffers;
 }
 
-public struct MachineComponent {
+public struct MachineComponent
+{
     public Recipe CurrentRecipe;
     public float Progress;
     public float Efficiency;
@@ -790,34 +789,38 @@ public struct MachineComponent {
 }
 ```
 
-#### 4. Social & Colony Dynamics
+#### Social & Colony Dynamics
 
 **Relationships & Social Networks Components:**
 ```csharp
-public struct RelationshipComponent {
+public struct RelationshipComponent
+{
     public Dictionary<int, RelationshipData> Relationships;
     public float Sociability;
     public float SocialNeed;
     public float CurrentSocialSatisfaction;
 }
 
-public struct MoodComponent {
+public struct MoodComponent
+{
     public float Current;
     public float Baseline;
     public List<MoodModifier> Modifiers;
     public float StabilityFactor;
 }
 
-public struct PersonalityComponent {
+public struct PersonalityComponent
+{
     public Dictionary<Trait, float> Traits;
     public List<string> Interests;
     public List<string> Dislikes;
     public float EmotionalStability;
 }
 
-public class RelationshipData {
-    public float Opinion; // -100 to +100
-    public RelationType Type; // Friend, Rival, Lover, Family, Enemy
+public class RelationshipData
+{
+    public float Opinion;        // -100 to +100
+    public RelationType Type;    // Friend, Rival, Lover, Family, Enemy
     public List<SharedMemory> History;
     public float TrustLevel;
     public float Intimacy;
@@ -826,28 +829,32 @@ public class RelationshipData {
 
 **Faction & Kingdom Management Components:**
 ```csharp
-public struct FactionComponent {
+public struct FactionComponent
+{
     public int FactionId;
     public FactionRole Role;
     public float Loyalty;
     public float Influence;
 }
 
-public struct DiplomacyComponent {
+public struct DiplomacyComponent
+{
     public Dictionary<int, RelationStatus> Relations;
     public List<Treaty> ActiveTreaties;
     public float DiplomaticSkill;
     public List<DiplomaticAction> RecentActions;
 }
 
-public struct TerritoryComponent {
+public struct TerritoryComponent
+{
     public List<Vector2> ClaimedTiles;
     public float InfluenceStrength;
     public List<Vector2> DisputedAreas;
     public Dictionary<int, float> BorderTensions;
 }
 
-public struct LeadershipComponent {
+public struct LeadershipComponent
+{
     public LeadershipStyle Style;
     public float Charisma;
     public List<Policy> EnactedPolicies;
@@ -856,11 +863,12 @@ public struct LeadershipComponent {
 }
 ```
 
-#### 5. Combat & Defense
+#### Combat & Defense
 
 **Combat Mechanics Components:**
 ```csharp
-public struct CombatStatsComponent {
+public struct CombatStatsComponent
+{
     public float Attack;
     public float Defense;
     public float Speed;
@@ -869,7 +877,8 @@ public struct CombatStatsComponent {
     public float Dodge;
 }
 
-public struct WeaponComponent {
+public struct WeaponComponent
+{
     public float Damage;
     public float Range;
     public AttackType Type;
@@ -879,7 +888,8 @@ public struct WeaponComponent {
     public float Durability;
 }
 
-public struct ArmorComponent {
+public struct ArmorComponent
+{
     public Dictionary<DamageType, float> Resistances;
     public float Weight;
     public float Durability;
@@ -887,7 +897,8 @@ public struct ArmorComponent {
     public float MovementPenalty;
 }
 
-public struct CombatAIComponent {
+public struct CombatAIComponent
+{
     public TacticType PreferredTactic;
     public float Aggression;
     public float Cowardice;
@@ -898,7 +909,8 @@ public struct CombatAIComponent {
 
 **Defensive Structures Components:**
 ```csharp
-public struct TurretComponent {
+public struct TurretComponent
+{
     public float Range;
     public float Damage;
     public float FireRate;
@@ -908,7 +920,8 @@ public struct TurretComponent {
     public List<int> ValidTargets;
 }
 
-public struct WallComponent {
+public struct WallComponent
+{
     public float Health;
     public float MaxHealth;
     public bool BlocksProjectiles;
@@ -917,7 +930,8 @@ public struct WallComponent {
     public float RepairCost;
 }
 
-public struct TrapComponent {
+public struct TrapComponent
+{
     public TriggerType Type;
     public float Damage;
     public bool IsArmed;
@@ -926,7 +940,8 @@ public struct TrapComponent {
     public bool IsHidden;
 }
 
-public struct FortificationComponent {
+public struct FortificationComponent
+{
     public List<int> WallSegments;
     public List<int> DefensiveStructures;
     public float OverallStrength;
@@ -934,24 +949,27 @@ public struct FortificationComponent {
 }
 ```
 
-#### 6. Progression & Technology
+#### Progression & Technology
 
 **Research & Technology Components:**
 ```csharp
-public struct ResearchProgressComponent {
+public struct ResearchProgressComponent
+{
     public Dictionary<TechId, float> Progress;
     public float ResearchSpeed;
     public TechId CurrentFocus;
     public List<TechId> QueuedResearch;
 }
 
-public struct UnlockedTechComponent {
+public struct UnlockedTechComponent
+{
     public HashSet<TechId> Unlocked;
     public HashSet<TechId> Available;
     public Dictionary<TechId, float> Familiarity;
 }
 
-public struct ResearchStationComponent {
+public struct ResearchStationComponent
+{
     public float SpeedMultiplier;
     public TechId CurrentResearch;
     public List<TechCategory> Specializations;
@@ -959,7 +977,8 @@ public struct ResearchStationComponent {
     public List<int> AssignedResearchers;
 }
 
-public struct InnovationComponent {
+public struct InnovationComponent
+{
     public float CreativityScore;
     public List<TechId> PersonalDiscoveries;
     public float ExperimentationRate;
@@ -969,24 +988,28 @@ public struct InnovationComponent {
 
 **Experience & Skills Components:**
 ```csharp
-public struct SkillsComponent {
+public struct SkillsComponent
+{
     public Dictionary<SkillType, SkillData> Skills;
     public float OverallExperience;
 }
 
-public struct ExperienceComponent {
+public struct ExperienceComponent
+{
     public Dictionary<SkillType, float> PendingXP;
     public float LearningSpeed;
     public float RetentionRate;
 }
 
-public struct PassionComponent {
+public struct PassionComponent
+{
     public Dictionary<SkillType, PassionLevel> Passions;
     public List<SkillType> Interests;
     public List<SkillType> Dislikes;
 }
 
-public class SkillData {
+public class SkillData
+{
     public int Level;
     public float Experience;
     public float DecayResistance;
@@ -995,26 +1018,29 @@ public class SkillData {
 }
 ```
 
-### Advanced Systems (7-15) - Sophisticated Features
+### 2.2 Advanced Systems
 
-#### 7. Environmental & World Systems
+#### Environmental & World Systems
 
 **Weather Systems Components:**
 ```csharp
-public struct WeatherAffectedComponent {
+public struct WeatherAffectedComponent
+{
     public Dictionary<WeatherType, float> Modifiers;
     public bool SeeksShelter;
     public float WeatherAdaptability;
 }
 
-public struct WindComponent {
+public struct WindComponent
+{
     public Vector2 Direction;
     public float Strength;
     public float Turbulence;
     public List<int> AffectedEntities;
 }
 
-public struct WeatherZoneComponent {
+public struct WeatherZoneComponent
+{
     public WeatherType CurrentWeather;
     public float Intensity;
     public float Duration;
@@ -1023,7 +1049,8 @@ public struct WeatherZoneComponent {
     public WeatherType NextWeather;
 }
 
-public struct StormComponent {
+public struct StormComponent
+{
     public StormType Type;
     public float Intensity;
     public Vector2 Direction;
@@ -1032,11 +1059,12 @@ public struct StormComponent {
 }
 ```
 
-#### 8. Ecology & Life Cycles
+#### Ecology & Life Cycles
 
 **Reproduction & Genetics Components:**
 ```csharp
-public struct ReproductionComponent {
+public struct ReproductionComponent
+{
     public float Fertility;
     public int ReproductionAge;
     public int MaxAge;
@@ -1045,7 +1073,8 @@ public struct ReproductionComponent {
     public int PregnancyDuration;
 }
 
-public struct GeneticsComponent {
+public struct GeneticsComponent
+{
     public Dictionary<GeneType, float> Genes;
     public List<GeneType> DominantTraits;
     public List<GeneType> RecessiveTraits;
@@ -1053,7 +1082,8 @@ public struct GeneticsComponent {
     public int Generation;
 }
 
-public struct EcosystemComponent {
+public struct EcosystemComponent
+{
     public SpeciesType Species;
     public int PopulationSize;
     public float CarryingCapacity;
@@ -1063,11 +1093,12 @@ public struct EcosystemComponent {
 }
 ```
 
-#### 9. Production Chains
+#### Production Chains
 
 **Manufacturing Networks Components:**
 ```csharp
-public struct ProductionChainComponent {
+public struct ProductionChainComponent
+{
     public List<ProductionStep> Steps;
     public Dictionary<ResourceType, float> InputRates;
     public Dictionary<ResourceType, float> OutputRates;
@@ -1075,7 +1106,8 @@ public struct ProductionChainComponent {
     public List<QualityModifier> QualityFactors;
 }
 
-public struct FactoryComponent {
+public struct FactoryComponent
+{
     public List<int> ProductionLines;
     public float PowerConsumption;
     public List<int> Workers;
@@ -1083,7 +1115,8 @@ public struct FactoryComponent {
     public Dictionary<ResourceType, int> FinishedGoodsStorage;
 }
 
-public struct LogisticsComponent {
+public struct LogisticsComponent
+{
     public List<SupplyRoute> Routes;
     public float TransportCapacity;
     public List<int> Vehicles;
@@ -1091,12 +1124,13 @@ public struct LogisticsComponent {
 }
 ```
 
-#### 10. God Powers & Intervention
+#### God Powers & Intervention
 
 **Divine Intervention Components:**
 ```csharp
-public struct DivinePower {
-    public PowerType Type;         // Blessing, Curse, Weather, Resource
+public struct DivinePower
+{
+    public PowerType Type; // Blessing, Curse, Weather, Resource
     public Vector3 TargetLocation;
     public float Intensity;
     public float Duration;
@@ -1104,7 +1138,8 @@ public struct DivinePower {
     public float FaithCost;
 }
 
-public struct FaithComponent {
+public struct FaithComponent
+{
     public float FaithLevel;
     public List<DivineMiracle> WitnessedMiracles;
     public ReligiousBehavior Behavior;
@@ -1113,7 +1148,8 @@ public struct FaithComponent {
     public DeityType PreferredDeity;
 }
 
-public struct ShrineComponent {
+public struct ShrineComponent
+{
     public DeityType Deity;
     public float FaithGeneration;
     public List<int> Worshippers;
@@ -1122,11 +1158,12 @@ public struct ShrineComponent {
 }
 ```
 
-#### 11. Gas & Liquid Dynamics
+#### Gas & Liquid Dynamics
 
 **Atmospheric Simulation Components:**
 ```csharp
-public struct AtmosphericComponent {
+public struct AtmosphericComponent
+{
     public Dictionary<GasType, float> GasComposition;
     public float Pressure;
     public float Temperature;
@@ -1134,14 +1171,16 @@ public struct AtmosphericComponent {
     public List<GasSink> Sinks;
 }
 
-public struct VentilationComponent {
+public struct VentilationComponent
+{
     public float AirFlow;
     public List<int> ConnectedVents;
     public float FilterEfficiency;
     public List<GasType> FilteredGases;
 }
 
-public struct PipeNetworkComponent {
+public struct PipeNetworkComponent
+{
     public FluidType FluidType;
     public float Pressure;
     public float FlowRate;
@@ -1151,11 +1190,12 @@ public struct PipeNetworkComponent {
 }
 ```
 
-#### 12. Advanced Power Systems
+#### Advanced Power Systems
 
 **Power Generation Components:**
 ```csharp
-public struct PowerGeneratorComponent {
+public struct PowerGeneratorComponent
+{
     public GeneratorType Type;
     public float PowerOutput;
     public float Efficiency;
@@ -1164,7 +1204,8 @@ public struct PowerGeneratorComponent {
     public float MaintenanceRequired;
 }
 
-public struct PowerGridComponent {
+public struct PowerGridComponent
+{
     public List<int> Generators;
     public List<int> Consumers;
     public float TotalGeneration;
@@ -1172,7 +1213,8 @@ public struct PowerGridComponent {
     public float GridStability;
 }
 
-public struct BatteryComponent {
+public struct BatteryComponent
+{
     public float Capacity;
     public float CurrentCharge;
     public float ChargeRate;
@@ -1181,11 +1223,12 @@ public struct BatteryComponent {
 }
 ```
 
-#### 13. Dwarf Fortress-Inspired Complex Systems
+#### Dwarf Fortress-Inspired Complex Systems
 
 **Complex Psychology Components:**
 ```csharp
-public struct DetailedPersonalityComponent {
+public struct DetailedPersonalityComponent
+{
     public Dictionary<PersonalityTrait, float> Traits; // 50+ traits
     public List<string> Likes;
     public List<string> Dislikes;
@@ -1194,14 +1237,16 @@ public struct DetailedPersonalityComponent {
     public MentalHealthState MentalHealth;
 }
 
-public struct ThoughtComponent {
+public struct ThoughtComponent
+{
     public List<Thought> RecentThoughts;
     public Dictionary<ThoughtType, float> ThoughtWeights;
     public float OverallHappiness;
     public List<string> Memories;
 }
 
-public struct HistoricalFigureComponent {
+public struct HistoricalFigureComponent
+{
     public string Name;
     public List<HistoricalDeed> Deeds;
     public Dictionary<string, float> Relationships;
@@ -1210,18 +1255,20 @@ public struct HistoricalFigureComponent {
 }
 ```
 
-#### 14. Cooking & Crafting Systems
+#### Cooking & Crafting Systems
 
 **Recipe Discovery Components:**
 ```csharp
-public struct CookingSkillComponent {
+public struct CookingSkillComponent
+{
     public float CookingLevel;
     public List<Recipe> KnownRecipes;
     public float CreativityBonus;
     public List<Ingredient> PreferredIngredients;
 }
 
-public struct QualityComponent {
+public struct QualityComponent
+{
     public QualityTier Quality; // Poor, Normal, Good, Excellent, Masterwork
     public float QualityModifier;
     public string CrafterSignature;
@@ -1229,7 +1276,8 @@ public struct QualityComponent {
     public List<QualityBonus> Bonuses;
 }
 
-public struct CraftingStationComponent {
+public struct CraftingStationComponent
+{
     public CraftingType Type;
     public float QualityBonus;
     public List<Recipe> AvailableRecipes;
@@ -1238,11 +1286,12 @@ public struct CraftingStationComponent {
 }
 ```
 
-#### 15. Weapon Production & Colony Defense
+#### Weapon Production & Colony Defense
 
 **Material-Based Crafting Components:**
 ```csharp
-public struct WeaponCraftingComponent {
+public struct WeaponCraftingComponent
+{
     public List<WeaponComponent> Components;
     public MaterialType BladeType;
     public MaterialType HandleType;
@@ -1251,7 +1300,8 @@ public struct WeaponCraftingComponent {
     public int CrafterSkillLevel;
 }
 
-public struct MaterialPropertiesComponent {
+public struct MaterialPropertiesComponent
+{
     public MaterialType Type;
     public float Hardness;
     public float Sharpness;
@@ -1260,7 +1310,8 @@ public struct MaterialPropertiesComponent {
     public Dictionary<DamageType, float> Resistances;
 }
 
-public struct SiegeEquipmentComponent {
+public struct SiegeEquipmentComponent
+{
     public SiegeType Type;
     public float Damage;
     public float Range;
@@ -1270,13 +1321,14 @@ public struct SiegeEquipmentComponent {
 }
 ```
 
-### Specialized Systems (16-21) - Genre-Specific Features
+### 2.3 Specialized Systems
 
-#### 16. Sierra City-Builder Mechanics
+#### Sierra City-Builder Mechanics
 
 **Walker-Based Services Components:**
 ```csharp
-public struct WalkerComponent {
+public struct WalkerComponent
+{
     public ServiceType ServiceProvided;
     public float ServiceRadius;
     public List<Vector3> PatrolRoute;
@@ -1285,7 +1337,8 @@ public struct WalkerComponent {
     public int CurrentLoad;
 }
 
-public struct HousingTierComponent {
+public struct HousingTierComponent
+{
     public HousingTier CurrentTier;
     public List<ServiceType> RequiredServices;
     public Dictionary<ServiceType, float> ServiceSatisfaction;
@@ -1293,7 +1346,8 @@ public struct HousingTierComponent {
     public int MaxOccupancy;
 }
 
-public struct ServiceCoverageComponent {
+public struct ServiceCoverageComponent
+{
     public Dictionary<ServiceType, float> Coverage;
     public float LastServiceTime;
     public List<int> ServiceProviders;
@@ -1301,11 +1355,12 @@ public struct ServiceCoverageComponent {
 }
 ```
 
-#### 17. Anno Series Mechanics
+#### Anno Series Mechanics
 
 **Multi-Island Economy Components:**
 ```csharp
-public struct IslandComponent {
+public struct IslandComponent
+{
     public IslandType Type;
     public Dictionary<ResourceType, float> NaturalResources;
     public float FertilityRating;
@@ -1313,7 +1368,8 @@ public struct IslandComponent {
     public List<int> Settlements;
 }
 
-public struct ShippingRouteComponent {
+public struct ShippingRouteComponent
+{
     public List<Vector3> RoutePoints;
     public Dictionary<ResourceType, int> CargoManifest;
     public float TravelTime;
@@ -1321,7 +1377,8 @@ public struct ShippingRouteComponent {
     public TradeRouteStatus Status;
 }
 
-public struct PopulationTierComponent {
+public struct PopulationTierComponent
+{
     public CitizenTier Tier; // Farmer, Worker, Artisan, Engineer
     public Dictionary<ResourceType, float> Needs;
     public float Satisfaction;
@@ -1330,11 +1387,12 @@ public struct PopulationTierComponent {
 }
 ```
 
-#### 18. Guild & Professional Specialization Systems
+#### Guild & Professional Specialization Systems
 
 **Professional Advancement Components:**
 ```csharp
-public struct GuildMembershipComponent {
+public struct GuildMembershipComponent
+{
     public GuildType Guild;
     public GuildRank Rank;
     public float GuildReputation;
@@ -1343,7 +1401,8 @@ public struct GuildMembershipComponent {
     public List<string> Specializations;
 }
 
-public struct BusinessComponent {
+public struct BusinessComponent
+{
     public BusinessType Type;
     public float Revenue;
     public List<int> Employees;
@@ -1352,7 +1411,8 @@ public struct BusinessComponent {
     public List<int> Competitors;
 }
 
-public struct DynastyComponent {
+public struct DynastyComponent
+{
     public string FamilyName;
     public List<int> FamilyMembers;
     public float FamilyWealth;
@@ -1361,11 +1421,12 @@ public struct DynastyComponent {
 }
 ```
 
-#### 19. Political Systems
+#### Political Systems
 
 **Government Systems Components:**
 ```csharp
-public struct ElectionComponent {
+public struct ElectionComponent
+{
     public List<int> Candidates;
     public Dictionary<int, int> Votes;
     public ElectionType Type;
@@ -1373,7 +1434,8 @@ public struct ElectionComponent {
     public List<string> CampaignPromises;
 }
 
-public struct PolicyComponent {
+public struct PolicyComponent
+{
     public PolicyType Type;
     public Dictionary<FactionType, float> Support;
     public List<PolicyEffect> Effects;
@@ -1381,7 +1443,8 @@ public struct PolicyComponent {
     public DateTime EnactmentDate;
 }
 
-public struct PoliticalFactionComponent {
+public struct PoliticalFactionComponent
+{
     public string FactionName;
     public List<int> Members;
     public float PoliticalPower;
@@ -1391,11 +1454,12 @@ public struct PoliticalFactionComponent {
 }
 ```
 
-#### 20. Moral Choice Systems
+#### Moral Choice Systems
 
 **Moral Dilemma Components:**
 ```csharp
-public struct MoralChoiceComponent {
+public struct MoralChoiceComponent
+{
     public string DilemmaDescription;
     public List<MoralOption> Options;
     public MoralWeight Severity;
@@ -1403,14 +1467,16 @@ public struct MoralChoiceComponent {
     public DateTime DecisionDeadline;
 }
 
-public struct SocietalValueComponent {
+public struct SocietalValueComponent
+{
     public Dictionary<MoralValue, float> Values; // Hope, Order, Faith, etc.
     public List<MoralPrecedent> Precedents;
     public float MoralStability;
     public List<string> CulturalLaws;
 }
 
-public struct ConsequenceComponent {
+public struct ConsequenceComponent
+{
     public MoralChoice OriginalChoice;
     public List<string> LongTermEffects;
     public float SocietalImpact;
@@ -1418,11 +1484,12 @@ public struct ConsequenceComponent {
 }
 ```
 
-#### 21. Creature Training
+#### Creature Training
 
 **Learning Systems Components:**
 ```csharp
-public struct CreatureLearningComponent {
+public struct CreatureLearningComponent
+{
     public float LearningRate;
     public List<Behavior> LearnedBehaviors;
     public Dictionary<ActionType, float> ActionWeights;
@@ -1430,7 +1497,8 @@ public struct CreatureLearningComponent {
     public List<int> Trainers;
 }
 
-public struct CreaturePersonalityComponent {
+public struct CreaturePersonalityComponent
+{
     public List<CreatureTrait> Traits;
     public float Aggressiveness;
     public float Playfulness;
@@ -1438,7 +1506,8 @@ public struct CreaturePersonalityComponent {
     public EmotionalState CurrentMood;
 }
 
-public struct MiracleComponent {
+public struct MiracleComponent
+{
     public MiracleType Type;
     public float Power;
     public List<int> Witnesses;
@@ -1447,20 +1516,22 @@ public struct MiracleComponent {
 }
 ```
 
-### Emergent Systems (22-26) - Meta-Game Features
+### 2.4 Emergent Systems
 
-#### 22. Emergent Economic Systems
+#### Emergent Economic Systems
 
 **Progressive Economic Components:**
 ```csharp
-public struct EconomicPhaseComponent {
+public struct EconomicPhaseComponent
+{
     public EconomicPhase CurrentPhase; // Simple, Multi-Commodity, Complex
     public float PhaseProgress;
     public List<EconomicIndicator> Indicators;
     public float MarketSophistication;
 }
 
-public struct MarketDynamicsComponent {
+public struct MarketDynamicsComponent
+{
     public Dictionary<ResourceType, float> Prices;
     public Dictionary<ResourceType, float> SupplyLevels;
     public Dictionary<ResourceType, float> DemandLevels;
@@ -1468,7 +1539,8 @@ public struct MarketDynamicsComponent {
     public float MarketVolatility;
 }
 
-public struct TradeNetworkComponent {
+public struct TradeNetworkComponent
+{
     public List<int> TradingPartners;
     public Dictionary<int, float> TradeIntimacy;
     public List<TradeRoute> ActiveRoutes;
@@ -1477,11 +1549,12 @@ public struct TradeNetworkComponent {
 }
 ```
 
-#### 23. Multi-Generational Relationship Systems
+#### Multi-Generational Relationship Systems
 
 **Family Tree Components:**
 ```csharp
-public struct GenealogyComponent {
+public struct GenealogyComponent
+{
     public List<int> Ancestors;
     public List<int> Descendants;
     public List<int> Siblings;
@@ -1490,14 +1563,16 @@ public struct GenealogyComponent {
     public string FamilyName;
 }
 
-public struct InheritanceComponent {
+public struct InheritanceComponent
+{
     public Dictionary<ResourceType, float> Wealth;
     public List<SkillType> InheritedSkills;
     public Dictionary<int, float> PropertyShares;
     public List<string> FamilyTraditions;
 }
 
-public struct ReputationInheritanceComponent {
+public struct ReputationInheritanceComponent
+{
     public float FamilyReputation;
     public float PersonalReputation;
     public List<ReputationEvent> FamilyHistory;
@@ -1506,11 +1581,12 @@ public struct ReputationInheritanceComponent {
 }
 ```
 
-#### 24. Ruins & Archaeological Systems
+#### Ruins & Archaeological Systems
 
 **Dynamic Ruin Generation Components:**
 ```csharp
-public struct RuinComponent {
+public struct RuinComponent
+{
     public int OriginalColonyId;
     public DateTime CollapseDate;
     public List<HistoricalArtifact> Artifacts;
@@ -1520,7 +1596,8 @@ public struct RuinComponent {
     public RuinCategory Category;
 }
 
-public struct ArchaeologicalSiteComponent {
+public struct ArchaeologicalSiteComponent
+{
     public List<int> DiscoverableItems;
     public float ExplorationProgress;
     public List<int> Archaeologists;
@@ -1528,7 +1605,8 @@ public struct ArchaeologicalSiteComponent {
     public List<HistoricalMystery> Mysteries;
 }
 
-public struct HistoricalArtifactComponent {
+public struct HistoricalArtifactComponent
+{
     public ArtifactType Type;
     public string Description;
     public DateTime CreationDate;
@@ -1538,11 +1616,12 @@ public struct HistoricalArtifactComponent {
 }
 ```
 
-#### 25. Living World Storytelling Systems
+#### Living World Storytelling Systems
 
 **Narrative Generation Components:**
 ```csharp
-public struct NarrativeEngineComponent {
+public struct NarrativeEngineComponent
+{
     public List<CharacterArchetype> IdentifiedHeroes;
     public List<CharacterArchetype> IdentifiedVillains;
     public List<StoryArc> ActiveSagas;
@@ -1550,7 +1629,8 @@ public struct NarrativeEngineComponent {
     public List<PlotTwist> RecentTwists;
 }
 
-public struct BiographyComponent {
+public struct BiographyComponent
+{
     public List<Achievement> MajorAchievements;
     public List<Relationship> SignificantRelationships;
     public List<HistoricalEvent> WitnessedEvents;
@@ -1559,7 +1639,8 @@ public struct BiographyComponent {
     public List<string> PersonalQuotes;
 }
 
-public struct ChronicleComponent {
+public struct ChronicleComponent
+{
     public List<ChronicleEntry> Entries;
     public float DramaRating;
     public List<int> KeyFigures;
@@ -1568,18 +1649,20 @@ public struct ChronicleComponent {
 }
 ```
 
-#### 26. Cross-Colony Economic Networks
+#### Cross-Colony Economic Networks
 
 **Trade Relationship Dynamics Components:**
 ```csharp
-public struct InterColonyRelationComponent {
+public struct InterColonyRelationComponent
+{
     public Dictionary<int, TradeRelationship> Relationships;
     public List<TradeAgreement> ActiveAgreements;
     public float EconomicInfluence;
     public List<EconomicCrisis> ExperiencedCrises;
 }
 
-public struct EconomicContagionComponent {
+public struct EconomicContagionComponent
+{
     public List<SupplyChainLink> SupplyChains;
     public float VulnerabilityIndex;
     public List<EconomicShock> ReceivedShocks;
@@ -1587,7 +1670,8 @@ public struct EconomicContagionComponent {
     public List<int> EconomicPartners;
 }
 
-public struct TradeRouteNetworkComponent {
+public struct TradeRouteNetworkComponent
+{
     public List<TradeRoute> Routes;
     public Dictionary<int, float> RouteReliability;
     public List<TradeDisruption> RecentDisruptions;
@@ -1597,19 +1681,14 @@ public struct TradeRouteNetworkComponent {
 
 ---
 
-## Comprehensive System Implementations
+## 3. System Implementations
 
-### Core Survival Systems (Priority 1)
+### 3.1 Core Survival Systems
 
 ```csharp
 // Disease and Immune System Implementation
 public class DiseaseSpreadSystem : BaseFixedSystem
 {
-    public DiseaseSpreadSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(InfectionComponent),
@@ -1621,12 +1700,15 @@ public class DiseaseSpreadSystem : BaseFixedSystem
         var infectionComponent = entity.FindComponent<InfectionComponent>();
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
         
-        if (!infectionComponent.IsContagious) return;
+        if (!infectionComponent.IsContagious)
+        {
+            return;
+        }
         
         // Find nearby entities within contagion range
-        var nearbyEntities = EntityManager.FindEntitiesInRadius(
+        var nearbyEntities = this.EntityManager.GetEntitiesInRadius(
             physicsComponent.Position, 
-            GetContagionRadius(infectionComponent.DiseaseId));
+            this.GetContagionRadius(infectionComponent.DiseaseId));
             
         foreach (var nearbyEntity in nearbyEntities)
         {
@@ -1661,11 +1743,6 @@ public class DiseaseSpreadSystem : BaseFixedSystem
 // Resource Management Systems
 public class ResourceGatheringSystem : BaseFixedSystem
 {
-    public ResourceGatheringSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(IntelligenceComponent),
@@ -1682,13 +1759,15 @@ public class ResourceGatheringSystem : BaseFixedSystem
         // Check if entity is targeting a harvestable resource
         if (intelligenceComponent.TargetPosition.HasValue)
         {
-            var nearbyResources = EntityManager.FindEntitiesWithComponent<HarvestableComponent>()
-                .Where(e => Vector3.Distance(e.FindComponent<PhysicsComponent>().Position, 
-                                           physicsComponent.Position) < 2.0f);
+            var nearbyResources = this.EntityManager
+                .GetEntitiesWithComponent<HarvestableComponent>()
+                .Where(resourceEntity => Vector3.Distance(
+                    resourceEntity.FindComponent<PhysicsComponent>().Position, 
+                    physicsComponent.Position) < 2.0f);
                                            
             foreach (var resourceEntity in nearbyResources)
             {
-                PerformHarvesting(entity, resourceEntity, inventoryComponent);
+                this.PerformHarvesting(entity, resourceEntity, inventoryComponent);
             }
         }
     }
@@ -1697,9 +1776,12 @@ public class ResourceGatheringSystem : BaseFixedSystem
     {
         var harvestableComponent = resource.FindComponent<HarvestableComponent>();
         
-        if (harvestableComponent.Amount <= 0) return;
+        if (harvestableComponent.Amount <= 0)
+        {
+            return;
+        }
         
-        var gatheringEfficiency = CalculateGatheringEfficiency(harvester, harvestableComponent);
+        var gatheringEfficiency = this.CalculateGatheringEfficiency(harvester, harvestableComponent);
         var harvestedAmount = Math.Min(harvestableComponent.Amount, gatheringEfficiency);
         
         // Add to inventory
@@ -1719,11 +1801,6 @@ public class ResourceGatheringSystem : BaseFixedSystem
 // Construction System
 public class ConstructionProgressSystem : BaseFixedSystem
 {
-    public ConstructionProgressSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(ConstructionProgressComponent),
@@ -1735,15 +1812,18 @@ public class ConstructionProgressSystem : BaseFixedSystem
         var progressComponent = entity.FindComponent<ConstructionProgressComponent>();
         var blueprintComponent = entity.FindComponent<BlueprintComponent>();
         
-        if (progressComponent.AssignedWorkers.Count == 0) return;
+        if (progressComponent.AssignedWorkers.Count == 0)
+        {
+            return;
+        }
         
         // Calculate work progress based on assigned workers
         var totalWorkThisTick = 0.0f;
         foreach (var workerId in progressComponent.AssignedWorkers)
         {
-            if (EntityManager.TryGetEntity(workerId, out var worker))
+            if (this.EntityManager.TryGetEntity(workerId, out var worker))
             {
-                totalWorkThisTick += CalculateWorkerEfficiency(worker, blueprintComponent);
+                totalWorkThisTick += this.CalculateWorkerEfficiency(worker, blueprintComponent);
             }
         }
         
@@ -1752,7 +1832,7 @@ public class ConstructionProgressSystem : BaseFixedSystem
         // Check if construction is complete
         if (progressComponent.Progress >= progressComponent.TotalWork)
         {
-            CompleteConstruction(entity, blueprintComponent);
+            this.CompleteConstruction(entity, blueprintComponent);
         }
     }
     
@@ -1767,7 +1847,7 @@ public class ConstructionProgressSystem : BaseFixedSystem
             Type = blueprint.Type,
             Health = 100.0f,
             MaxHealth = 100.0f,
-            Functions = GetBuildingFunctions(blueprint.Type)
+            Functions = this.GetBuildingFunctions(blueprint.Type)
         });
     }
 }
@@ -1775,11 +1855,6 @@ public class ConstructionProgressSystem : BaseFixedSystem
 // Social Relationship System
 public class RelationshipUpdateSystem : BaseFixedSystem
 {
-    public RelationshipUpdateSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(RelationshipComponent),
@@ -1794,17 +1869,23 @@ public class RelationshipUpdateSystem : BaseFixedSystem
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
         
         // Find nearby entities for social interactions
-        var nearbyEntities = EntityManager.FindEntitiesInRadius(physicsComponent.Position, 5.0f)
-            .Where(e => e.HasComponent<RelationshipComponent>() && e.Id != entity.Id);
+        var nearbyEntities = this.EntityManager
+            .GetEntitiesInRadius(physicsComponent.Position, 5.0f)
+            .Where(otherEntity =>
+                otherEntity.HasComponent<RelationshipComponent>() &&
+                otherEntity.Id != entity.Id);
             
         foreach (var otherEntity in nearbyEntities)
         {
-            ProcessSocialInteraction(entity, otherEntity, relationshipComponent, personalityComponent);
+            this.ProcessSocialInteraction(entity, otherEntity, relationshipComponent, personalityComponent);
         }
     }
     
-    private void ProcessSocialInteraction(IEntity entity1, IEntity entity2, 
-        RelationshipComponent relationships, PersonalityComponent personality)
+    private void ProcessSocialInteraction(
+        IEntity entity1,
+        IEntity entity2, 
+        RelationshipComponent relationships,
+        PersonalityComponent personality)
     {
         var entityId2 = entity2.Id;
         
@@ -1824,22 +1905,17 @@ public class RelationshipUpdateSystem : BaseFixedSystem
         var otherPersonality = entity2.FindComponent<PersonalityComponent>();
         
         // Calculate compatibility and update relationship
-        var compatibility = CalculatePersonalityCompatibility(personality, otherPersonality);
+        var compatibility = this.CalculatePersonalityCompatibility(personality, otherPersonality);
         var opinionChange = compatibility * 0.1f;
         
         relationship.Opinion = Math.Clamp(relationship.Opinion + opinionChange, -100.0f, 100.0f);
-        UpdateRelationshipType(relationship);
+        this.UpdateRelationshipType(relationship);
     }
 }
 
 // Combat System
 public class CombatResolutionSystem : BaseFixedSystem
 {
-    public CombatResolutionSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(CombatStatsComponent),
@@ -1853,13 +1929,16 @@ public class CombatResolutionSystem : BaseFixedSystem
         var combatAI = entity.FindComponent<CombatAIComponent>();
         var physics = entity.FindComponent<PhysicsComponent>();
         
-        if (combatAI.CurrentTargets.Count == 0) return;
+        if (combatAI.CurrentTargets.Count == 0)
+        {
+            return;
+        }
         
         foreach (var targetId in combatAI.CurrentTargets.ToList())
         {
-            if (EntityManager.TryGetEntity(targetId, out var target))
+            if (this.EntityManager.TryGetEntity(targetId, out var target))
             {
-                ProcessCombatAction(entity, target, combatStats);
+                this.ProcessCombatAction(entity, target, combatStats);
             }
             else
             {
@@ -1875,11 +1954,11 @@ public class CombatResolutionSystem : BaseFixedSystem
         var attackerPhysics = attacker.FindComponent<PhysicsComponent>();
         
         var distance = Vector3.Distance(attackerPhysics.Position, targetPhysics.Position);
-        var weaponRange = GetWeaponRange(attacker);
+        var weaponRange = this.GetWeaponRange(attacker);
         
         if (distance <= weaponRange)
         {
-            PerformAttack(attacker, target, attackerStats, targetStats);
+            this.PerformAttack(attacker, target, attackerStats, targetStats);
         }
     }
 }
@@ -1887,11 +1966,6 @@ public class CombatResolutionSystem : BaseFixedSystem
 // Technology Research System
 public class ResearchProgressSystem : BaseFixedSystem
 {
-    public ResearchProgressSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(ResearchStationComponent),
@@ -1903,13 +1977,18 @@ public class ResearchProgressSystem : BaseFixedSystem
         var researchStation = entity.FindComponent<ResearchStationComponent>();
         var building = entity.FindComponent<BuildingComponent>();
         
-        if (researchStation.CurrentResearch == TechId.None || 
-            researchStation.AssignedResearchers.Count == 0) return;
+        var hasNoResearch = researchStation.CurrentResearch == TechId.None;
+        var hasNoResearchers = researchStation.AssignedResearchers.Count == 0;
+        
+        if (hasNoResearch || hasNoResearchers)
+        {
+            return;
+        }
             
-        var researchProgress = CalculateResearchProgress(researchStation);
+        var researchProgress = this.CalculateResearchProgress(researchStation);
         
         // Update faction-wide research progress
-        var faction = GetEntityFaction(entity);
+        var faction = this.GetEntityFaction(entity);
         if (faction?.HasComponent<ResearchProgressComponent>() == true)
         {
             var factionResearch = faction.FindComponent<ResearchProgressComponent>();
@@ -1921,10 +2000,11 @@ public class ResearchProgressSystem : BaseFixedSystem
             factionResearch.Progress[researchStation.CurrentResearch] += researchProgress;
             
             // Check if research is complete
-            var requiredProgress = GetRequiredResearchProgress(researchStation.CurrentResearch);
+            var requiredProgress = this.GetRequiredResearchProgress(researchStation.CurrentResearch);
+            
             if (factionResearch.Progress[researchStation.CurrentResearch] >= requiredProgress)
             {
-                CompleteResearch(faction, researchStation.CurrentResearch);
+                this.CompleteResearch(faction, researchStation.CurrentResearch);
             }
         }
     }
@@ -1935,7 +2015,7 @@ public class ResearchProgressSystem : BaseFixedSystem
         unlockedTech.Unlocked.Add(completedTech);
         
         // Unlock dependent technologies
-        var dependentTechs = GetDependentTechnologies(completedTech);
+        var dependentTechs = this.GetDependentTechnologies(completedTech);
         foreach (var tech in dependentTechs)
         {
             unlockedTech.Available.Add(tech);
@@ -1944,17 +2024,12 @@ public class ResearchProgressSystem : BaseFixedSystem
 }
 ```
 
-### Advanced System Implementations (Priority 2)
+### 3.2 Advanced System Implementations
 
 ```csharp
 // Environmental Weather System
 public class WeatherEffectSystem : BaseFixedSystem
 {
-    public WeatherEffectSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(WeatherAffectedComponent),
@@ -1970,13 +2045,13 @@ public class WeatherEffectSystem : BaseFixedSystem
         
         if (weatherComponent.Modifiers.ContainsKey(currentWeather.Type))
         {
-            ApplyWeatherEffects(entity, currentWeather, weatherComponent);
+            this.ApplyWeatherEffects(entity, currentWeather, weatherComponent);
         }
         
-        if (weatherComponent.SeeksShelter && RequiresShelter(currentWeather))
+        if (weatherComponent.SeeksShelter && this.RequiresShelter(currentWeather))
         {
             var intelligence = entity.FindComponent<IntelligenceComponent>();
-            intelligence.TargetPosition = FindNearestShelter(physicsComponent.Position);
+            intelligence.TargetPosition = this.FindNearestShelter(physicsComponent.Position);
         }
     }
 }
@@ -1984,11 +2059,6 @@ public class WeatherEffectSystem : BaseFixedSystem
 // Production Chain System
 public class ProductionChainSystem : BaseFixedSystem
 {
-    public ProductionChainSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(ProductionChainComponent),
@@ -2000,27 +2070,25 @@ public class ProductionChainSystem : BaseFixedSystem
         var productionChain = entity.FindComponent<ProductionChainComponent>();
         var factory = entity.FindComponent<FactoryComponent>();
         
-        if (factory.Workers.Count == 0) return;
+        if (factory.Workers.Count == 0)
+        {
+            return;
+        }
         
         // Process each production step
         foreach (var step in productionChain.Steps)
         {
-            ProcessProductionStep(entity, step, factory);
+            this.ProcessProductionStep(entity, step, factory);
         }
         
         // Update efficiency based on worker skills and facility condition
-        UpdateProductionEfficiency(productionChain, factory);
+        this.UpdateProductionEfficiency(productionChain, factory);
     }
 }
 
 // Ecosystem Balance System
 public class EcosystemBalanceSystem : BaseFixedSystem
 {
-    public EcosystemBalanceSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(EcosystemComponent),
@@ -2037,28 +2105,23 @@ public class EcosystemBalanceSystem : BaseFixedSystem
         var adjustedFertility = reproduction.Fertility * (2.0f - populationPressure);
         
         // Predator-prey relationships
-        AdjustPopulationBasedOnPredators(entity, ecosystem);
+        this.AdjustPopulationBasedOnPredators(entity, ecosystem);
         
         // Resource competition
         if (populationPressure > 1.0f)
         {
-            ApplyResourceCompetitionStress(entity);
+            this.ApplyResourceCompetitionStress(entity);
         }
     }
 }
 ```
 
-### Specialized System Implementations (Priority 3)
+### 3.3 Specialized System Implementations
 
 ```csharp
 // Multi-Generational Relationship System
 public class GenerationalRelationshipSystem : BaseFixedSystem
 {
-    public GenerationalRelationshipSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(GenealogyComponent),
@@ -2071,10 +2134,11 @@ public class GenerationalRelationshipSystem : BaseFixedSystem
         var reputation = entity.FindComponent<ReputationInheritanceComponent>();
         
         // Update family reputation based on personal actions
-        var personalActions = GetRecentPersonalActions(entity);
+        var personalActions = this.GetRecentPersonalActions(entity);
+        
         foreach (var action in personalActions)
         {
-            var reputationImpact = CalculateReputationImpact(action);
+            var reputationImpact = this.CalculateReputationImpact(action);
             reputation.PersonalReputation += reputationImpact;
             
             // Family reputation changes at 25% rate
@@ -2082,18 +2146,13 @@ public class GenerationalRelationshipSystem : BaseFixedSystem
         }
         
         // Inheritance and legacy systems
-        ProcessInheritanceTransfer(entity, genealogy);
+        this.ProcessInheritanceTransfer(entity, genealogy);
     }
 }
 
 // Archaeological Discovery System
 public class ArchaeologySystem : BaseFixedSystem
 {
-    public ArchaeologySystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(ArchaeologicalSiteComponent),
@@ -2105,13 +2164,16 @@ public class ArchaeologySystem : BaseFixedSystem
         var archaeologicalSite = entity.FindComponent<ArchaeologicalSiteComponent>();
         var ruin = entity.FindComponent<RuinComponent>();
         
-        if (archaeologicalSite.Archaeologists.Count == 0) return;
+        if (archaeologicalSite.Archaeologists.Count == 0)
+        {
+            return;
+        }
         
         foreach (var archaeologistId in archaeologicalSite.Archaeologists)
         {
-            if (EntityManager.TryGetEntity(archaeologistId, out var archaeologist))
+            if (this.EntityManager.TryGetEntity(archaeologistId, out var archaeologist))
             {
-                ProcessArchaeologicalExcavation(archaeologist, entity, archaeologicalSite, ruin);
+                this.ProcessArchaeologicalExcavation(archaeologist, entity, archaeologicalSite, ruin);
             }
         }
     }
@@ -2120,11 +2182,6 @@ public class ArchaeologySystem : BaseFixedSystem
 // Narrative Generation System
 public class NarrativeGenerationSystem : BaseVariableSystem
 {
-    public NarrativeGenerationSystem(IEntityManager entityManager)
-        : base(entityManager)
-    {
-    }
-
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
     [
         typeof(NarrativeEngineComponent),
@@ -2137,42 +2194,55 @@ public class NarrativeGenerationSystem : BaseVariableSystem
         var biography = entity.FindComponent<BiographyComponent>();
         
         // Analyze entity's recent actions for narrative significance
-        var significantEvents = AnalyzeRecentEvents(entity);
+        var significantEvents = this.AnalyzeRecentEvents(entity);
         
         foreach (var eventData in significantEvents)
         {
-            if (IsNarrativelySignificant(eventData))
+            if (this.IsNarrativelySignificant(eventData))
             {
-                GenerateStoryArc(narrativeEngine, biography, eventData);
+                this.GenerateStoryArc(narrativeEngine, biography, eventData);
             }
         }
         
         // Update dramatic tension based on current conflicts
-        UpdateDramaticTension(narrativeEngine, entity);
+        this.UpdateDramaticTension(narrativeEngine, entity);
     }
 }
 ```
 
 ---
 
-## System Integration Notes
+## 4. Performance Considerations
 
-### Naming Conventions Followed:
+### 4.1 Scalability Targets
+
+| Tier                | Agent Count | Description                                      |
+|---------------------|-------------|--------------------------------------------------|
+| Core Mechanics      | 1000+       | Continuous real-time updates                     |
+| Advanced Systems    | 500+        | Complex environmental interactions               |
+| Specialized Systems | 200+        | Detailed professional and political systems      |
+| Emergent Systems    | 100+        | Full multi-generational tracking and narratives  |
+
+### 4.2 Optimization Strategies
+
+**Naming Conventions:**
 - **Components**: `[Purpose]Component` inheriting from `IComponent`
 - **Systems**: `[Purpose]System` inheriting from `BaseFixedSystem` or `BaseVariableSystem`
 - **No Name Conflicts**: Each system has a unique purpose and name
 
-### Architecture Compliance:
+**Architecture Compliance:**
 - All systems declare `RequiredComponentTypes` for entity filtering
 - Systems use `EntityManager` for entity queries and component access
 - Proper dependency injection through constructor
 - Component data encapsulation with properties
 - Separation of concerns between components (data) and systems (behavior)
 
-### Performance Considerations:
-- Systems process only entities with required components
-- Spatial queries use radius-based entity finding
-- Batch processing where applicable
-- Event-driven updates to minimize unnecessary calculations
+**Performance Strategies:**
+1. **Tiered Activation**: Enable complexity tiers based on colony development
+2. **Spatial Partitioning**: Group nearby agents for social/environmental calculations
+3. **Update Frequency Scaling**: Reduce update rates for distant/inactive agents
+4. **Event-Driven Processing**: Only process changes when state modifications occur
+5. **Batch Processing**: Handle similar operations in bulk for efficiency
+6. **Historical Data Compression**: Compress older generational data while maintaining narrative coherence
 
 *Note: These system implementations follow the existing AI.Odin ECS architecture patterns and should integrate seamlessly with the current codebase. Each system is designed to work independently while supporting emergent behaviors through component interactions.*

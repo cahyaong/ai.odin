@@ -1,16 +1,43 @@
-# AI.Odin Pathfinding and Spatial Systems Implementation Snippets
+# SNIPPET: Pathfinding and Spatial Systems
 
-## Overview
+**Last Updated:** January 6, 2026
+
+---
+
+## Table of Contents
+
+- [SNIPPET: Pathfinding and Spatial Systems](#snippet-pathfinding-and-spatial-systems)
+  - [Table of Contents](#table-of-contents)
+  - [1. Overview](#1-overview)
+  - [2. Implementation Priority Matrix](#2-implementation-priority-matrix)
+    - [2.1 Core Spatial Systems - Essential Foundation](#21-core-spatial-systems---essential-foundation)
+      - [Dual Spatial Partitioning](#dual-spatial-partitioning)
+      - [Core Pathfinding Algorithms](#core-pathfinding-algorithms)
+      - [Flow Field Implementation](#flow-field-implementation)
+      - [Enhanced Movement Integration](#enhanced-movement-integration)
+    - [2.2 Performance Optimization Systems (9-12) - Production-Ready Features](#22-performance-optimization-systems-9-12---production-ready-features)
+      - [Performance Budget Management](#performance-budget-management)
+      - [Advanced Caching Systems](#advanced-caching-systems)
+      - [NEAT AI Integration](#neat-ai-integration)
+  - [3. System Integration Notes](#3-system-integration-notes)
+    - [3.1 Naming Conventions Followed:](#31-naming-conventions-followed)
+    - [3.2 Architecture Compliance:](#32-architecture-compliance)
+    - [3.3 Performance Considerations:](#33-performance-considerations)
+    - [3.4 ECS Integration:](#34-ecs-integration)
+
+---
+
+## 1. Overview
 
 This document contains comprehensive code implementation snippets for the pathfinding and spatial systems within our Entity Component System (ECS) framework. Each section provides component definitions and system implementations in C# for creating scalable pathfinding and spatial partitioning that supports thousands of entities while maintaining 60 FPS performance.
 
 **Note:** These are complete implementations ready for integration with the existing ECS architecture. The systems build upon current `PhysicsComponent` and `MovementSystem` implementations.
 
-## Implementation Priority Matrix
+## 2. Implementation Priority Matrix
 
-### Core Spatial Systems (1-4) - Essential Foundation
+### 2.1 Core Spatial Systems - Essential Foundation
 
-#### 1. Dual Spatial Partitioning
+#### Dual Spatial Partitioning
 
 **Enhanced Movement Component:**
 ```csharp
@@ -70,38 +97,38 @@ public record StaticEntityComponent : IComponent
 
 public enum PathfindingMethod
 {
-    Direct,         // Simple A* for short distances
-    JumpPointSearch,// Optimized A* for long distances
-    FlowField,      // Shared pathfinding for groups
-    Hierarchical,   // HPA* for large maps
-    Cached          // Use cached result
+    Direct,             // Simple A* for short distances
+    JumpPointSearch,    // Optimized A* for long distances
+    FlowField,          // Shared pathfinding for groups
+    Hierarchical,       // HPA* for large maps
+    Cached              // Use cached result
 }
 
 public enum PathfindingStatus
 {
-    Idle,           // Not currently pathfinding
-    Calculating,    // Path calculation in progress
-    Following,      // Following calculated path
-    Stuck,          // Unable to reach destination
-    Reached         // Destination reached
+    Idle,            // Not currently pathfinding
+    Calculating,     // Path calculation in progress
+    Following,       // Following calculated path
+    Stuck,           // Unable to reach destination
+    Reached          // Destination reached
 }
 
 public enum CollisionResponseType
 {
-    None,           // No collision response
-    Separate,       // Push objects apart
-    Stop,           // Stop movement on collision
-    Bounce,         // Reflect velocity
-    Trigger,        // Send collision event only
-    Destroy         // Remove entity on collision
+    None,        // No collision response
+    Separate,    // Push objects apart
+    Stop,        // Stop movement on collision
+    Bounce,      // Reflect velocity
+    Trigger,     // Send collision event only
+    Destroy      // Remove entity on collision
 }
 
 public enum StaticEntityType
 {
-    Building,       // Player-constructed buildings
-    Terrain,        // Natural terrain features
-    Resource,       // Resource nodes (trees, rocks)
-    Decoration      // Visual elements
+    Building,      // Player-constructed buildings
+    Terrain,       // Natural terrain features
+    Resource,      // Resource nodes (trees, rocks)
+    Decoration     // Visual elements
 }
 
 public enum CollisionLayer
@@ -130,20 +157,20 @@ public class DualSpatialManagerSystem : BaseFixedSystem
     {
         var worldBounds = new Rect2(new Vector2(-1000, -1000), new Vector2(2000, 2000));
         
-        _movingEntitiesGrid = new SpatialHashGrid<IEntity>(
+        this._movingEntitiesGrid = new SpatialHashGrid<IEntity>(
             worldBounds: worldBounds,
-            cellSize: 32f,           // 2x typical entity size
-            expectedDensity: 0.1f    // 10% cell occupancy
+            cellSize: 32f,        // 2x typical entity size
+            expectedDensity: 0.1f // 10% cell occupancy
         );
         
-        _staticEntitiesTree = new StaticQuadTree<IEntity>(
+        this._staticEntitiesTree = new StaticQuadTree<IEntity>(
             worldBounds: worldBounds,
-            maxDepth: 10,            // Deep subdivision for varied sizes
-            maxItemsPerLeaf: 8       // Geometric precision
+            maxDepth: 10,         // Deep subdivision for varied sizes
+            maxItemsPerLeaf: 8    // Geometric precision
         );
         
-        _entityStructureMap = new Dictionary<IEntity, SpatialStructureType>();
-        _queryCache = new CrossStructureQueryCache();
+        this._entityStructureMap = new Dictionary<IEntity, SpatialStructureType>();
+        this._queryCache = new CrossStructureQueryCache();
     }
 
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
@@ -160,41 +187,42 @@ public class DualSpatialManagerSystem : BaseFixedSystem
         var entityBounds = CalculateEntityBounds(entity, physicsComponent, spatialComponent);
         
         // Determine if entity should be in moving or static structure
-        var isStatic = entity.HasComponent<StaticEntityComponent>() || 
-                      spatialComponent.Type == SpatialPartitionComponent.PartitionType.Static;
+        var hasStaticEntityComponent = entity.HasComponent<StaticEntityComponent>();
+        var isStaticPartitionType = spatialComponent.Type == SpatialPartitionComponent.PartitionType.Static;
+        var isStatic = hasStaticEntityComponent || isStaticPartitionType;
         
         var currentTime = Time.RealtimeSinceStartup;
         
-        if (!_entityStructureMap.TryGetValue(entity, out var currentStructure))
+        if (!this._entityStructureMap.TryGetValue(entity, out var currentStructure))
         {
             // New entity - add to appropriate structure
             if (isStatic)
             {
-                _staticEntitiesTree.Insert(entity, entityBounds);
-                _entityStructureMap[entity] = SpatialStructureType.Static;
+                this._staticEntitiesTree.Insert(entity, entityBounds);
+                this._entityStructureMap[entity] = SpatialStructureType.Static;
             }
             else
             {
-                _movingEntitiesGrid.Insert(entity, entityBounds);
-                _entityStructureMap[entity] = SpatialStructureType.Moving;
+                this._movingEntitiesGrid.Insert(entity, entityBounds);
+                this._entityStructureMap[entity] = SpatialStructureType.Moving;
             }
         }
         else
         {
             // Existing entity - check for structure migration or update
-            if (isStatic && currentStructure == SpatialStructureType.Moving)
+            var shouldMigrateToStatic = isStatic && currentStructure == SpatialStructureType.Moving;
+            var shouldMigrateToMoving = !isStatic && currentStructure == SpatialStructureType.Static;
+            
+            if (shouldMigrateToStatic)
             {
-                // Migrate from moving to static
                 MigrateEntityToStatic(entity, entityBounds);
             }
-            else if (!isStatic && currentStructure == SpatialStructureType.Static)
+            else if (shouldMigrateToMoving)
             {
-                // Migrate from static to moving
                 MigrateEntityToMoving(entity, entityBounds);
             }
             else
             {
-                // Update within current structure
                 UpdateEntityInStructure(entity, entityBounds, currentStructure);
             }
         }
@@ -203,27 +231,27 @@ public class DualSpatialManagerSystem : BaseFixedSystem
         entity.SetComponent(spatialComponent with { LastUpdateTime = currentTime });
         
         // Update query cache
-        _queryCache.Update(Time.DeltaTime);
+        this._queryCache.Update(Time.DeltaTime);
     }
     
     private void MigrateEntityToStatic(IEntity entity, Rect2 bounds)
     {
-        _movingEntitiesGrid.Remove(entity);
-        _staticEntitiesTree.Insert(entity, bounds);
-        _entityStructureMap[entity] = SpatialStructureType.Static;
+        this._movingEntitiesGrid.Remove(entity);
+        this._staticEntitiesTree.Insert(entity, bounds);
+        this._entityStructureMap[entity] = SpatialStructureType.Static;
         
         // Invalidate cache for affected regions
-        _queryCache.InvalidateRegion(bounds);
+        this._queryCache.InvalidateRegion(bounds);
     }
     
     private void MigrateEntityToMoving(IEntity entity, Rect2 bounds)
     {
-        _staticEntitiesTree.Remove(entity);
-        _movingEntitiesGrid.Insert(entity, bounds);
-        _entityStructureMap[entity] = SpatialStructureType.Moving;
+        this._staticEntitiesTree.Remove(entity);
+        this._movingEntitiesGrid.Insert(entity, bounds);
+        this._entityStructureMap[entity] = SpatialStructureType.Moving;
         
         // Invalidate cache for affected regions
-        _queryCache.InvalidateRegion(bounds);
+        this._queryCache.InvalidateRegion(bounds);
     }
     
     private void UpdateEntityInStructure(IEntity entity, Rect2 newBounds, SpatialStructureType structure)
@@ -232,11 +260,11 @@ public class DualSpatialManagerSystem : BaseFixedSystem
         
         if (structure == SpatialStructureType.Moving)
         {
-            _movingEntitiesGrid.Update(entity, oldBounds, newBounds);
+            this._movingEntitiesGrid.Update(entity, oldBounds, newBounds);
         }
         else
         {
-            _staticEntitiesTree.Update(entity, oldBounds, newBounds);
+            this._staticEntitiesTree.Update(entity, oldBounds, newBounds);
         }
         
         UpdateLastKnownBounds(entity, newBounds);
@@ -252,27 +280,34 @@ public class DualSpatialManagerSystem : BaseFixedSystem
         );
         
         // Check cache first
-        if (_queryCache.TryGetCachedResult(queryBounds, out var cachedResult))
+        if (this._queryCache.TryGetCachedResult(queryBounds, out var cachedResult))
         {
-            return cachedResult.Where(e => e != sourceEntity);
+            return cachedResult
+                .Where(entity => entity != sourceEntity);
         }
         
         var neighbors = new List<IEntity>();
         
         if (includeMoving)
         {
-            neighbors.AddRange(_movingEntitiesGrid.Query(queryBounds)
-                .Where(e => e != sourceEntity));
+            var movingNeighbors = this._movingEntitiesGrid
+                .Query(queryBounds)
+                .Where(entity => entity != sourceEntity);
+            
+            neighbors.AddRange(movingNeighbors);
         }
         
         if (includeStatic)
         {
-            neighbors.AddRange(_staticEntitiesTree.Query(queryBounds)
-                .Where(e => e != sourceEntity));
+            var staticNeighbors = this._staticEntitiesTree
+                .Query(queryBounds)
+                .Where(entity => entity != sourceEntity);
+            
+            neighbors.AddRange(staticNeighbors);
         }
         
         // Cache the result
-        _queryCache.CacheResult(queryBounds, neighbors);
+        this._queryCache.CacheResult(queryBounds, neighbors);
         
         return neighbors;
     }
@@ -299,14 +334,7 @@ public class SpatialHashGrid<T> where T : class
     {
         public T Item;
         public Rect2 Bounds;
-        public uint Hash; // Cache hash for fast removal
-        
-        public SpatialItem(T item, Rect2 bounds, uint hash)
-        {
-            Item = item;
-            Bounds = bounds;
-            Hash = hash;
-        }
+        public uint Hash;
     }
     
     private readonly GridCell[] _grid;
@@ -331,26 +359,27 @@ public class SpatialHashGrid<T> where T : class
         _gridMask = (uint)(gridSize - 1);
         
         _grid = new GridCell[gridSize];
-        for (int i = 0; i < gridSize; i++)
-        {
-            _grid[i] = new GridCell();
-        }
         
-        _itemCells = new Dictionary<T, List<uint>>();
-        _lastKnownBounds = new Dictionary<T, Rect2>();
+        for (int gridIndex = 0; gridIndex < gridSize; gridIndex++)
+        {
+            this._grid[gridIndex] = new GridCell();
+        }
+
+        this._itemCells = new Dictionary<T, List<uint>>();
+        this._lastKnownBounds = new Dictionary<T, Rect2>();
     }
-    
+
     public void Insert(T item, Rect2 bounds)
     {
-        var cellHashes = GetCellHashes(bounds);
-        _itemCells[item] = cellHashes;
-        _lastKnownBounds[item] = bounds;
+        var cellHashes = this.GetCellHashes(bounds);
+        this._itemCells[item] = cellHashes;
+        this._lastKnownBounds[item] = bounds;
         
         var spatialItem = new SpatialItem(item, bounds, 0);
         
         foreach (uint hash in cellHashes)
         {
-            ref var cell = ref _grid[hash];
+            ref var cell = ref this._grid[hash];
             cell.Items.Add(spatialItem);
             cell.Version++;
         }
@@ -358,68 +387,72 @@ public class SpatialHashGrid<T> where T : class
     
     public void Update(T item, Rect2 oldBounds, Rect2 newBounds)
     {
-        if (!_itemCells.TryGetValue(item, out var oldCellHashes))
+        if (!this._itemCells.TryGetValue(item, out var oldCellHashes))
         {
-            Insert(item, newBounds);
+            this.Insert(item, newBounds);
             return;
         }
+
+        var newCellHashes = this.GetCellHashes(newBounds);
         
-        var newCellHashes = GetCellHashes(newBounds);
-        
-        // Optimize for micro-movements (most common case)
-        if (ListsEqual(oldCellHashes, newCellHashes))
+        if (SpatialHashGrid<T>.ListsEqual(oldCellHashes, newCellHashes))
         {
             // Object stayed in same cells, just update bounds
             var spatialItem = new SpatialItem(item, newBounds, 0);
+            
             foreach (uint hash in oldCellHashes)
             {
-                ref var cell = ref _grid[hash];
-                for (int i = 0; i < cell.Items.Count; i++)
+                ref var cell = ref this._grid[hash];
+                
+                for (int itemIndex = 0; itemIndex < cell.Items.Count; itemIndex++)
                 {
-                    if (ReferenceEquals(cell.Items[i].Item, item))
+                    if (ReferenceEquals(cell.Items[itemIndex].Item, item))
                     {
-                        cell.Items[i] = spatialItem;
+                        cell.Items[itemIndex] = spatialItem;
                         break;
                     }
                 }
             }
-            _lastKnownBounds[item] = newBounds;
+            
+            this._lastKnownBounds[item] = newBounds;
         }
         else
         {
-            // Object moved to different cells
-            Remove(item);
-            Insert(item, newBounds);
+            this.Remove(item);
+            this.Insert(item, newBounds);
         }
     }
-    
+
     public void Remove(T item)
     {
-        if (!_itemCells.TryGetValue(item, out var cellHashes))
+        if (!this._itemCells.TryGetValue(item, out var cellHashes))
+        {
             return;
+        }
         
         foreach (uint hash in cellHashes)
         {
-            ref var cell = ref _grid[hash];
-            for (int i = cell.Items.Count - 1; i >= 0; i--)
+            ref var cell = ref this._grid[hash];
+            
+            for (int itemIndex = cell.Items.Count - 1; itemIndex >= 0; itemIndex--)
             {
-                if (ReferenceEquals(cell.Items[i].Item, item))
+                if (ReferenceEquals(cell.Items[itemIndex].Item, item))
                 {
-                    cell.Items.RemoveAt(i);
+                    cell.Items.RemoveAt(itemIndex);
                     cell.Version++;
                     break;
                 }
             }
         }
         
-        _itemCells.Remove(item);
-        _lastKnownBounds.Remove(item);
+        this._itemCells.Remove(item);
+        this._lastKnownBounds.Remove(item);
     }
     
     public IEnumerable<T> Query(Rect2 bounds)
     {
         var results = new HashSet<T>();
-        var cellHashes = GetCellHashes(bounds);
+        var cellHashes = this.GetCellHashes(bounds);
         
         foreach (uint hash in cellHashes)
         {
@@ -438,20 +471,20 @@ public class SpatialHashGrid<T> where T : class
     
     private List<uint> GetCellHashes(Rect2 bounds)
     {
-        var localBounds = new Rect2(bounds.Position - _worldOffset, bounds.Size);
-        
-        int minX = Mathf.FloorToInt(localBounds.Position.X / _cellSize);
-        int minY = Mathf.FloorToInt(localBounds.Position.Y / _cellSize);
-        int maxX = Mathf.FloorToInt((localBounds.Position.X + localBounds.Size.X) / _cellSize);
-        int maxY = Mathf.FloorToInt((localBounds.Position.Y + localBounds.Size.Y) / _cellSize);
+        var localBounds = new Rect2(bounds.Position - this._worldOffset, bounds.Size);
+
+        int minX = Mathf.FloorToInt(localBounds.Position.X / this._cellSize);
+        int minY = Mathf.FloorToInt(localBounds.Position.Y / this._cellSize);
+        int maxX = Mathf.FloorToInt((localBounds.Position.X + localBounds.Size.X) / this._cellSize);
+        int maxY = Mathf.FloorToInt((localBounds.Position.Y + localBounds.Size.Y) / this._cellSize);
         
         var hashes = new List<uint>((maxX - minX + 1) * (maxY - minY + 1));
         
-        for (int x = minX; x <= maxX; x++)
+        for (int gridX = minX; gridX <= maxX; gridX++)
         {
-            for (int y = minY; y <= maxY; y++)
+            for (int gridY = minY; gridY <= maxY; gridY++)
             {
-                uint hash = SpatialHash(x, y) & _gridMask;
+                var hash = SpatialHashGrid<T>.SpatialHash(gridX, gridY) & this._gridMask;
                 hashes.Add(hash);
             }
         }
@@ -469,11 +502,17 @@ public class SpatialHashGrid<T> where T : class
     
     private static bool ListsEqual(List<uint> list1, List<uint> list2)
     {
-        if (list1.Count != list2.Count) return false;
-        
-        for (int i = 0; i < list1.Count; i++)
+        if (list1.Count != list2.Count)
         {
-            if (list1[i] != list2[i]) return false;
+            return false;
+        }
+        
+        for (int listIndex = 0; listIndex < list1.Count; listIndex++)
+        {
+            if (list1[listIndex] != list2[listIndex])
+            {
+                return false;
+            }
         }
         
         return true;
@@ -481,7 +520,7 @@ public class SpatialHashGrid<T> where T : class
 }
 ```
 
-#### 2. Core Pathfinding Algorithms
+#### Core Pathfinding Algorithms
 
 **Pathfinding Coordinator System:**
 ```csharp
@@ -497,11 +536,11 @@ public class PathfindingCoordinatorSystem : BaseFixedSystem
     public PathfindingCoordinatorSystem(IEntityManager entityManager)
         : base(entityManager)
     {
-        _jpsSystem = new JumpPointSearchSystem();
-        _directSystem = new DirectPathfindingSystem();
-        _flowFieldSystem = new FlowFieldSystem();
-        _destinationCounts = new Dictionary<Vector2, int>();
-        _pathCache = new Dictionary<(Vector2, Vector2), List<Vector2>>();
+        this._jpsSystem = new JumpPointSearchSystem();
+        this._directSystem = new DirectPathfindingSystem();
+        this._flowFieldSystem = new FlowFieldSystem();
+        this._destinationCounts = new Dictionary<Vector2, int>();
+        this._pathCache = new Dictionary<(Vector2, Vector2), List<Vector2>>();
     }
 
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
@@ -518,16 +557,25 @@ public class PathfindingCoordinatorSystem : BaseFixedSystem
         var physicsComponent = entity.FindComponent<PhysicsComponent>();
         
         // Check if pathfinding is needed
-        if (movementComponent.Destination == Vector2.Zero || 
-            pathfindingComponent.Status == PathfindingStatus.Calculating)
+        var hasNoDestination = movementComponent.Destination == Vector2.Zero;
+        var isCurrentlyCalculating = pathfindingComponent.Status == PathfindingStatus.Calculating;
+        
+        if (hasNoDestination || isCurrentlyCalculating)
+        {
             return;
+        }
         
         var currentTime = Time.RealtimeSinceStartup;
         
         // Check if recalculation is needed
-        if (pathfindingComponent.Status == PathfindingStatus.Following &&
-            currentTime - pathfindingComponent.LastRecalculationTime < 1.0f) // 1 second minimum between recalculations
+        var isFollowingPath = pathfindingComponent.Status == PathfindingStatus.Following;
+        var timeSinceLastRecalculation = currentTime - pathfindingComponent.LastRecalculationTime;
+        var shouldSkipRecalculation = isFollowingPath && timeSinceLastRecalculation < 1.0f;
+        
+        if (shouldSkipRecalculation)
+        {
             return;
+        }
         
         var method = DetermineOptimalMethod(entity, movementComponent.Destination);
         RequestPath(entity, movementComponent.Destination, method);
@@ -573,14 +621,26 @@ public class PathfindingCoordinatorSystem : BaseFixedSystem
         var destinationKey = QuantizeDestination(destination, 32f);
         var nearbyEntitiesWithSameDestination = CountNearbyEntitiesWithDestination(destinationKey);
         
-        if (nearbyEntitiesWithSameDestination >= 5)
+        var hasEnoughUsersForFlowField = nearbyEntitiesWithSameDestination >= 5;
+        var isLongDistance = distance > this._chunkSize * 3;
+        var hasCachedPathAvailable = HasCachedPath(position, destination);
+        
+        if (hasEnoughUsersForFlowField)
+        {
             return PathfindingMethod.FlowField;
-        else if (distance > _chunkSize * 3)
+        }
+        else if (isLongDistance)
+        {
             return PathfindingMethod.JumpPointSearch;
-        else if (HasCachedPath(position, destination))
+        }
+        else if (hasCachedPathAvailable)
+        {
             return PathfindingMethod.Cached;
+        }
         else
+        {
             return PathfindingMethod.Direct;
+        }
     }
     
     private Vector2 QuantizeDestination(Vector2 destination, float gridSize)
@@ -593,17 +653,17 @@ public class PathfindingCoordinatorSystem : BaseFixedSystem
     
     private int CountNearbyEntitiesWithDestination(Vector2 destination)
     {
-        return _destinationCounts.GetValueOrDefault(destination, 0);
+        return this._destinationCounts.GetValueOrDefault(destination, 0);
     }
     
     private bool HasCachedPath(Vector2 start, Vector2 destination)
     {
-        return _pathCache.ContainsKey((start, destination));
+        return this._pathCache.ContainsKey((start, destination));
     }
     
     private int GetOrCreateFlowField(Vector2 destination)
     {
-        return _flowFieldSystem.GetOrCreateFlowField(destination, maxUsers: 100);
+        return this._flowFieldSystem.GetOrCreateFlowField(destination, maxUsers: 100);
     }
     
     private void AssignToFlowField(IEntity entity, int flowFieldId)
@@ -624,7 +684,7 @@ public class PathfindingCoordinatorSystem : BaseFixedSystem
     private void ScheduleJPSPath(IEntity entity, Vector2 destination)
     {
         var position = entity.FindComponent<PhysicsComponent>().Position;
-        var path = _jpsSystem.FindPath(position, destination);
+        var path = this._jpsSystem.FindPath(position, destination);
         
         if (path.Count > 0)
         {
@@ -648,7 +708,7 @@ public class PathfindingCoordinatorSystem : BaseFixedSystem
     private void CalculateDirectPath(IEntity entity, Vector2 destination)
     {
         var position = entity.FindComponent<PhysicsComponent>().Position;
-        var path = _directSystem.FindPath(position, destination);
+        var path = this._directSystem.FindPath(position, destination);
         
         if (path.Count > 0)
         {
@@ -662,7 +722,7 @@ public class PathfindingCoordinatorSystem : BaseFixedSystem
             });
             
             // Cache the result
-            _pathCache[(position, destination)] = path;
+            this._pathCache[(position, destination)] = path;
         }
         else
         {
@@ -674,7 +734,7 @@ public class PathfindingCoordinatorSystem : BaseFixedSystem
     private void ApplyCachedPath(IEntity entity, Vector2 destination)
     {
         var position = entity.FindComponent<PhysicsComponent>().Position;
-        var path = _pathCache[(position, destination)];
+        var path = this._pathCache[(position, destination)];
         
         var waypoints = new Queue<Vector2>(path);
         var pathfindingComponent = entity.FindComponent<PathfindingComponent>();
@@ -697,27 +757,29 @@ public class JumpPointSearchSystem
     
     public JumpPointSearchSystem()
     {
-        _pathCache = new Dictionary<(Vector2, Vector2), List<Vector2>>();
+        this._pathCache = new Dictionary<(Vector2, Vector2), List<Vector2>>();
     }
     
     public List<Vector2> FindPath(Vector2 start, Vector2 goal)
     {
         var cacheKey = (start, goal);
-        if (_pathCache.TryGetValue(cacheKey, out var cachedPath))
+        
+        if (this._pathCache.TryGetValue(cacheKey, out var cachedPath))
         {
             return new List<Vector2>(cachedPath);
         }
         
-        _currentGoal = goal;
+        this._currentGoal = goal;
         var path = JumpPointSearch(start, goal);
         
         // Cache the result (limit cache size)
-        if (_pathCache.Count > 1000)
+        if (this._pathCache.Count > 1000)
         {
-            var oldestKey = _pathCache.Keys.First();
-            _pathCache.Remove(oldestKey);
+            var oldestKey = this._pathCache.Keys.First();
+            this._pathCache.Remove(oldestKey);
         }
-        _pathCache[cacheKey] = new List<Vector2>(path);
+        
+        this._pathCache[cacheKey] = new List<Vector2>(path);
         
         return path;
     }
@@ -783,9 +845,10 @@ public class JumpPointSearchSystem
                 new Vector2(-1, 1).Normalized(), new Vector2(-1, -1).Normalized()
             };
             
-            foreach (var dir in allDirections)
+            foreach (var searchDirection in allDirections)
             {
-                var jumpPoint = Jump(current, dir);
+                var jumpPoint = Jump(current, searchDirection);
+                
                 if (jumpPoint != Vector2.Zero)
                 {
                     successors.Add(jumpPoint);
@@ -797,9 +860,10 @@ public class JumpPointSearchSystem
             // Prune directions based on parent
             var prunedDirections = PruneDirections(current, direction);
             
-            foreach (var dir in prunedDirections)
+            foreach (var searchDirection in prunedDirections)
             {
-                var jumpPoint = Jump(current, dir);
+                var jumpPoint = Jump(current, searchDirection);
+                
                 if (jumpPoint != Vector2.Zero)
                 {
                     successors.Add(jumpPoint);
@@ -815,20 +879,30 @@ public class JumpPointSearchSystem
         var next = current + direction * 16f; // 16-pixel grid step
         
         if (!IsWalkable(next))
+        {
             return Vector2.Zero;
+        }
         
-        if (Vector2.Distance(next, _currentGoal) < 8f)
+        if (Vector2.Distance(next, this._currentGoal) < 8f)
+        {
             return next;
+        }
         
         // Check for forced neighbors
         if (HasForcedNeighbor(next, direction))
+        {
             return next;
+        }
         
         // Diagonal movement - check orthogonal jumps
-        if (direction.X != 0 && direction.Y != 0)
+        var isDiagonalMovement = direction.X != 0 && direction.Y != 0;
+        
+        if (isDiagonalMovement)
         {
-            if (Jump(next, new Vector2(direction.X, 0)) != Vector2.Zero ||
-                Jump(next, new Vector2(0, direction.Y)) != Vector2.Zero)
+            var horizontalJumpPoint = Jump(next, new Vector2(direction.X, 0));
+            var verticalJumpPoint = Jump(next, new Vector2(0, direction.Y));
+            
+            if (horizontalJumpPoint != Vector2.Zero || verticalJumpPoint != Vector2.Zero)
             {
                 return next;
             }
@@ -840,35 +914,52 @@ public class JumpPointSearchSystem
     
     private bool HasForcedNeighbor(Vector2 position, Vector2 direction)
     {
+        var isDiagonalMovement = direction.X != 0 && direction.Y != 0;
+        var isHorizontalMovement = direction.X != 0;
+        
         // Check for obstacles that would force consideration of this position
-        if (direction.X != 0 && direction.Y != 0) // Diagonal
+        if (isDiagonalMovement)
         {
-            return (!IsWalkable(position + new Vector2(-direction.X, 0)) && 
-                    IsWalkable(position + new Vector2(-direction.X, direction.Y))) ||
-                   (!IsWalkable(position + new Vector2(0, -direction.Y)) && 
-                    IsWalkable(position + new Vector2(direction.X, -direction.Y)));
+            var horizontalBlockedButDiagonalOpen =
+                !IsWalkable(position + new Vector2(-direction.X, 0)) && 
+                IsWalkable(position + new Vector2(-direction.X, direction.Y));
+            
+            var verticalBlockedButDiagonalOpen =
+                !IsWalkable(position + new Vector2(0, -direction.Y)) && 
+                IsWalkable(position + new Vector2(direction.X, -direction.Y));
+            
+            return horizontalBlockedButDiagonalOpen || verticalBlockedButDiagonalOpen;
         }
-        else if (direction.X != 0) // Horizontal
+        else if (isHorizontalMovement)
         {
-            return (!IsWalkable(position + new Vector2(0, 16)) && 
-                    IsWalkable(position + new Vector2(direction.X, 16))) ||
-                   (!IsWalkable(position + new Vector2(0, -16)) && 
-                    IsWalkable(position + new Vector2(direction.X, -16)));
+            var upperBlockedButDiagonalOpen =
+                !IsWalkable(position + new Vector2(0, 16)) && 
+                IsWalkable(position + new Vector2(direction.X, 16));
+            
+            var lowerBlockedButDiagonalOpen =
+                !IsWalkable(position + new Vector2(0, -16)) && 
+                IsWalkable(position + new Vector2(direction.X, -16));
+            
+            return upperBlockedButDiagonalOpen || lowerBlockedButDiagonalOpen;
         }
         else // Vertical
         {
-            return (!IsWalkable(position + new Vector2(16, 0)) && 
-                    IsWalkable(position + new Vector2(16, direction.Y))) ||
-                   (!IsWalkable(position + new Vector2(-16, 0)) && 
-                    IsWalkable(position + new Vector2(-16, direction.Y)));
+            var rightBlockedButDiagonalOpen =
+                !IsWalkable(position + new Vector2(16, 0)) && 
+                IsWalkable(position + new Vector2(16, direction.Y));
+            
+            var leftBlockedButDiagonalOpen =
+                !IsWalkable(position + new Vector2(-16, 0)) && 
+                IsWalkable(position + new Vector2(-16, direction.Y));
+            
+            return rightBlockedButDiagonalOpen || leftBlockedButDiagonalOpen;
         }
     }
     
     private bool IsWalkable(Vector2 position)
     {
-        // Implementation depends on your collision detection system
-        // This should check against static obstacles, buildings, etc.
-        return true; // Placeholder - implement based on your collision system
+        // Implementation depends on collision detection system
+        return true;
     }
     
     private List<Vector2> PruneDirections(Vector2 current, Vector2 direction)
@@ -889,12 +980,12 @@ public class JumpPointSearchSystem
         return directions;
     }
     
-    private float HeuristicDistance(Vector2 a, Vector2 b)
+    private float HeuristicDistance(Vector2 pointA, Vector2 pointB)
     {
         // Octile distance (allows diagonal movement)
-        var dx = Math.Abs(a.X - b.X);
-        var dy = Math.Abs(a.Y - b.Y);
-        return (dx + dy) + (1.414f - 2) * Math.Min(dx, dy);
+        var deltaX = Math.Abs(pointA.X - pointB.X);
+        var deltaY = Math.Abs(pointA.Y - pointB.Y);
+        return (deltaX + deltaY) + (1.414f - 2) * Math.Min(deltaX, deltaY);
     }
     
     private List<Vector2> ReconstructPath(Dictionary<Vector2, Vector2> cameFrom, Vector2 current)
@@ -913,16 +1004,11 @@ public class JumpPointSearchSystem
     private struct JPSNode
     {
         public Vector2 Position;
-        
-        public JPSNode(Vector2 position)
-        {
-            Position = position;
-        }
     }
 }
 ```
 
-#### 3. Flow Field Implementation
+#### Flow Field Implementation
 
 **Flow Field System:**
 ```csharp
@@ -944,20 +1030,21 @@ public class FlowFieldSystem
     
     public FlowFieldSystem()
     {
-        _flowFields = new Dictionary<int, FlowField>();
-        _destinationToFlowField = new Dictionary<Vector2, int>();
+        this._flowFields = new Dictionary<int, FlowField>();
+        this._destinationToFlowField = new Dictionary<Vector2, int>();
     }
     
     public int GetOrCreateFlowField(Vector2 destination, int maxUsers = 50)
     {
         // Check if flow field already exists for this destination
-        if (_destinationToFlowField.TryGetValue(destination, out int existingId))
+        if (this._destinationToFlowField.TryGetValue(destination, out int existingId))
         {
-            var existing = _flowFields[existingId];
+            var existing = this._flowFields[existingId];
+            
             if (existing.UserCount < existing.MaxUsers)
             {
                 existing.UserCount++;
-                _flowFields[existingId] = existing;
+                this._flowFields[existingId] = existing;
                 return existingId;
             }
         }
@@ -973,9 +1060,9 @@ public class FlowFieldSystem
             Bounds = CalculateFlowFieldBounds(destination)
         };
         
-        var flowFieldId = _nextFlowFieldId++;
-        _flowFields[flowFieldId] = flowField;
-        _destinationToFlowField[destination] = flowFieldId;
+        var flowFieldId = this._nextFlowFieldId++;
+        this._flowFields[flowFieldId] = flowField;
+        this._destinationToFlowField[destination] = flowFieldId;
         
         return flowFieldId;
     }
@@ -990,11 +1077,11 @@ public class FlowFieldSystem
         var distanceField = GenerateDistanceField(destination, gridSize, cellSize);
         
         // Convert distance field to vector field
-        for (int x = 0; x < gridSize; x++)
+        for (int gridX = 0; gridX < gridSize; gridX++)
         {
-            for (int y = 0; y < gridSize; y++)
+            for (int gridY = 0; gridY < gridSize; gridY++)
             {
-                vectorGrid[x, y] = CalculateFlowVector(x, y, distanceField);
+                vectorGrid[gridX, gridY] = this.CalculateFlowVector(gridX, gridY, distanceField);
             }
         }
         
@@ -1008,11 +1095,11 @@ public class FlowFieldSystem
         var queue = new Queue<(int x, int y, float distance)>();
         
         // Initialize all cells to infinity
-        for (int x = 0; x < gridSize; x++)
+        for (int gridX = 0; gridX < gridSize; gridX++)
         {
-            for (int y = 0; y < gridSize; y++)
+            for (int gridY = 0; gridY < gridSize; gridY++)
             {
-                distanceField[x, y] = float.MaxValue;
+                distanceField[gridX, gridY] = float.MaxValue;
             }
         }
         
@@ -1028,9 +1115,9 @@ public class FlowFieldSystem
         }
         
         // Dijkstra flood-fill
-        var directions = new (int dx, int dy)[] 
+        var directions = new (int deltaX, int deltaY)[] 
         {
-            (0, 1), (1, 0), (0, -1), (-1, 0), // Cardinal
+            (0, 1), (1, 0), (0, -1), (-1, 0),  // Cardinal
             (1, 1), (1, -1), (-1, 1), (-1, -1) // Diagonal
         };
         
@@ -1038,27 +1125,27 @@ public class FlowFieldSystem
         {
             var (x, y, distance) = queue.Dequeue();
             
-            foreach (var (dx, dy) in directions)
+            foreach (var (deltaX, deltaY) in directions)
             {
-                var nx = x + dx;
-                var ny = y + dy;
+                var neighborX = x + deltaX;
+                var neighborY = y + deltaY;
                 
-                if (nx < 0 || nx >= gridSize || ny < 0 || ny >= gridSize || visited[nx, ny])
+                if (neighborX < 0 || neighborX >= gridSize || neighborY < 0 || neighborY >= gridSize || visited[neighborX, neighborY])
                     continue;
                 
                 // Check if walkable
-                var worldPos = new Vector2(nx * cellSize, ny * cellSize);
+                var worldPos = new Vector2(neighborX * cellSize, neighborY * cellSize);
                 if (!IsWalkable(worldPos))
                     continue;
                 
-                var moveCost = (dx != 0 && dy != 0) ? 1.414f : 1.0f; // Diagonal cost
+                var moveCost = (deltaX != 0 && deltaY != 0) ? 1.414f : 1.0f; // Diagonal cost
                 var newDistance = distance + moveCost;
                 
-                if (newDistance < distanceField[nx, ny])
+                if (newDistance < distanceField[neighborX, neighborY])
                 {
-                    distanceField[nx, ny] = newDistance;
-                    queue.Enqueue((nx, ny, newDistance));
-                    visited[nx, ny] = true;
+                    distanceField[neighborX, neighborY] = newDistance;
+                    queue.Enqueue((neighborX, neighborY, newDistance));
+                    visited[neighborX, neighborY] = true;
                 }
             }
         }
@@ -1066,34 +1153,46 @@ public class FlowFieldSystem
         return distanceField;
     }
     
-    private Vector2 CalculateFlowVector(int x, int y, float[,] distanceField)
+    private Vector2 CalculateFlowVector(int cellX, int cellY, float[,] distanceField)
     {
         var gridSize = distanceField.GetLength(0);
-        var currentDistance = distanceField[x, y];
+        var currentDistance = distanceField[cellX, cellY];
         
         if (currentDistance == float.MaxValue)
+        {
             return Vector2.Zero;
+        }
         
         var bestDirection = Vector2.Zero;
         var bestDistance = currentDistance;
         
         // Check all 8 neighbors
-        for (int dx = -1; dx <= 1; dx++)
+        for (int deltaX = -1; deltaX <= 1; deltaX++)
         {
-            for (int dy = -1; dy <= 1; dy++)
+            for (int deltaY = -1; deltaY <= 1; deltaY++)
             {
-                if (dx == 0 && dy == 0) continue;
-                
-                var nx = x + dx;
-                var ny = y + dy;
-                
-                if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize)
+                if (deltaX == 0 && deltaY == 0)
                 {
-                    var neighborDistance = distanceField[nx, ny];
+                    continue;
+                }
+                
+                var neighborX = cellX + deltaX;
+                var neighborY = cellY + deltaY;
+                
+                var isWithinBounds =
+                    neighborX >= 0 &&
+                    neighborX < gridSize &&
+                    neighborY >= 0 &&
+                    neighborY < gridSize;
+                
+                if (isWithinBounds)
+                {
+                    var neighborDistance = distanceField[neighborX, neighborY];
+                    
                     if (neighborDistance < bestDistance)
                     {
                         bestDistance = neighborDistance;
-                        bestDirection = new Vector2(dx, dy).Normalized();
+                        bestDirection = new Vector2(deltaX, deltaY).Normalized();
                     }
                 }
             }
@@ -1104,8 +1203,10 @@ public class FlowFieldSystem
     
     public Vector2 SampleFlowField(int flowFieldId, Vector2 worldPosition)
     {
-        if (!_flowFields.TryGetValue(flowFieldId, out var flowField))
+        if (!this._flowFields.TryGetValue(flowFieldId, out var flowField))
+        {
             return Vector2.Zero;
+        }
         
         const float cellSize = 16f;
         const int gridSize = 128;
@@ -1113,7 +1214,13 @@ public class FlowFieldSystem
         var gridX = Mathf.RoundToInt(worldPosition.X / cellSize);
         var gridY = Mathf.RoundToInt(worldPosition.Y / cellSize);
         
-        if (gridX >= 0 && gridX < gridSize && gridY >= 0 && gridY < gridSize)
+        var isWithinBounds =
+            gridX >= 0 &&
+            gridX < gridSize &&
+            gridY >= 0 &&
+            gridY < gridSize;
+        
+        if (isWithinBounds)
         {
             return flowField.VectorGrid[gridX, gridY];
         }
@@ -1123,25 +1230,25 @@ public class FlowFieldSystem
     
     public void ReleaseFlowField(int flowFieldId)
     {
-        if (_flowFields.TryGetValue(flowFieldId, out var flowField))
+        if (this._flowFields.TryGetValue(flowFieldId, out var flowField))
         {
             flowField.UserCount--;
+            
             if (flowField.UserCount <= 0)
             {
-                _flowFields.Remove(flowFieldId);
-                _destinationToFlowField.Remove(flowField.Destination);
+                this._flowFields.Remove(flowFieldId);
+                this._destinationToFlowField.Remove(flowField.Destination);
             }
             else
             {
-                _flowFields[flowFieldId] = flowField;
+                this._flowFields[flowFieldId] = flowField;
             }
         }
     }
     
     private bool IsWalkable(Vector2 position)
     {
-        // Implementation should check against static obstacles
-        return true; // Placeholder
+        return true;
     }
     
     private Rect2 CalculateFlowFieldBounds(Vector2 destination)
@@ -1152,7 +1259,7 @@ public class FlowFieldSystem
 }
 ```
 
-#### 4. Enhanced Movement Integration
+#### Enhanced Movement Integration
 
 **Spatial-Aware Movement System:**
 ```csharp
@@ -1168,9 +1275,9 @@ public class SpatialAwareMovementSystem : BaseFixedSystem
         FlowFieldSystem flowFieldSystem)
         : base(entityManager)
     {
-        _spatialManager = spatialManager;
-        _pathfindingCoordinator = pathfindingCoordinator;
-        _flowFieldSystem = flowFieldSystem;
+        this._spatialManager = spatialManager;
+        this._pathfindingCoordinator = pathfindingCoordinator;
+        this._flowFieldSystem = flowFieldSystem;
     }
 
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
@@ -1189,7 +1296,7 @@ public class SpatialAwareMovementSystem : BaseFixedSystem
         Vector2 desiredVelocity = CalculateDesiredVelocity(entity, movementComponent, pathfindingComponent, physicsComponent);
         
         // Apply collision avoidance
-        var neighbors = _spatialManager.GetNearbyEntities(entity, 32f, includeMoving: true, includeStatic: false);
+        var neighbors = this._spatialManager.GetNearbyEntities(entity, 32f, includeMoving: true, includeStatic: false);
         var avoidanceForce = CalculateAvoidanceForce(entity, neighbors);
         
         // Combine desired movement with avoidance
@@ -1224,7 +1331,7 @@ public class SpatialAwareMovementSystem : BaseFixedSystem
             case PathfindingMethod.FlowField:
                 if (movement.FlowFieldId >= 0)
                 {
-                    desiredDirection = _flowFieldSystem.SampleFlowField(movement.FlowFieldId, physics.Position);
+                    desiredDirection = this._flowFieldSystem.SampleFlowField(movement.FlowFieldId, physics.Position);
                 }
                 break;
                 
@@ -1269,7 +1376,7 @@ public class SpatialAwareMovementSystem : BaseFixedSystem
     
     private bool CheckStaticCollisions(IEntity entity, Vector2 newPosition)
     {
-        var staticEntities = _spatialManager.GetNearbyEntities(entity, 16f, 
+        var staticEntities = this._spatialManager.GetNearbyEntities(entity, 16f, 
             includeMoving: false, includeStatic: true);
         
         foreach (var staticEntity in staticEntities)
@@ -1358,9 +1465,12 @@ public class SpatialAwareMovementSystem : BaseFixedSystem
         var pathfindingComponent = entity.FindComponent<PathfindingComponent>();
         
         // Release flow field if using one
-        if (movementComponent.Method == PathfindingMethod.FlowField && movementComponent.FlowFieldId >= 0)
+        var isUsingFlowField = movementComponent.Method == PathfindingMethod.FlowField;
+        var hasValidFlowFieldId = movementComponent.FlowFieldId >= 0;
+        
+        if (isUsingFlowField && hasValidFlowFieldId)
         {
-            _flowFieldSystem.ReleaseFlowField(movementComponent.FlowFieldId);
+            this._flowFieldSystem.ReleaseFlowField(movementComponent.FlowFieldId);
         }
         
         // Clear movement and pathfinding
@@ -1394,9 +1504,9 @@ public class SpatialAwareMovementSystem : BaseFixedSystem
 }
 ```
 
-### Performance Optimization Systems (9-12) - Production-Ready Features
+### 2.2 Performance Optimization Systems (9-12) - Production-Ready Features
 
-#### 9. Performance Budget Management
+#### Performance Budget Management
 
 **Performance Budget Manager:**
 ```csharp
@@ -1428,7 +1538,7 @@ public class PerformanceBudgetManagerSystem : BaseVariableSystem
     public override void Update(float deltaTime, IGameState gameState)
     {
         var frameStart = Time.RealtimeSinceStartup;
-        _frameTimeAverage.AddSample(deltaTime);
+        this._frameTimeAverage.AddSample(deltaTime);
         
         // Process high-priority systems first with time budgets
         ProcessSpatialUpdates(frameStart);
@@ -1438,20 +1548,30 @@ public class PerformanceBudgetManagerSystem : BaseVariableSystem
     
     private void ProcessSpatialUpdates(float frameStart)
     {
-        var budget = _budgets["SpatialUpdate"];
+        var budget = this._budgets["SpatialUpdate"];
         var processed = 0;
         
-        while (_spatialUpdateQueue.Count > 0 && HasBudget(frameStart, budget) && processed < 100)
+        var canContinueProcessing =
+            this._spatialUpdateQueue.Count > 0 &&
+            HasBudget(frameStart, budget) &&
+            processed < 100;
+        
+        while (canContinueProcessing)
         {
-            var updateAction = _spatialUpdateQueue.Dequeue();
+            var updateAction = this._spatialUpdateQueue.Dequeue();
             updateAction.Invoke();
             processed++;
+            
+            canContinueProcessing =
+                this._spatialUpdateQueue.Count > 0 &&
+                HasBudget(frameStart, budget) &&
+                processed < 100;
         }
     }
     
     private void ProcessCollisionDetection(float frameStart)
     {
-        var budget = _budgets["CollisionDetection"];
+        var budget = this._budgets["CollisionDetection"];
         var remainingBudget = GetRemainingBudget(frameStart, budget);
         
         if (remainingBudget > 0.5f) // Only process if we have meaningful time left
@@ -1462,14 +1582,24 @@ public class PerformanceBudgetManagerSystem : BaseVariableSystem
     
     private void ProcessPathfindingUpdates(float frameStart)
     {
-        var budget = _budgets["PathfindingUpdate"];
+        var budget = this._budgets["PathfindingUpdate"];
         var processed = 0;
         
-        while (_pathfindingQueue.Count > 0 && HasBudget(frameStart, budget) && processed < 50)
+        var canContinueProcessing =
+            this._pathfindingQueue.Count > 0 &&
+            HasBudget(frameStart, budget) &&
+            processed < 50;
+        
+        while (canContinueProcessing)
         {
-            var pathfindingAction = _pathfindingQueue.Dequeue();
+            var pathfindingAction = this._pathfindingQueue.Dequeue();
             pathfindingAction.Invoke();
             processed++;
+            
+            canContinueProcessing =
+                this._pathfindingQueue.Count > 0 &&
+                HasBudget(frameStart, budget) &&
+                processed < 50;
         }
     }
     
@@ -1496,12 +1626,12 @@ public class PerformanceBudgetManagerSystem : BaseVariableSystem
     
     public void QueueSpatialUpdate(Action updateAction)
     {
-        _spatialUpdateQueue.Enqueue(updateAction);
+        this._spatialUpdateQueue.Enqueue(updateAction);
     }
     
     public void QueuePathfindingUpdate(Action pathfindingAction)
     {
-        _pathfindingQueue.Enqueue(pathfindingAction);
+        this._pathfindingQueue.Enqueue(pathfindingAction);
     }
 }
 
@@ -1534,7 +1664,7 @@ public class MovingAverage
 }
 ```
 
-#### 10. Advanced Caching Systems
+#### Advanced Caching Systems
 
 **Cross-Structure Query Cache:**
 ```csharp
@@ -1560,17 +1690,19 @@ public class CrossStructureQueryCache
     
     public CrossStructureQueryCache()
     {
-        _cache = new Dictionary<uint, CacheEntry>();
-        _regionCacheKeys = new Dictionary<uint, HashSet<uint>>();
+        this._cache = new Dictionary<uint, CacheEntry>();
+        this._regionCacheKeys = new Dictionary<uint, HashSet<uint>>();
     }
     
     public bool TryGetCachedResult(Rect2 bounds, out List<IEntity> result)
     {
         uint key = HashBounds(bounds);
         
-        if (_cache.TryGetValue(key, out var entry) && 
-            entry.IsValid(Time.RealtimeSinceStartup) &&
-            entry.Version == _currentVersion)
+        var hasCacheEntry = this._cache.TryGetValue(key, out var entry);
+        var isEntryValid = hasCacheEntry && entry.IsValid(Time.RealtimeSinceStartup);
+        var isVersionCurrent = hasCacheEntry && entry.Version == this._currentVersion;
+        
+        if (isEntryValid && isVersionCurrent)
         {
             result = new List<IEntity>(entry.Results);
             return true;
@@ -1584,12 +1716,12 @@ public class CrossStructureQueryCache
     {
         uint key = HashBounds(bounds);
         
-        _cache[key] = new CacheEntry
+        this._cache[key] = new CacheEntry
         {
             Results = new List<IEntity>(result),
             Timestamp = Time.RealtimeSinceStartup,
             QueryBounds = bounds,
-            Version = _currentVersion
+            Version = this._currentVersion
         };
         
         RegisterForRegionInvalidation(key, bounds);
@@ -1599,18 +1731,18 @@ public class CrossStructureQueryCache
     {
         uint regionKey = HashBounds(region);
         
-        if (_regionCacheKeys.TryGetValue(regionKey, out var cacheKeys))
+        if (this._regionCacheKeys.TryGetValue(regionKey, out var cacheKeys))
         {
             foreach (uint cacheKey in cacheKeys)
             {
-                _cache.Remove(cacheKey);
+                this._cache.Remove(cacheKey);
             }
             
-            _regionCacheKeys.Remove(regionKey);
+            this._regionCacheKeys.Remove(regionKey);
         }
         
         // Increment version to invalidate all cached results
-        _currentVersion++;
+        this._currentVersion++;
     }
     
     public void Update(float deltaTime)
@@ -1618,10 +1750,12 @@ public class CrossStructureQueryCache
         var expiredKeys = new List<uint>();
         var currentTime = Time.RealtimeSinceStartup;
         
-        foreach (var kvp in _cache)
+        foreach (var kvp in this._cache)
         {
-            if (!kvp.Value.IsValid(currentTime, CACHE_DURATION) || 
-                kvp.Value.Version < _currentVersion)
+            var isExpired = !kvp.Value.IsValid(currentTime, CACHE_DURATION);
+            var isOldVersion = kvp.Value.Version < this._currentVersion;
+            
+            if (isExpired || isOldVersion)
             {
                 expiredKeys.Add(kvp.Key);
             }
@@ -1629,7 +1763,7 @@ public class CrossStructureQueryCache
         
         foreach (uint key in expiredKeys)
         {
-            _cache.Remove(key);
+            this._cache.Remove(key);
         }
         
         // Clean up region mappings periodically
@@ -1643,12 +1777,12 @@ public class CrossStructureQueryCache
     {
         var regionKey = HashBounds(QuantizeRegion(bounds));
         
-        if (!_regionCacheKeys.ContainsKey(regionKey))
+        if (!this._regionCacheKeys.ContainsKey(regionKey))
         {
-            _regionCacheKeys[regionKey] = new HashSet<uint>();
+            this._regionCacheKeys[regionKey] = new HashSet<uint>();
         }
         
-        _regionCacheKeys[regionKey].Add(cacheKey);
+        this._regionCacheKeys[regionKey].Add(cacheKey);
     }
     
     private Rect2 QuantizeRegion(Rect2 bounds)
@@ -1665,9 +1799,9 @@ public class CrossStructureQueryCache
     {
         var keysToRemove = new List<uint>();
         
-        foreach (var kvp in _regionCacheKeys)
+        foreach (var kvp in this._regionCacheKeys)
         {
-            kvp.Value.RemoveWhere(cacheKey => !_cache.ContainsKey(cacheKey));
+            kvp.Value.RemoveWhere(cacheKey => !this._cache.ContainsKey(cacheKey));
             
             if (kvp.Value.Count == 0)
             {
@@ -1677,7 +1811,7 @@ public class CrossStructureQueryCache
         
         foreach (var key in keysToRemove)
         {
-            _regionCacheKeys.Remove(key);
+            this._regionCacheKeys.Remove(key);
         }
     }
     
@@ -1692,7 +1826,7 @@ public class CrossStructureQueryCache
 }
 ```
 
-#### 12. NEAT AI Integration
+#### NEAT AI Integration
 
 **Spatial NEAT Input Provider:**
 ```csharp
@@ -1704,7 +1838,7 @@ public class SpatialNEATInputProviderSystem : BaseFixedSystem
         DualSpatialManagerSystem spatialManager)
         : base(entityManager)
     {
-        _spatialManager = spatialManager;
+        this._spatialManager = spatialManager;
     }
 
     protected override IReadOnlyCollection<Type> RequiredComponentTypes { get; } =
@@ -1722,12 +1856,16 @@ public class SpatialNEATInputProviderSystem : BaseFixedSystem
         var currentInputs = neatComponent.Inputs?.ToList() ?? new List<float>();
         
         // Replace or append spatial inputs (assume first 12 inputs are spatial)
-        for (int i = 0; i < spatialInputs.Length && i < 12; i++)
+        for (int inputIndex = 0; inputIndex < spatialInputs.Length && inputIndex < 12; inputIndex++)
         {
-            if (i < currentInputs.Count)
-                currentInputs[i] = spatialInputs[i];
+            if (inputIndex < currentInputs.Count)
+            {
+                currentInputs[inputIndex] = spatialInputs[inputIndex];
+            }
             else
-                currentInputs.Add(spatialInputs[i]);
+            {
+                currentInputs.Add(spatialInputs[inputIndex]);
+            }
         }
         
         entity.SetComponent(neatComponent with { Inputs = currentInputs.ToArray() });
@@ -1739,9 +1877,9 @@ public class SpatialNEATInputProviderSystem : BaseFixedSystem
         var inputs = new float[12];
         
         // Get neighbors from appropriate spatial structures
-        var nearbyMoving = _spatialManager.GetNearbyEntities(entity, 48f, 
+        var nearbyMoving = this._spatialManager.GetNearbyEntities(entity, 48f, 
             includeMoving: true, includeStatic: false);
-        var nearbyStatic = _spatialManager.GetNearbyEntities(entity, 64f,
+        var nearbyStatic = this._spatialManager.GetNearbyEntities(entity, 64f,
             includeMoving: false, includeStatic: true);
         
         // 0-3: Moving entity density in cardinal directions (N, E, S, W)
@@ -1765,30 +1903,35 @@ public class SpatialNEATInputProviderSystem : BaseFixedSystem
         return inputs;
     }
     
-    private void CalculateDirectionalDensity(Vector2 position, IEnumerable<IEntity> entities, 
-        float[] inputs, int startIndex)
+    private void CalculateDirectionalDensity(
+        Vector2 position,
+        IEnumerable<IEntity> entities, 
+        float[] inputs,
+        int startIndex)
     {
         var directions = new Vector2[] { Vector2.Up, Vector2.Right, Vector2.Down, Vector2.Left };
         
-        for (int i = 0; i < 4; i++)
+        for (int directionIndex = 0; directionIndex < 4; directionIndex++)
         {
-            var direction = directions[i];
+            var direction = directions[directionIndex];
             var sectorBounds = new Rect2(
                 position + direction * 24f - Vector2.One * 16f,
                 Vector2.One * 32f
             );
             
             int entitiesInSector = 0;
+            
             foreach (var entity in entities)
             {
                 var entityPos = entity.FindComponent<PhysicsComponent>().Position;
+                
                 if (sectorBounds.HasPoint(entityPos))
                 {
                     entitiesInSector++;
                 }
             }
             
-            inputs[startIndex + i] = Math.Min(1.0f, entitiesInSector / 5.0f);
+            inputs[startIndex + directionIndex] = Math.Min(1.0f, entitiesInSector / 5.0f);
         }
     }
     
@@ -1888,28 +2031,28 @@ public class SpatialNEATInputProviderSystem : BaseFixedSystem
 
 ---
 
-## System Integration Notes
+## 3. System Integration Notes
 
-### Naming Conventions Followed:
+### 3.1 Naming Conventions Followed:
 - **Components**: `[Purpose]Component` inheriting from `IComponent`
 - **Systems**: `[Purpose]System` inheriting from `BaseFixedSystem` or `BaseVariableSystem`
 - **No Name Conflicts**: Each system has a unique purpose and name
 
-### Architecture Compliance:
+### 3.2 Architecture Compliance:
 - All systems declare `RequiredComponentTypes` for entity filtering
 - Systems use `EntityManager` for entity queries and component access
 - Proper dependency injection through constructor parameters
 - Component data encapsulation with `record` types and properties
 - Separation of concerns between components (data) and systems (behavior)
 
-### Performance Considerations:
+### 3.3 Performance Considerations:
 - Systems process only entities with required components
 - Spatial queries use optimized hash grid and quadtree structures
 - Caching systems minimize repeated expensive calculations
 - Time-slicing prevents frame rate drops under heavy load
 - Memory pooling and reuse strategies minimize garbage collection
 
-### ECS Integration:
+### 3.4 ECS Integration:
 - Seamless integration with existing `PhysicsComponent` and `IntelligenceComponent`
 - Enhanced `MovementComponent` with pathfinding-specific data
 - New specialized components for pathfinding and spatial partitioning
