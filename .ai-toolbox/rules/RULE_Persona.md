@@ -1,6 +1,6 @@
 # RULE: Expert Persona
 
-**Last Updated:** January 3, 2026
+**Last Updated:** February 5, 2026
 
 ---
 
@@ -57,6 +57,7 @@ Reusable expert personas for code analysis, audits, and technical evaluations. F
 | **DevOps Engineer**      | CI/CD, IaC, containers, monitoring, alerting, DR        | Automated deployment, IaC, monitoring, rollback tested    |
 | **UX Designer**          | Consistency, navigation, accessibility, responsiveness  | Intuitive, clear navigation, accessible, helpful errors   |
 | **Technical Artist**     | Asset organization, naming, pipeline, compression       | Organized, automated pipeline, optimized assets           |
+| **AI Agent**             | Prompts, tools, context, task decomposition, validation | Clear steps, tools used correctly, self-verified, concise |
 
 ### 2.2 Game Development Personas
 
@@ -99,6 +100,8 @@ Reusable expert personas for code analysis, audits, and technical evaluations. F
 | Documentation unclear  | Technical Writer                        |
 | Content hard to find   | Information Architect                   |
 | ML not converging      | ML Research Scientist                   |
+| Agent misbehavior      | AI Agent + Software Engineer            |
+| SKILL/RULE creation    | AI Agent + Technical Writer             |
 
 ### 3.2 By Project Phase
 
@@ -131,6 +134,7 @@ When adopting a persona:
 | Game Designer + Level Designer           | Designer defines mechanics → Level Designer creates spaces to showcase them |
 | Technical Writer + Information Architect | Writer creates content → Architect structures and organizes it              |
 | ML Research Scientist + Data Scientist   | Scientist designs algorithms → Data Scientist validates with analysis       |
+| AI Agent + Technical Writer              | Agent defines workflow → Writer ensures clarity and consistency             |
 
 ### 4.2 Overlapping Concerns
 

@@ -236,7 +236,7 @@ State transitions managed by `DecisionMakingSystem`.
 
 ### 7.1 Code Style
 
-See `.ai-toolbox/RULE_CSharp.md` for complete standards.
+See `.ai-toolbox/rules/RULE_CSharp.md` for complete standards.
 
 **Quick Reference:**
 - Private fields: `_camelCase`
@@ -246,7 +246,7 @@ See `.ai-toolbox/RULE_CSharp.md` for complete standards.
 
 ### 7.2 Documentation
 
-See `.ai-toolbox/RULE_Markdown.md` and `.ai-toolbox/RULE_Document.md`.
+See `.ai-toolbox/rules/RULE_Markdown.md` and `.ai-toolbox/rules/RULE_Document.md`.
 
 **Quick Reference:**
 - Last Updated: `**Last Updated:** Month DD, YYYY`
@@ -257,13 +257,13 @@ See `.ai-toolbox/RULE_Markdown.md` and `.ai-toolbox/RULE_Document.md`.
 
 | File                      | Purpose                                    |
 |---------------------------|--------------------------------------------|
-| `RULE_CSharp.md`          | C# coding standards                        |
-| `RULE_Markdown.md`        | Markdown formatting                        |
-| `RULE_Document.md`        | Document content rules                     |
-| `RULE_Persona.md`         | Expert persona reference                   |
-| `SKILL_FormatMarkdown.md` | Markdown validation                        |
-| `SKILL_ReviewMarkdown.md` | Markdown optimization for token reduction  |
-| `SKILL_AuditCodebase.md`  | Codebase auditing                          |
+| `rules/RULE_CSharp.md`    | C# coding standards                        |
+| `rules/RULE_Markdown.md`  | Markdown formatting                        |
+| `rules/RULE_Document.md`  | Document content rules                     |
+| `rules/RULE_Persona.md`   | Expert persona reference                   |
+| `skills/format-markdown/` | Markdown validation                        |
+| `skills/review-markdown/` | Markdown optimization for token reduction  |
+| `skills/audit-codebase/`  | Codebase auditing                          |
 
 ## 8. AI Context System
 
@@ -289,7 +289,7 @@ The `.ai-context/` folder contains curated documents for feature planning and im
 3. Use `SNIPPET_*` during coding
 4. Reference `AUDIT_*` for quality
 
-See `.ai-toolbox/RULE_Document.md` for complete document standards.
+See `.ai-toolbox/rules/RULE_Document.md` for complete document standards.
 
 ## 9. Resources
 

@@ -1,6 +1,6 @@
 # RULE: Document Content
 
-**Last Updated:** January 3, 2026
+**Last Updated:** February 5, 2026
 
 ---
 
@@ -22,8 +22,7 @@
     - [4.2 Structure](#42-structure)
   - [5. SKILL Files](#5-skill-files)
   - [6. Other File Types](#6-other-file-types)
-  - [7. Verification Template](#7-verification-template)
-  - [8. Self-Assessment Protocol](#8-self-assessment-protocol)
+  - [7. Self-Assessment Protocol](#7-self-assessment-protocol)
 
 ---
 
@@ -31,16 +30,17 @@ Content rules for document types. For Markdown formatting and severity levels, s
 
 ## 1. File Types
 
-| Prefix      | Location       | Purpose                         |
-|-------------|----------------|---------------------------------|
-| `IDEA_*`    | `.ai-context/` | Feature discussions (WHAT/WHY)  |
-| `SNIPPET_*` | `.ai-context/` | Code implementation references  |
-| `AUDIT_*`   | `.ai-context/` | Assessment reports              |
-| `SUMMARY_*` | `.ai-context/` | Quick reference guides          |
-| `ROADMAP_*` | `.ai-context/` | Prioritized development plans   |
-| `SKILL_*`   | `.ai-toolbox/` | Executable AI agent skills      |
-| `RULE_*`    | `.ai-toolbox/` | Formatting and validation rules |
-| `*.md`      | `.kiro/`       | Kiro specs and steering docs    |
+| Prefix       | Location                       | Purpose                         |
+|--------------|--------------------------------|---------------------------------|
+| `IDEA_*`     | `.ai-context/`                 | Feature discussions (WHAT/WHY)  |
+| `SNIPPET_*`  | `.ai-context/`                 | Code implementation references  |
+| `AUDIT_*`    | `.ai-context/`                 | Assessment reports              |
+| `SUMMARY_*`  | `.ai-context/`                 | Quick reference guides          |
+| `ROADMAP_*`  | `.ai-context/`                 | Prioritized development plans   |
+| `SKILL_*`    | `.ai-toolbox/`                 | Executable AI agent skills      |
+| `RULE_*`     | `.ai-toolbox/`                 | Formatting and validation rules |
+| `TEMPLATE_*` | `.ai-toolbox/skills/*/assets/` | Blank document scaffolds        |
+| `*.md`       | `.kiro/`                       | Kiro specs and steering docs    |
 
 ### 1.1 H1 Heading Format
 
@@ -53,12 +53,12 @@ Content rules for document types. For Markdown formatting and severity levels, s
 **Applies to:** IDEA, SNIPPET, AUDIT, SUMMARY, SKILL, RULE files  
 **Does NOT apply to:** ROADMAP files (exempt)
 
-| Prohibited                                 | Rationale                  |
-|--------------------------------------------|----------------------------|
-| Priority markers (P0, P1, Phase 1)         | ROADMAP files only         |
-| Effort estimation (story points, hours)    | Project management tools   |
-| Implementation timelines                   | ROADMAP files only         |
-| Status tracking (Not Started, In Progress) | Project management tools   |
+| Prohibited                                 | Rationale                |
+|--------------------------------------------|--------------------------|
+| Priority markers (P0, P1, Phase 1)         | ROADMAP files only       |
+| Effort estimation (story points, hours)    | Project management tools |
+| Implementation timelines                   | ROADMAP files only       |
+| Status tracking (Not Started, In Progress) | Project management tools |
 
 ## 2. Example Conventions
 
@@ -140,60 +140,40 @@ Feature discussions describing WHAT and WHY, not HOW. Audience: Engineers with C
 ---
 name: validate-order
 description: Validates restaurant order data
-display-name: Validate Order
-keywords: [order, validate, menu, customer]
-example-prompt:
-  - Validate the order data in OrderController.cs
-  - Can you check if this order request is valid?
+metadata:
+  display-name: Validate Order
+  keywords: [order, validate, menu, customer]
+  example-prompt:
+    - Validate the order data in OrderController.cs
+    - Can you check if this order request is valid?
 ---
 ```
 
-| Attribute      | Format          |
-|----------------|-----------------|
-| name           | kebab-case      |
-| description    | Full sentence   |
-| display-name   | Title Case      |
-| keywords       | Lowercase array |
-| example-prompt | 2-3 strings     |
+| Field                     | Format          | Required |
+|---------------------------|-----------------|----------|
+| `name`                    | kebab-case      | Yes      |
+| `description`             | Full sentence   | Yes      |
+| `metadata.display-name`   | Title Case      | Optional |
+| `metadata.keywords`       | Lowercase array | Optional |
+| `metadata.example-prompt` | 2-3 strings     | Optional |
 
 ## 6. Other File Types
 
-| Type    | Audience              | Structure                                                         |
-|---------|-----------------------|-------------------------------------------------------------------|
-| AUDIT   | Team leads, engineers | Executive Summary → Findings → Recommendations → Readiness        |
-| RULE    | AI agents, writers    | Scope → Rules → Examples → Checklist                              |
-| SUMMARY | Engineers             | Tables preferred, max 2 pages, links to detailed docs             |
-| ROADMAP | Project managers      | Overview → Features by Priority (P0-P3) → Timeline → Dependencies |
+| Type     | Audience              | Structure                                                         |
+|----------|-----------------------|-------------------------------------------------------------------|
+| AUDIT    | Team leads, engineers | Executive Summary → Findings → Recommendations → Readiness        |
+| RULE     | AI agents, writers    | Scope → Rules → Examples → Checklist                              |
+| SUMMARY  | Engineers             | Tables preferred, max 2 pages, links to detailed docs             |
+| ROADMAP  | Project managers      | Overview → Features by Priority (P0-P3) → Timeline → Dependencies |
+| TEMPLATE | Skill users           | Placeholder structure, `{variable}` and `*italic*` guidance       |
 
 **AUDIT Findings Format:** Location, Severity (per `RULE_Markdown.md` Section 6), Problem, Impact, Fix
 
 **ROADMAP Exception:** May contain priorities, timelines, status tracking (see `RULE_Markdown.md` Section 5.3).
 
-## 7. Verification Template
+**TEMPLATE Exception:** No Last Updated date or TOC (generated by format-markdown skill after template is filled).
 
-**Required for:** All SKILL_* and RULE_* files in `.ai-toolbox/`
-
-**Structure:**
-- **Heading:** `## N. Self-Assessment Protocol`
-- **Introduction:** `**🚨 CRITICAL:** Before presenting results, verify using this checklist:`
-- **Subsections:** Bold headers (e.g., `**Order Validation:**`) with checkbox items
-
-**Example:**
-```markdown
-## N. Self-Assessment Protocol
-
-**🚨 CRITICAL:** Before presenting results, verify using this checklist:
-
-**Order Validation:**
-- [ ] Order items verified against menu
-- [ ] Customer payment method confirmed
-
-**Kitchen Integration:**
-- [ ] Order sent to kitchen queue
-- [ ] Preparation time estimated
-```
-
-## 8. Self-Assessment Protocol
+## 7. Self-Assessment Protocol
 
 **🚨 CRITICAL:** Before presenting results, verify using this checklist:
 
@@ -241,3 +221,9 @@ example-prompt:
 - [ ] Rules are specific and testable
 - [ ] Cross-references to related RULE files included
 - [ ] Self-Assessment Protocol section present
+
+**TEMPLATE Files:**
+- [ ] No Last Updated date
+- [ ] No Table of Contents
+- [ ] `{variable}` syntax used for YAML frontmatter placeholders
+- [ ] `*Italic instructions*` used for body section guidance

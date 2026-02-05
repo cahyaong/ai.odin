@@ -1,6 +1,6 @@
 # RULE: Markdown Formatting
 
-**Last Updated:** January 3, 2026
+**Last Updated:** February 5, 2026
 
 ---
 
@@ -19,12 +19,12 @@
     - [4.1 Code Snippets](#41-code-snippets)
     - [4.2 Lists](#42-lists)
     - [4.3 Tables](#43-tables)
+    - [4.4 Variables](#44-variables)
   - [5. Emoji Standards](#5-emoji-standards)
     - [5.1 Boolean Operations](#51-boolean-operations)
     - [5.2 Severity Levels](#52-severity-levels)
     - [5.3 Status Indicators](#53-status-indicators)
   - [6. Severity Levels](#6-severity-levels)
-    - [6.1 Markdown-Specific Priorities](#61-markdown-specific-priorities)
   - [7. Self-Assessment Protocol](#7-self-assessment-protocol)
 
 ---
@@ -74,12 +74,12 @@ This document defines Markdown formatting standards. For content rules (IDEA, SN
 
 ### 2.1 Numbering Convention
 
-| Level | Format             | Example                            |
-|-------|--------------------|------------------------------------|
-| H2    | Sequential from 1  | `## 1. Section`, `## 2. Next`      |
-| H3    | Relative to parent | `### 1.1 Sub`, `### 1.2 Another`   |
-| H4    | Unnumbered         | `#### Details`                     |
-| H5+   | Don't use          | Use `- **Title:** Content` instead |
+| Level | Format             | Example                                |
+|-------|--------------------|-----------------------------------------|
+| H2    | Sequential from 1  | `## 1. Section`, `## 2. Next`           |
+| H3    | Relative to parent | `### 1.1 Sub`, `### 1.2 Another`        |
+| H4    | Unnumbered         | `#### Details`                          |
+| H5+   | Don't use          | Use `- **Title:** Content` instead      |
 
 **Sequential integrity:** Renumber all affected sections when adding/removing/moving.
 
@@ -147,6 +147,18 @@ In this example:
 
 **Rationale:** Emojis cause column misalignment due to inconsistent character widths across viewers.
 
+### 4.4 Variables
+
+**Use `{snake_case}` syntax** for placeholders in templates and documentation.
+
+- ✅ CORRECT: `{skill_name}`, `{file_type}`, `{audit_type}`
+- ❌ WRONG: `[Type]`, `<variable>`, `VARIABLE`
+
+**Rules:**
+- Wrap variable names in curly braces: `{variable_name}`
+- Use snake_case inside braces: `{skill_name}`, not `{skillName}`
+- Wrap in backticks when shown inline: `` `{variable_name}` ``
+
 ## 5. Emoji Standards
 
 **Rule:** Emojis MUST be followed by UPPERCASE text.
@@ -182,26 +194,6 @@ See [Section 6](#6-severity-levels) for definitions.
 | MEDIUM   | ⚠️    | Code quality issues, minor performance problems, inconsistencies            |
 | LOW      | ℹ️    | Style issues, documentation gaps, minor improvements                        |
 
-### 6.1 Markdown-Specific Priorities
-
-**🚨 CRITICAL:**
-- Broken heading numbering sequence
-- Missing Last Updated date
-- Missing Table of Contents
-- Code identifiers in headings
-- H5+ headings (use bold list items)
-
-**❌ HIGH:**
-- Incorrect folder path notation
-- Code snippets with ellipsis comments
-- Comma-separated items (3+)
-- Tables without whitespace padding
-- Emojis in table headers or cells
-
-**⚠️ MEDIUM:**
-- Inconsistent date format
-- Emoji not followed by UPPERCASE
-
 ## 7. Self-Assessment Protocol
 
 **🚨 CRITICAL:** Before presenting results, verify using this checklist:
@@ -226,9 +218,8 @@ See [Section 6](#6-severity-levels) for definitions.
 - [ ] Table separator dashes match column width
 - [ ] Tables contain no emojis (headers or cells)
 
-**Regex for emoji violations:**
-```regex
-(?:✅|❌|🚨|⚠️|ℹ️|🟢|🟠|🟣|🔴)\s+[a-z]
-```
+**Variables:**
+- [ ] Placeholders use `{snake_case}` syntax
 
-This pattern detects emojis followed by lowercase text (violations should use UPPERCASE).
+**Validation Tools:**
+- [ ] No emoji violations (regex: `(?:✅|❌|🚨|⚠️|ℹ️|🟢|🟠|🟣|🔴)\s+[a-z]`)
