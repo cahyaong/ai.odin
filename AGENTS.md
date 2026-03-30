@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Last Updated:** January 3, 2026
+**Last Updated:** March 29, 2026
 
 ---
 
@@ -236,7 +236,7 @@ State transitions managed by `DecisionMakingSystem`.
 
 ### 7.1 Code Style
 
-See `.ai-toolbox/rules/RULE_CSharp.md` for complete standards.
+See `External/cop.olympus/Source/Olympus.Agentic/rules/RULE_CSharp.md` for complete standards.
 
 **Quick Reference:**
 - Private fields: `_camelCase`
@@ -246,7 +246,7 @@ See `.ai-toolbox/rules/RULE_CSharp.md` for complete standards.
 
 ### 7.2 Documentation
 
-See `.ai-toolbox/rules/RULE_Markdown.md` and `.ai-toolbox/rules/RULE_Document.md`.
+See `External/cop.olympus/Source/Olympus.Agentic/rules/RULE_Markdown.md` and `External/cop.olympus/Source/Olympus.Agentic/rules/RULE_Document.md`.
 
 **Quick Reference:**
 - Last Updated: `**Last Updated:** Month DD, YYYY`
@@ -255,15 +255,7 @@ See `.ai-toolbox/rules/RULE_Markdown.md` and `.ai-toolbox/rules/RULE_Document.md
 
 ### 7.3 AI Toolbox
 
-| File                      | Purpose                                    |
-|---------------------------|--------------------------------------------|
-| `rules/RULE_CSharp.md`    | C# coding standards                        |
-| `rules/RULE_Markdown.md`  | Markdown formatting                        |
-| `rules/RULE_Document.md`  | Document content rules                     |
-| `rules/RULE_Persona.md`   | Expert persona reference                   |
-| `skills/format-markdown/` | Markdown validation                        |
-| `skills/review-markdown/` | Markdown optimization for token reduction  |
-| `skills/audit-codebase/`  | Codebase auditing                          |
+See `External/cop.olympus/Source/Olympus.Agentic/SUMMARY_Toolbox.md` for a complete summary of rules and skills.
 
 ## 8. AI Context System
 
@@ -274,7 +266,7 @@ The `.ai-context/` folder contains curated documents for feature planning and im
 | Prefix       | Purpose                                     | When to Read                 |
 |--------------|---------------------------------------------|------------------------------|
 | `IDEA_*`     | Game feature discussions and ideas          | Before implementing features |
-| `ROADMAP_*`  | Prioritized development features (future)   | During sprint planning       |
+| `ROADMAP_*`  | Prioritized development plans               | During sprint planning       |
 | `SNIPPET_*`  | Code references                             | During implementation        |
 | `SUMMARY_*`  | Quick references                            | First when starting work     |
 | `AUDIT_*`    | Quality assessments                         | During refactoring           |
@@ -288,8 +280,6 @@ The `.ai-context/` folder contains curated documents for feature planning and im
 2. Read `IDEA_*` for feature discussions
 3. Use `SNIPPET_*` during coding
 4. Reference `AUDIT_*` for quality
-
-See `.ai-toolbox/rules/RULE_Document.md` for complete document standards.
 
 ## 9. Resources
 
